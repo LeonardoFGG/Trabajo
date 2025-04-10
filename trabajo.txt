@@ -1,0 +1,46 @@
+php artisan migrate --path=/database/migrations/2024_09_20_154832_create_cliente_table.php
+
+php artisan make:migration create_cliente_table
+php artisan migrate --path=/database/migrations/2024_09_04_172647_create_empleados_table.php
+
+
+php artisan migrate --path=/database/migrations/2024_09_20_154832_create_cliente_table.php
+
+
+
+Cooperativa/cliente
+
+Contrato
+cargar orden de trabajo 
+
+contrato de mantenimiento/uso de licencia
+
+
+Repositorio de Otros 
+
+una vez que primero seleccione que documento subir como el carga de orden de trabajo o contrato de mantenimiento y de uso de licencia
+o de otros 
+
+y una vez cargado el adminastrador pueda ver los documentos cargados tanto solo de orden de trabajo o contrato de mantenimiento /uso de licencia 
+
+
+Producto 
+php artisan make:migration create_productos_table
+
+php artisan make:migration create_departamentos_table --create=departamentos
+
+
+
+----------------------
+Historial de Runiones
+
+tanto la cooperativa a la empresa 
+como un empleado a la empresa a la cooperativa
+
+---------------------
+
+
+git remote set-url origin <https://github.com/karol-macas/trabajo>
+
+
+consentimiento de datos personales 
