@@ -113,7 +113,27 @@
             });
 
             // SweetAlert para confirmación de eliminación
-            $('.form-delete').on('submit', function(event) {
+            /*$('.form-delete').on('submit', function(event) {
+                event.preventDefault();
+                const form = this;
+
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: "Esta acción no se puede deshacer",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });*/
+
+            $(document).on('submit', '.form-delete', function(event) {
                 event.preventDefault();
                 const form = this;
 
