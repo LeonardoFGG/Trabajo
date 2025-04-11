@@ -8,11 +8,29 @@ use App\Models\Departamento;
 
 class CargosController extends Controller
 {
-    public function index()
+    /*public function index()
     {
         $cargos = Cargos::all();
         return view('Cargos.index', compact('cargos'));
+    }*/
+
+    //Logica para filtro por departamento
+    public function index(Request $request)
+    {
+        $departamentoId = $request->get('departamento_id'); // valor del filtro
+
+        $query = Cargos::query()->with('departamento');
+
+        if ($departamentoId) {
+            $query->where('departamento_id', $departamentoId);
+        }
+
+        $cargos = $query->get();
+        $departamentos = Departamento::all(); // para mostrar el select en la vista
+
+        return view('Cargos.index', compact('cargos', 'departamentos'));
     }
+
 
     public function create()
     {
