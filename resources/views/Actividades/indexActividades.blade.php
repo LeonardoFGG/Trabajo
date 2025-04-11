@@ -217,7 +217,45 @@ Ultima Modificación:
                             <td>{{ $actividad->producto->nombre ?? 'N/A' }}</td> 
 							<td>{{ $actividad->empleado ? $actividad->empleado->nombre1 . ' ' . $actividad->empleado->apellido1 : 'No asignado' }}
                             </td>
-                            <td class="descripcion-limite">{{ $actividad->descripcion }}</td>
+                            <!-- Descripcion actualizada -->
+                            <td class="descripcion-limite">
+                                <div class="text-truncate" style="max-width: 200px;">
+                                    {{ $actividad->descripcion }}
+                                </div>
+                            
+                                <!-- Botón para abrir el modal de descripción completa -->
+                                <button type="button" class="btn btn-outline-info btn-sm mt-1" data-bs-toggle="modal"
+                                    data-bs-target="#modalVerDescripcion{{ $actividad->id }}">
+                                    Ver más
+                                </button>
+                            </td>
+                            <!-- El modal debe ir despues del </td> -->
+                            <!-- Modal para ver descripción completa -->
+                            <div class="modal fade" id="modalVerDescripcion{{ $actividad->id }}" tabindex="-1"
+                                aria-labelledby="modalVerDescripcionLabel{{ $actividad->id }}" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modalVerDescripcionLabel{{ $actividad->id }}">
+                                                Descripción Completa
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <!-- Mostrar la descripción completa -->
+                                            <div class="p-3 bg-light border rounded">
+                                                <p class="mb-0">{{ $actividad->descripcion }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            
                             <td>
                                 @if (!empty($actividad->codigo_osticket))
                                     <a href="{{ $actividad->codigo_osticket }}" target="_blank"
@@ -428,7 +466,7 @@ Ultima Modificación:
                 </div>
             </div>
         </div>
-
+    
     </div>
 
     <style>
