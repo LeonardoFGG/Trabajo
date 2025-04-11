@@ -37,6 +37,8 @@ class ActividadesController extends Controller
         // Obtener el empleado seleccionado del filtro (si lo hay)
         $empleadoId = $request->input('empleado_id');
 
+        // Nuevo filtro por fecha
+        $fechaSeleccionada = $request->input('fecha', now()->toDateString());
         // Obtener los filtros del request
         $filtro = $request->input('filtro', 'semana'); // Por defecto, "semana"
         $semanaSeleccionada = $request->input('semana', 0); // Por defecto, semana actual
@@ -55,6 +57,7 @@ class ActividadesController extends Controller
         }
 
         // Aplicar filtro por semana o mes
+
         if ($filtro === 'semana') {
             $inicioSemana = now()->startOfWeek()->subWeeks($semanaSeleccionada);
             $finSemana = now()->endOfWeek()->subWeeks($semanaSeleccionada);
@@ -65,6 +68,12 @@ class ActividadesController extends Controller
             $finMes = Carbon::parse($mesSeleccionado)->endOfMonth();
 
             $actividadesQuery->whereBetween('created_at', [$inicioMes, $finMes]);
+        }
+
+        // Nuevo filtro por fecha exacta
+        if ($request->filled('fecha')) {
+            $fecha = Carbon::parse($request->input('fecha'))->toDateString();
+            $actividadesQuery->whereDate('created_at', $fecha); // Cambia 'created_at' si usas otra columna
         }
 
         // Obtener actividades filtradas

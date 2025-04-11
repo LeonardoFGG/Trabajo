@@ -38,6 +38,9 @@ Ultima Modificación:
             <!-- Formulario de filtros (solo para el admin) -->
             <form action="{{ route('actividades.indexActividades') }}" method="GET"
             class="mb-4 p-4 shadow bg-light rounded" style="max-width: 1100px; margin: 0 auto;">                <div class="d-flex flex-column flex-md-row gap-3 align-items-center">
+                    
+                    <!-- Antiguo filtro por semana y mes -->
+                    <!--
                     <div>
                         <label for="filtro">Filtrar por:</label>
                         <select name="filtro" id="filtro" class="form-select" onchange="cambiarFiltro()">
@@ -46,10 +49,7 @@ Ultima Modificación:
                             </option>
                         </select>
 
-
                     </div>
-
-
 
                     <div id="filtro-mes" style="display: {{ request('filtro') == 'mes' ? 'block' : 'none' }};">
                         <label for="mes">Selecciona Mes:</label>
@@ -67,7 +67,15 @@ Ultima Modificación:
                             <option value="3" {{ request('semana') == 3 ? 'selected' : '' }}>Hace 3 semanas</option>
                         </select>
                     </div>
+                    -->
+                    <!-- Nuevo filtro por seleccion de fecha -->
+                    <div>
+                        <label for="fecha">Seleccionar Fecha:</label>
+                        <input type="date" name="fecha" id="fecha" class="form-control"
+                            value="{{ request('fecha', now()->format('Y-m-d')) }}">
+                    </div>
 
+                    
                     <div class="col-md-4">
                         <label for="empleado_id" class="form-label">Seleccionar Empleado:</label>
                         <div class="input-group">
@@ -113,6 +121,7 @@ Ultima Modificación:
                 class="mb-3 p-4 shadow bg-light rounded" style="max-width: 700px; margin: 0 auto;">
                 <div class="d-flex flex-column flex-md-row gap-3 align-items-center justify-content-center">
 
+                    <!--
                     <div class="d-flex flex-column gap-2">
                         <label for="filtro" class="form-label fw-semibold" style="font-size: 0.9rem;">Filtrar por:</label>
                         <select name="filtro" id="filtro" class="form-select w-auto" onchange="cambiarFiltro()">
@@ -138,6 +147,14 @@ Ultima Modificación:
                             <option value="2" {{ request('semana') == 2 ? 'selected' : '' }}>Hace 2 semanas</option>
                             <option value="3" {{ request('semana') == 3 ? 'selected' : '' }}>Hace 3 semanas</option>
                         </select>
+                    </div>
+                    -->
+                    <!-- Actualizacion para seleccionar fecha -->
+
+                    <div>
+                        <label for="fecha">Seleccionar Fecha:</label>
+                        <input type="date" name="fecha" id="fecha" class="form-control"
+                            value="{{ request('fecha', now()->format('Y-m-d')) }}">
                     </div>
 
                     <div class="d-flex align-items-center gap-3">
@@ -179,7 +196,6 @@ Ultima Modificación:
             </button>
         </div>
 
-
         <div class="text-left">
             <a href="{{ route('actividades.create') }}" class="btn btn-primary btn-lg ms-3"
                 style="margin-left: 1rem;">Crear Actividad</a>
@@ -187,7 +203,6 @@ Ultima Modificación:
 
         <div class="table-responsive">
             <!-- Contadores para los estados -->
-
 
             <table id="actividades-table" class="table table-hover table-bordered">
                 <thead class="thead-dark text-center">
