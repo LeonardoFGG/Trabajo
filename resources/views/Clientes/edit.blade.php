@@ -38,7 +38,7 @@
                                                     <input class="form-check-input" type="checkbox" name="productos[]" id="producto{{ $producto->id }}" value="{{ $producto->id }}"
                                                         @if(in_array($producto->id, $cliente->productos->pluck('id')->toArray())) checked @endif>
                                                     <label class="form-check-label" for="producto{{ $producto->id }}">
-                                                        {{ $producto->nombre }}
+                                                        {{ $producto->codigo . ' - ' . $producto->nombre }}
                                                     </label>
                                                 </div>
                                             @endforeach
