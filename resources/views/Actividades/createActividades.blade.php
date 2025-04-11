@@ -21,10 +21,6 @@
 
                         <form action="{{ route('actividades.store') }}" method="POST">
                             @csrf
-							
-												
-
-
 
                             <!-- Selección del Cliente -->
                             <div class="form-group row mb-3">
@@ -46,9 +42,9 @@
                                         </option>
                                     @endforeach
                                 </select>
-								 @if ($errors->has('cliente_id'))
-        <small class="text-danger">{{ $errors->first('cliente_id') }}</small>
-    @endif
+                                @if ($errors->has('cliente_id'))
+                                    <small class="text-danger">{{ $errors->first('cliente_id') }}</small>
+                                @endif
                             </div>
 
                             <div class="form-group mb-4">
@@ -58,13 +54,13 @@
                                     @foreach ($productos as $producto)
                                         <option value="{{ $producto->id }}"
                                             {{ old('producto_id', $actividad->producto_id ?? '') == $producto->id ? 'selected' : '' }}>
-                                            {{ $producto->nombre }}
+                                            {{ $producto->codigo . ' - ' . $producto->nombre }}
                                         </option>
                                     @endforeach
                                 </select>
-								 @if ($errors->has('producto_id'))
-        <small class="text-danger">{{ $errors->first('producto_id') }}</small>
-    @endif
+                                @if ($errors->has('producto_id'))
+                                    <small class="text-danger">{{ $errors->first('producto_id') }}</small>
+                                @endif
                             </div>
 
                             <div class="form-group">
@@ -395,7 +391,7 @@
                             data.forEach(producto => {
                                 const option = document.createElement('option');
                                 option.value = producto.id;
-                                option.textContent = producto.nombre;
+                                option.textContent = producto.codigo + ' - ' + producto.nombre;
                                 productoSelect.appendChild(option);
                             });
                         })

@@ -482,6 +482,6 @@ if ($empleados->es_supervisor) {
 
         $empleados->delete();
 
-        return redirect()->route('Empleados.indexEmpleados')->with('success', 'Empleado eliminado con éxito.');
+        return redirect()->route('empleados.indexEmpleados')->with('success', 'Empleado eliminado con éxito.');
     }
 }

@@ -39,7 +39,7 @@
                             <td>{{ $cliente->id }}</td>
                             <td>
                                 @foreach ($cliente->productos as $producto)
-                                    <span>{{ $producto->nombre }}</span>
+                                    <span>{{$producto->codigo . ' - ' . $producto->nombre}}</span>
                                     @if (!$loop->last)
                                         ,
                                     @endif

@@ -223,7 +223,7 @@
     });
 
     // SweetAlert para confirmación de eliminación
-    $('.form-delete').on('submit', function(event) {
+    /*$('.form-delete').on('submit', function(event) {
         event.preventDefault();
         var form = this;
         Swal.fire({
@@ -240,7 +240,29 @@
                 form.submit();
             }
         });
+    });*/
+
+    // SweetAlert para confirmación de eliminación con delegación
+    $(document).on('submit', '.form-delete', function(e) {
+        e.preventDefault();
+        const form = this;
+
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¡No podrás revertir esto!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
     });
+
 
     // Funcionalidad de los botones de desplazamiento
     const tableWrapper = document.getElementById("table-wrapper");
