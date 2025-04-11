@@ -149,8 +149,8 @@ Ultima Modificación:
                         </select>
                     </div>
                     -->
-                    <!-- Actualizacion para seleccionar fecha -->
 
+                    <!-- Actualizacion para seleccionar fecha -->
                     <div>
                         <label for="fecha">Seleccionar Fecha:</label>
                         <input type="date" name="fecha" id="fecha" class="form-control"
@@ -212,6 +212,7 @@ Ultima Modificación:
 						<th scope="col">Productos</th>
                         <th scope="col">Empleado</th>
                         <th scope="col">Descripción</th>
+                        <th scope="col">Tipo Error</th>
                         <th scope="col">Código Osticket</th>
                         <th scope="col">Fecha de Inicio</th>
                         <th scope="col">Estado</th>
@@ -245,31 +246,50 @@ Ultima Modificación:
                                 </button>
                             </td>
                             <!-- El modal debe ir despues del </td> -->
-                            <!-- Modal para ver descripción completa -->
+                            <!-- Modal para ver y editar descripción -->
                             <div class="modal fade" id="modalVerDescripcion{{ $actividad->id }}" tabindex="-1"
                                 aria-labelledby="modalVerDescripcionLabel{{ $actividad->id }}" aria-hidden="true">
                                 <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="modalVerDescripcionLabel{{ $actividad->id }}">
-                                                Descripción Completa
-                                            </h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <!-- Mostrar la descripción completa -->
-                                            <div class="p-3 bg-light border rounded">
-                                                <p class="mb-0">{{ $actividad->descripcion }}</p>
+                                        <form action="{{ route('actividades.update', $actividad->id) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modalVerDescripcionLabel{{ $actividad->id }}">
+                                                    Descripción Completa
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Cerrar"></button>
                                             </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                                        </div>
+
+                                            <div class="modal-body">
+                                                <div class="form-group">
+                                                    <label for="descripcion">Editar Descripción:</label>
+                                                    <textarea name="descripcion" class="form-control" rows="6" required>{{ $actividad->descripcion }}</textarea>
+                                                </div>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
 
+
+                            <td>
+                                <span>{{ $actividad->error ?? 'N/A' }}</span><br>
+                            
+                                <!-- Botón para abrir modal de edición -->
+                                <button type="button" class="btn btn-sm btn-outline-primary mt-1" data-bs-toggle="modal"
+                                    data-bs-target="#modalEditarError{{ $actividad->id }}">
+                                    Editar
+                                </button>
+                            </td>
+                            
                             
                             <td>
                                 @if (!empty($actividad->codigo_osticket))
@@ -463,6 +483,46 @@ Ultima Modificación:
                     @endforEach
                 </tbody>
             </table>
+            @foreach ($actividades as $actividad)
+            <!-- Modal para editar Tipo de Error -->
+            <div class="modal fade" id="modalEditarError{{ $actividad->id }}" tabindex="-1"
+                aria-labelledby="modalEditarErrorLabel{{ $actividad->id }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form action="{{ route('actividades.update', $actividad->id) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalEditarErrorLabel{{ $actividad->id }}">
+                                    Editar Tipo de Error
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Cerrar"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="error">Tipo de Error <span class="text-danger">*</span></label>
+                                    <select name="error" class="form-select" required>
+                                        <option value="">Seleccione un tipo de error</option>
+                                        <option value="ESTRUCTURA" {{ $actividad->error == 'ESTRUCTURA' ? 'selected' : '' }}>Estructura</option>
+                                        <option value="CLIENTE" {{ $actividad->error == 'CLIENTE' ? 'selected' : '' }}>Cliente</option>
+                                        <option value="SOFTWARE" {{ $actividad->error == 'SOFTWARE' ? 'selected' : '' }}>Software</option>
+                                        <option value="MEJORA ERROR" {{ $actividad->error == 'MEJORA ERROR' ? 'selected' : '' }}>Mejora Error</option>
+                                        <option value="DESARROLLO" {{ $actividad->error == 'DESARROLLO' ? 'selected' : '' }}>Desarrollo</option>
+                                        <option value="OTRO" {{ $actividad->error == 'OTRO' ? 'selected' : '' }}>Otros</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+
         </div>
 
         <div class="modal fade" id="actividadModal" tabindex="-1" aria-labelledby="actividadModalLabel"

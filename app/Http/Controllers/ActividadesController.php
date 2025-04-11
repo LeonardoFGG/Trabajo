@@ -222,6 +222,18 @@ class ActividadesController extends Controller
 
     public function update(Request $request, $id)
     {
+        // Actualiza la descripcion
+        $actividad = Actividades::findOrFail($id);
+        $actividad->update($request->only(['descripcion']));
+
+        return redirect()->back()->with('success', 'Descripción actualizada correctamente.');
+
+        // Actualiza el tipo de error
+        $actividad = Actividades::findOrFail($id);
+        $actividad->update($request->only(['error'])); // asegúrate de permitir esto
+
+        return redirect()->back()->with('success', 'Tipo de error actualizado correctamente.');
+
         $validated = $request->validate([
             'cliente_id' => 'required|string|max:255',
             'producto_id' => 'required|exists:productos,id',
