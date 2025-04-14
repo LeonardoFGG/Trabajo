@@ -162,12 +162,12 @@
                         </a>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('analisis.indexActividades') ? 'active' : '' }}"
-                            href="{{ route('analisis.indexActividades') }}" title="Analisis de Actividades">
-                            <i class="bi bi-file-bar-graph-fill"></i> <span>Analisis de Actividades</span>
-                        </a>
-                    </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ request()->routeIs('analisis.indexActividades') ? 'active' : '' }}"
+                                href="{{ route('analisis.indexActividades') }}" title="Analisis de Actividades">
+                                <i class="bi bi-file-bar-graph-fill"></i> <span>Analisis de Actividades</span>
+                            </a>
+                        </li>
 
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('analisis.indexMatriz') ? 'active' : '' }}"
@@ -190,6 +190,16 @@
                         </a>
                     </li>
                 @endif
+
+                @if (( Auth::user()->isSupervisor()))
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('analisis.indexActividades') ? 'active' : '' }}"
+                            href="{{ route('analisis.indexActividades') }}" title="Analisis de Actividades">
+                            <i class="bi bi-file-bar-graph-fill"></i> <span>Analisis de Actividades</span>
+                        </a>
+                    </li>
+                @endif
+
             </ul>
         </div>
 
@@ -232,7 +242,8 @@
                                 </ul>
                             </li>
 
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                style="display: none;">
                                 @csrf
                             </form>
                         @endguest

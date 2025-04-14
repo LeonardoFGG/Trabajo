@@ -287,10 +287,6 @@
                             </a>
                         </li>
 
-
-
-
-
                     </ul>
                 @endif
 
@@ -335,28 +331,27 @@
                             <i class="bi bi-table"></i> <span>Matriz de Cumplimiento</span>
                         </a>
                     </li>
-                @endif
-                @if (Auth::check() &&
-                        Auth::user()->empleado &&
-                        (Auth::user()->empleado->cargo_id == 15 || Auth::user()->empleado->cargo_id == 14))
+
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('ventas.index') ? 'active' : '' }}"
-                            href="{{ route('ventas.index') }}" title="Ventas">
-                            <i class="bi bi-cart"></i> <span>Ventas</span>
+                        <a class="nav-link {{ request()->routeIs('analisis.indexAnalisis') ? 'active' : '' }}"
+                            href="{{ route('analisis.indexAnalisis') }}" title="Inteligencia de Negocios">
+                            <i class="bi bi-bar-chart"></i> <span>Inteligencia de Negocios</span>
                         </a>
+
                     </li>
                 @endif
+
                 @if (Auth::check() && Auth::user()->isGerenteGeneral())
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('analisis.indexAnalisis') ? 'active' : '' }}"
                             href="{{ route('analisis.indexAnalisis') }}" title="Inteligencia de Negocios">
                             <i class="bi bi-bar-chart"></i> <span>Inteligencia de Negocios</span>
                         </a>
-                        
+
                     </li>
                 @endif
 
-                
+
 
             </ul>
         </div>

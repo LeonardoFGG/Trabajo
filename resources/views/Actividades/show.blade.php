@@ -9,7 +9,7 @@
                         <h1><i class="fas fa-info-circle"></i> Detalles de la Actividad</h1>
                     </div>
                     <div class="card-body">
-                        @include('actividades.partials.show-content', ['actividades' => $actividades])
+                        @include('Actividades.partials.show-content', ['actividades' => $actividades])
                         <div class="mt-3 text-center">
                             <a href="{{ route('actividades.indexActividades') }}" class="btn btn-primary">Volver al listado</a>
                         </div>
