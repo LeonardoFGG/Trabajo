@@ -134,6 +134,44 @@ Ultima Modificación:
                 class="mb-3 p-4 shadow bg-light rounded" style="max-width: 700px; margin: 0 auto;">
                 <div class="d-flex flex-column flex-md-row gap-3 align-items-center justify-content-center">
 
+                    <!--
+                                                        <div class="d-flex flex-column gap-2">
+                                                            <label for="filtro" class="form-label fw-semibold" style="font-size: 0.9rem;">Filtrar por:</label>
+                                                            <select name="filtro" id="filtro" class="form-select w-auto" onchange="cambiarFiltro()">
+                                                                <option value="mes" {{ request('filtro') == 'mes' ? 'selected' : '' }}>Mes</option>
+                                                                <option value="semana" {{ request('filtro', 'semana') == 'semana' ? 'selected' : '' }}>Semana
+                                                                </option>
+                                                            </select>
+                                                        </div>
+
+                                                        <div id="filtro-mes" class="mt-3"
+                                                            style="display: {{ request('filtro') == 'mes' ? 'block' : 'none' }};">
+                                                            <label for="mes" class="form-label" style="font-size: 0.9rem;">Selecciona Mes:</label>
+                                                            <input type="month" name="mes" id="mes" class="form-control"
+                                                                value="{{ request('mes', now()->format('Y-m')) }}">
+                                                        </div>
+
+
+                                                        <div id="filtro-semana" class="mt-3"
+                                                            style="display: {{ request('filtro', 'semana') == 'semana' ? 'block' : 'none' }};">
+                                                            <label for="semana" class="form-label" style="font-size: 0.9rem;">Selecciona Semana:</label>
+                                                            <select name="semana" id="semana" class="form-select">
+                                                                <option value="0" {{ request('semana', 0) == 0 ? 'selected' : '' }}>Esta semana</option>
+                                                                <option value="1" {{ request('semana') == 1 ? 'selected' : '' }}>Semana pasada</option>
+                                                                <option value="2" {{ request('semana') == 2 ? 'selected' : '' }}>Hace 2 semanas</option>
+                                                                <option value="3" {{ request('semana') == 3 ? 'selected' : '' }}>Hace 3 semanas</option>
+                                                            </select>
+                                                        </div>
+                                                        -->
+                    <!-- Actualizacion para seleccionar fecha -->
+
+
+                    <!-- Actualizacion para seleccionar fecha -->
+                    <div>
+                        <label for="fecha">Seleccionar Fecha:</label>
+                        <input type="date" name="fecha" id="fecha" class="form-control"
+                            value="{{ request('fecha', now()->format('Y-m-d')) }}">
+                    </div>
 
                     <div class="d-flex align-items-center gap-3">
 
@@ -254,8 +292,9 @@ Ultima Modificación:
                                             @method('PUT')
 
                                             <div class="modal-header">
-                                                <h5 class="modal-title"
-                                                    id="modalVerDescripcionLabel{{ $actividad->id }}">
+
+                                                <h5 class="modal-title" id="modalVerDescripcionLabel{{ $actividad->id }}">
+
                                                     Descripción Completa
                                                 </h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -270,8 +309,9 @@ Ultima Modificación:
                                             </div>
 
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Cerrar</button>
+
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+
                                                 <button type="submit" class="btn btn-primary">Guardar cambios</button>
                                             </div>
                                         </form>
@@ -289,7 +329,6 @@ Ultima Modificación:
                                     Editar
                                 </button>
                             </td>
-
 
                             <td>
                                 @if (!empty($actividad->codigo_osticket))
@@ -545,6 +584,7 @@ Ultima Modificación:
                 </tbody>
             </table>
             @foreach ($actividades as $actividad)
+
                 <!-- Modal para editar Tipo de Error -->
                 <div class="modal fade" id="modalEditarError{{ $actividad->id }}" tabindex="-1"
                     aria-labelledby="modalEditarErrorLabel{{ $actividad->id }}" aria-hidden="true">
@@ -593,6 +633,7 @@ Ultima Modificación:
                     </div>
                 </div>
             @endforeach
+
 
         </div>
 

@@ -240,6 +240,7 @@ class ActividadesController extends Controller
     public function update(Request $request, $id)
     {
 
+
         $actividad = Actividades::findOrFail($id);
         // Actualiza la descripcion
         if ($request->has('descripcion')) {
@@ -251,6 +252,7 @@ class ActividadesController extends Controller
             $actividad->update($request->only('error'));
             return redirect()->back()->with('success', 'Tipo de error actualizado correctamente.');
         }
+
         $validated = $request->validate([
             'cliente_id' => 'required|string|max:255',
             'producto_id' => 'required|exists:productos,id',
@@ -319,7 +321,7 @@ class ActividadesController extends Controller
             // Si está en curso (EN CURSO)
             $actividad->estado = 'EN CURSO';
 
-            // Registrar el tiempo de inicio si no está en curso
+            // Refstrar el tiempo de inicio si no está en curso
             if (is_null($actividad->tiempo_inicio)) {
                 $actividad->tiempo_inicio = now();
             }
