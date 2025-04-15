@@ -24,11 +24,47 @@
                 style="max-width: 1100px; margin: 0 auto;">
                 <div class="d-flex flex-column flex-md-row gap-3 align-items-center">
 
+                    <!-- Nuevo selector de fechas por rango -->
                     <div>
-                        <label for="fecha">Filtrar por día (opcional):</label>
-                        <input type="date" name="fecha" id="fecha" class="form-control"
-                            value="{{ request('fecha') }}" onchange="document.getElementById('filter-form').submit()">
+                        <label for="daterange">Seleccionar Rango de Fechas:</label>
+                        <!-- Input para seleccionar el rango de fechas -->
+                        <input type="text" name="daterange" id="daterange" class="form-control"
+                            placeholder="Selecciona un rango"
+                            value="{{ request('start_date') && request('end_date') ? request('start_date') . ' to ' . request('end_date') : '' }}">
+        
+                        <!-- Inputs ocultos para enviar las fechas reales -->
+                        <input type="hidden" name="start_date" id="start_date" value="{{ request('start_date') }}">
+                        <input type="hidden" name="end_date" id="end_date" value="{{ request('end_date') }}">
                     </div>
+
+                    <script>
+                        flatpickr("#daterange", {
+                            mode: "range",  // Modo de selección de rango
+                            dateFormat: "Y-m-d",  // Formato de la fecha
+                            defaultDate: [
+                                "{{ request('start_date', now()->format('Y-m-d')) }}",  // Fecha inicial por defecto
+                                "{{ request('end_date', now()->format('Y-m-d')) }}"     // Fecha final por defecto
+                            ],
+                            locale: {
+                                firstDayOfWeek: 1,
+                                weekdays: {
+                                    shorthand: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+                                    longhand: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                                },
+                                months: {
+                                    shorthand: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                                    longhand: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                                },
+                            },
+                            onChange: function(selectedDates) {
+                                // Cuando se seleccionan ambas fechas, actualizamos los campos ocultos
+                                if (selectedDates.length === 2) {
+                                    document.getElementById('start_date').value = selectedDates[0].toISOString().slice(0, 10);
+                                    document.getElementById('end_date').value = selectedDates[1].toISOString().slice(0, 10);
+                                }
+                            }
+                        });
+                    </script>
 
                     <div class="col-md-4">
                         <label for="empleado_id" class="form-label">Seleccionar Empleado:</label>
@@ -70,11 +106,47 @@
                     <!-- Formulario de filtrado (independiente) -->
                     <form action="{{ route('permisos.index') }}" method="GET" class="mb-0">
                         <div class="d-flex flex-column flex-md-row gap-3 align-items-center">
-                            <div class="flex-grow-1">
-                                <label for="fecha" class="form-label">Filtrar por día (opcional):</label>
-                                <input type="date" name="fecha" id="fecha" class="form-control"
-                                    value="{{ request('fecha') }}">
-                            </div>
+                            <!-- Nuevo selector de fechas por rango -->
+                    <div>
+                        <label for="daterange">Seleccionar Rango de Fechas:</label>
+                        <!-- Input para seleccionar el rango de fechas -->
+                        <input type="text" name="daterange" id="daterange" class="form-control"
+                            placeholder="Selecciona un rango"
+                            value="{{ request('start_date') && request('end_date') ? request('start_date') . ' to ' . request('end_date') : '' }}">
+        
+                        <!-- Inputs ocultos para enviar las fechas reales -->
+                        <input type="hidden" name="start_date" id="start_date" value="{{ request('start_date') }}">
+                        <input type="hidden" name="end_date" id="end_date" value="{{ request('end_date') }}">
+                    </div>
+
+                    <script>
+                        flatpickr("#daterange", {
+                            mode: "range",  // Modo de selección de rango
+                            dateFormat: "Y-m-d",  // Formato de la fecha
+                            defaultDate: [
+                                "{{ request('start_date', now()->format('Y-m-d')) }}",  // Fecha inicial por defecto
+                                "{{ request('end_date', now()->format('Y-m-d')) }}"     // Fecha final por defecto
+                            ],
+                            locale: {
+                                firstDayOfWeek: 1,
+                                weekdays: {
+                                    shorthand: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+                                    longhand: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                                },
+                                months: {
+                                    shorthand: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                                    longhand: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                                },
+                            },
+                            onChange: function(selectedDates) {
+                                // Cuando se seleccionan ambas fechas, actualizamos los campos ocultos
+                                if (selectedDates.length === 2) {
+                                    document.getElementById('start_date').value = selectedDates[0].toISOString().slice(0, 10);
+                                    document.getElementById('end_date').value = selectedDates[1].toISOString().slice(0, 10);
+                                }
+                            }
+                        });
+                    </script>
 
                             <div class="mt-3 mt-md-0">
                                 <button type="submit" class="btn btn-primary">

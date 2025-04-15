@@ -55,13 +55,18 @@ class DailyController extends Controller
         $user = Auth::user();
         $empleadoId = $request->input('empleado_id');
         $departamentoId = $request->input('departamento_id');
-        $fechaSeleccionada = $request->input('fecha');
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
 
         $dailiesQuery = Daily::query();
 
-        // Aplicar filtros
-        if ($fechaSeleccionada) {
-            $dailiesQuery->whereDate('fecha', $fechaSeleccionada);
+        // Filtrar por rango de fechas si ambos parámetros existen
+        if ($startDate && $endDate) {
+            $dailiesQuery->whereBetween('fecha', [$startDate, $endDate]);
+        }
+        // O solo por una fecha específica si solo se proporciona una
+        elseif ($startDate) {
+            $dailiesQuery->whereDate('fecha', $startDate);
         }
 
         if ($departamentoId) {
@@ -75,8 +80,8 @@ class DailyController extends Controller
         }
 
         // Ordenar siempre por fecha y creación descendente (últimos primero)
-        // a menos que se esté filtrando SOLO por fecha (sin departamento ni empleado)
-        if (!$fechaSeleccionada || $departamentoId || $empleadoId) {
+        // Ordenar por fecha y creación descendente
+        if (!$startDate || $departamentoId || $empleadoId) {
             $dailiesQuery->orderBy('fecha', 'desc')->orderBy('created_at', 'desc');
         }
 
@@ -94,8 +99,9 @@ class DailyController extends Controller
             'empleado',
             'departamentos',
             'empleados',
-            'fechaSeleccionada',
-            'departamentoId'
+            'departamentoId',
+            'startDate',
+            'endDate'
         ));
     }
     /**

@@ -68,5 +68,11 @@ class Actividades extends Model
         return $this->belongsTo(Producto::class, 'producto_id');
     }
 
+    public function supervisor()
+    {
+        return $this->belongsTo(Empleados::class, 'supervisor_id');
+    }
+    
+
     
 }

@@ -36,80 +36,84 @@ class ActividadesController extends Controller
 {
     public function index(Request $request)
     {
-        // Obtener el usuario autenticado
         $user = Auth::user();
-
-        // Obtener el empleado seleccionado del filtro (si lo hay)
         $empleadoId = $request->input('empleado_id');
 
-        // Nuevo filtro por fecha
-        $fechaSeleccionada = $request->input('fecha', now()->toDateString());
-        // Obtener los filtros del request
-        $filtro = $request->input('filtro', 'fecha'); // Por defecto, "semana"
-        // $semanaSeleccionada = $request->input('semana', 0); // Por defecto, semana actual
-        // $mesSeleccionado = $request->input('mes', now()->format('Y-m')); // Mes actual como predeterminado
+        // Cargar relaciones necesarias
+        $actividadesQuery = Actividades::with([
+            'empleado',
+            'cliente',
+            'departamento',
+            'producto' => function ($query) {
+                $query->select('id', 'nombre');
+            }
+        ]);
 
-        // Inicializar la consulta de actividades
-        $actividadesQuery = Actividades::with('empleado', 'cliente', 'departamento');
-
-        // Agregar nuevo filtro para servicio por hora
-        $actividadesQuery->when($request->has('servicio_hora'), function ($q) {
-            $q->whereHas('producto', function ($subQuery) {
-                $subQuery->where('nombre', 'servicio por hora');
-            });
-        });
+        // Inicializar variable de empleados
+        $empleados = collect();
 
         // Aplicar filtros según el tipo de usuario
-        if ($user->isEmpleado() && !$user->isAdmin() && $user->id != 3 && $user->id != 24) {
-            // Empleados normales solo ven sus actividades
+        if ($user->isAdmin() || $user->isAsistenteGerencial() || $user->isGerenteGeneral()) {
+            $actividadesQuery->when($empleadoId, function ($query) use ($empleadoId) {
+                return $query->where('empleado_id', $empleadoId);
+            });
+            $empleados = Empleados::all(['id', 'nombre1', 'apellido1']);
+        } elseif ($user->isSupervisor()) {
+            // Obtener ID del supervisor
+            $supervisorId = $user->empleado->id;
+
+            // Obtener empleados a cargo (incluyendo al supervisor)
+            $empleados = Empleados::where('supervisor_id', $supervisorId)
+                ->orWhere('id', $supervisorId)
+                ->get(['id', 'nombre1', 'apellido1']);
+
+            // Filtrar actividades
+            $actividadesQuery->where(function ($query) use ($supervisorId, $empleadoId) {
+                $query->whereHas('empleado', function ($q) use ($supervisorId) {
+                    $q->where('supervisor_id', $supervisorId);
+                })->orWhere('empleado_id', $supervisorId);
+
+                if ($empleadoId) {
+                    $query->where('empleado_id', $empleadoId);
+                }
+            });
+        } elseif ($user->isEmpleado()) {
             $actividadesQuery->where('empleado_id', $user->empleado->id);
-        } elseif ($empleadoId) {
-            // Administradores y otros usuarios especiales pueden filtrar por empleado
-            $actividadesQuery->where('empleado_id', $empleadoId);
+            $empleados = collect([$user->empleado]);
+        } else {
+            return redirect()->route('home')->with('error', 'No tienes permisos para acceder a esta página');
         }
 
-        // Aplicar filtro por semana o mes
-
-        // if ($filtro === 'semana') {
-        //     $inicioSemana = now()->startOfWeek()->subWeeks($semanaSeleccionada);
-        //     $finSemana = now()->endOfWeek()->subWeeks($semanaSeleccionada);
-
-        //     $actividadesQuery->whereBetween('created_at', [$inicioSemana, $finSemana]);
-        // } elseif ($filtro === 'mes') {
-        //     $inicioMes = Carbon::parse($mesSeleccionado)->startOfMonth();
-        //     $finMes = Carbon::parse($mesSeleccionado)->endOfMonth();
-
-        //     $actividadesQuery->whereBetween('created_at', [$inicioMes, $finMes]);
-        // }
-
-        // Nuevo filtro por fecha exacta
-        if ($request->filled('fecha')) {
-            $fecha = Carbon::parse($request->input('fecha'))->toDateString();
-            $actividadesQuery->whereDate('created_at', $fecha); // Cambia 'created_at' si usas otra columna
+        // Resto de filtros
+        if ($request->has('servicio_hora')) {
+            $actividadesQuery->whereHas('producto', function ($q) {
+                $q->where('nombre', 'servicio por hora');
+            });
         }
 
-        // Obtener actividades filtradas
-        $actividades = $actividadesQuery->orderBy('created_at', 'desc')->get();
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $startDate = Carbon::parse($request->input('start_date'))->startOfDay();
+            $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
+            $actividadesQuery->whereBetween('created_at', [$startDate, $endDate]);
+        }
 
-        // Obtener la lista de empleados
-        $empleados = Empleados::all();
+        // Obtener resultados
+        $actividades = $actividadesQuery
+            ->select('actividades.*')
+            ->orderBy('created_at', 'desc')
+            ->paginate(100);
 
-        // Contar las actividades por estado
-        $enCursoCount = $actividades->where('estado', 'EN CURSO')->count();
-        $pendienteCount = $actividades->where('estado', 'PENDIENTE')->count();
-        $finalizadoCount = $actividades->where('estado', 'FINALIZADO')->count();
+        // Contar estados
+        $statusCounts = $actividades->groupBy('estado')->map->count();
 
-
-
-        return view('Actividades.indexActividades', compact(
-            'actividades',
-            'empleados',
-            'enCursoCount',
-            'pendienteCount',
-            'finalizadoCount',
-            'filtro',
-            
-        ));
+        return view('Actividades.indexActividades', [
+            'actividades' => $actividades,
+            'empleados' => $empleados,
+            'enCursoCount' => $statusCounts->get('EN CURSO', 0),
+            'pendienteCount' => $statusCounts->get('PENDIENTE', 0),
+            'finalizadoCount' => $statusCounts->get('FINALIZADO', 0),
+            'filtro' => $request->input('filtro', 'fecha'),
+        ]);
     }
 
 
@@ -149,7 +153,7 @@ class ActividadesController extends Controller
 
         return view('Actividades.createActividades', compact('empleados', 'departamentos', 'clientes', 'cargos', 'productos'));
     }
-
+//------------------------------------------------------------
     public function getProductosByCliente($clienteId)
     {
         // Buscar el cliente
@@ -164,7 +168,7 @@ class ActividadesController extends Controller
         // Si no se encuentra el cliente, devolver un array vacío
         return response()->json([]);
     }
-
+//------------------------------------------------------------
 
     public function store(Request $request)
     {
@@ -242,7 +246,7 @@ class ActividadesController extends Controller
             $actividad->update($request->only('descripcion'));
             return redirect()->back()->with('success', 'Descripción actualizada correctamente.');
         }
-    
+
         if ($request->has('error')) {
             $actividad->update($request->only('error'));
             return redirect()->back()->with('success', 'Tipo de error actualizado correctamente.');
@@ -268,7 +272,7 @@ class ActividadesController extends Controller
             'departamento_id' => 'required|exists:departamentos,id',
             'cargo_id' => 'required|exists:cargos,id',
             'error' => 'required|string|in:ESTRUCTURA,CLIENTE,SOFTWARE,MEJORA ERROR,DESARROLLO,OTRO',
-           
+
         ]);
 
         $actividades = Actividades::findOrFail($id);
@@ -506,8 +510,8 @@ class ActividadesController extends Controller
         }
     }
 
-    
- 
+
+
 
     /**
      * Método para calcular y acumular tiempo transcurrido.
