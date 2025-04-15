@@ -32,50 +32,56 @@ Ultima Modificación:
             </div>
         @endif
 
-
-
-        @if (Auth::user()->isAdmin())
-            <!-- Formulario de filtros (solo para el admin) -->
+        @if (Auth::user()->isAdmin() ||
+                Auth::user()->isGerenteGeneral() ||
+                Auth::user()->isAsistenteGerencial() ||
+                Auth::user()->isSupervisor())
             <form action="{{ route('actividades.indexActividades') }}" method="GET"
-            class="mb-4 p-4 shadow bg-light rounded" style="max-width: 1100px; margin: 0 auto;">                <div class="d-flex flex-column flex-md-row gap-3 align-items-center">
-                    
-                    <!-- Antiguo filtro por semana y mes -->
-                    <!--
+                class="mb-4 p-4 shadow bg-light rounded" style="max-width: 1100px; margin: 0 auto;">
+                <div class="d-flex flex-column flex-md-row gap-3 align-items-center">
+
+                    <!-- Actualizacion para seleccionar fecha -->
                     <div>
-                        <label for="filtro">Filtrar por:</label>
-                        <select name="filtro" id="filtro" class="form-select" onchange="cambiarFiltro()">
-                            <option value="mes" {{ request('filtro') == 'mes' ? 'selected' : '' }}>Mes</option>
-                            <option value="semana" {{ request('filtro', 'semana') == 'semana' ? 'selected' : '' }}>Semana
-                            </option>
-                        </select>
-
+                        <label for="daterange">Rango de Fechas:</label>
+                        <input type="text" name="daterange" id="daterange" class="form-control"
+                            placeholder="Selecciona un rango"
+                            value="{{ request('start_date') && request('end_date') ? request('start_date') . ' to ' . request('end_date') : '' }}">
+                        
+                        <!-- Inputs ocultos para enviar las fechas reales -->
+                        <input type="hidden" name="start_date" id="start_date" value="{{ request('start_date') }}">
+                        <input type="hidden" name="end_date" id="end_date" value="{{ request('end_date') }}">
                     </div>
-
-                    <div id="filtro-mes" style="display: {{ request('filtro') == 'mes' ? 'block' : 'none' }};">
-                        <label for="mes">Selecciona Mes:</label>
-                        <input type="month" name="mes" id="mes" class="form-control"
-                            value="{{ request('mes', now()->format('Y-m')) }}">
-                    </div>
-
-                    <div id="filtro-semana"
-                        style="display: {{ request('filtro', 'semana') == 'semana' ? 'block' : 'none' }};">
-                        <label for="semana">Selecciona Semana:</label>
-                        <select name="semana" class="form-select" id="semana">
-                            <option value="0" {{ request('semana', 0) == 0 ? 'selected' : '' }}>Esta semana</option>
-                            <option value="1" {{ request('semana') == 1 ? 'selected' : '' }}>Semana pasada</option>
-                            <option value="2" {{ request('semana') == 2 ? 'selected' : '' }}>Hace 2 semanas</option>
-                            <option value="3" {{ request('semana') == 3 ? 'selected' : '' }}>Hace 3 semanas</option>
-                        </select>
-                    </div>
-                    -->
-                    <!-- Nuevo filtro por seleccion de fecha -->
-                    <div>
-                        <label for="fecha">Seleccionar Fecha:</label>
-                        <input type="date" name="fecha" id="fecha" class="form-control"
-                            value="{{ request('fecha', now()->format('Y-m-d')) }}">
-                    </div>
-
                     
+                    <script>
+                        flatpickr("#daterange", {
+                            mode: "range",
+                            dateFormat: "Y-m-d",
+                            defaultDate: [
+                                "{{ request('start_date', now()->format('Y-m-d')) }}",
+                                "{{ request('end_date', now()->format('Y-m-d')) }}"
+                            ],
+                            locale: {
+                                firstDayOfWeek: 1,
+                                weekdays: {
+                                    shorthand: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+                                    longhand: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                                },
+                                months: {
+                                    shorthand: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                                    longhand: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                                },
+                            },
+                            onChange: function(selectedDates) {
+                                if (selectedDates.length === 2) {
+                                    document.getElementById('start_date').value = selectedDates[0].toISOString().slice(0, 10);
+                                    document.getElementById('end_date').value = selectedDates[1].toISOString().slice(0, 10);
+                                }
+                            }
+                        });
+                    </script>
+                    
+
+                    <!-- Mostrar siempre el dropdown para supervisores, admin, gerentes y asistentes -->
                     <div class="col-md-4">
                         <label for="empleado_id" class="form-label">Seleccionar Empleado:</label>
                         <div class="input-group">
@@ -94,61 +100,71 @@ Ultima Modificación:
                         </div>
                     </div>
 
+
+
+
                     <div class="d-flex justify-content-center align-items-center mt-3 mt-md-0">
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-filter"></i> Aplicar Filtro
                         </button>
                     </div>
                     <div class="d-flex gap-3">
-                        <div class="estado-card pastel-morado d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm" style="text-align: center; height: 80px;">
+                        <div class="estado-card pastel-morado d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm"
+                            style="text-align: center; height: 80px;">
                             <i class="fas fa-stopwatch text-white" style="font-size: 1.5rem;"></i>
                             <p class="estado-titulo mb-0" style="font-size: 0.9rem;">{{ $enCursoCount }}</p>
                         </div>
-                        <div class="estado-card pastel-naranja d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm" style="text-align: center; height: 80px;">
+                        <div class="estado-card pastel-naranja d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm"
+                            style="text-align: center; height: 80px;">
                             <i class="fas fa-hourglass-half text-white" style="font-size: 1.5rem;"></i>
                             <p class="estado-titulo mb-0" style="font-size: 0.9rem;">{{ $pendienteCount }}</p>
                         </div>
-                        <div class="estado-card pastel-verde d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm" style="text-align: center; height: 80px;">
+                        <div class="estado-card pastel-verde d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm"
+                            style="text-align: center; height: 80px;">
                             <i class="fas fa-check-circle text-white" style="font-size: 1.5rem;"></i>
                             <p class="estado-titulo mb-0" style="font-size: 0.9rem;">{{ $finalizadoCount }}</p>
                         </div>
                     </div>
-                    
+
                 </div>
             </form>
+            
         @else
             <form method="GET" action="{{ route('actividades.indexActividades') }}"
                 class="mb-3 p-4 shadow bg-light rounded" style="max-width: 700px; margin: 0 auto;">
                 <div class="d-flex flex-column flex-md-row gap-3 align-items-center justify-content-center">
 
                     <!--
-                    <div class="d-flex flex-column gap-2">
-                        <label for="filtro" class="form-label fw-semibold" style="font-size: 0.9rem;">Filtrar por:</label>
-                        <select name="filtro" id="filtro" class="form-select w-auto" onchange="cambiarFiltro()">
-                            <option value="mes" {{ request('filtro') == 'mes' ? 'selected' : '' }}>Mes</option>
-                            <option value="semana" {{ request('filtro', 'semana') == 'semana' ? 'selected' : '' }}>Semana
-                            </option>
-                        </select>
-                    </div>
+                                                        <div class="d-flex flex-column gap-2">
+                                                            <label for="filtro" class="form-label fw-semibold" style="font-size: 0.9rem;">Filtrar por:</label>
+                                                            <select name="filtro" id="filtro" class="form-select w-auto" onchange="cambiarFiltro()">
+                                                                <option value="mes" {{ request('filtro') == 'mes' ? 'selected' : '' }}>Mes</option>
+                                                                <option value="semana" {{ request('filtro', 'semana') == 'semana' ? 'selected' : '' }}>Semana
+                                                                </option>
+                                                            </select>
+                                                        </div>
 
-                    <div id="filtro-mes" class="mt-3"
-                        style="display: {{ request('filtro') == 'mes' ? 'block' : 'none' }};">
-                        <label for="mes" class="form-label" style="font-size: 0.9rem;">Selecciona Mes:</label>
-                        <input type="month" name="mes" id="mes" class="form-control"
-                            value="{{ request('mes', now()->format('Y-m')) }}">
-                    </div>
+                                                        <div id="filtro-mes" class="mt-3"
+                                                            style="display: {{ request('filtro') == 'mes' ? 'block' : 'none' }};">
+                                                            <label for="mes" class="form-label" style="font-size: 0.9rem;">Selecciona Mes:</label>
+                                                            <input type="month" name="mes" id="mes" class="form-control"
+                                                                value="{{ request('mes', now()->format('Y-m')) }}">
+                                                        </div>
 
-                    <div id="filtro-semana" class="mt-3"
-                        style="display: {{ request('filtro', 'semana') == 'semana' ? 'block' : 'none' }};">
-                        <label for="semana" class="form-label" style="font-size: 0.9rem;">Selecciona Semana:</label>
-                        <select name="semana" id="semana" class="form-select">
-                            <option value="0" {{ request('semana', 0) == 0 ? 'selected' : '' }}>Esta semana</option>
-                            <option value="1" {{ request('semana') == 1 ? 'selected' : '' }}>Semana pasada</option>
-                            <option value="2" {{ request('semana') == 2 ? 'selected' : '' }}>Hace 2 semanas</option>
-                            <option value="3" {{ request('semana') == 3 ? 'selected' : '' }}>Hace 3 semanas</option>
-                        </select>
-                    </div>
-                    -->
+
+                                                        <div id="filtro-semana" class="mt-3"
+                                                            style="display: {{ request('filtro', 'semana') == 'semana' ? 'block' : 'none' }};">
+                                                            <label for="semana" class="form-label" style="font-size: 0.9rem;">Selecciona Semana:</label>
+                                                            <select name="semana" id="semana" class="form-select">
+                                                                <option value="0" {{ request('semana', 0) == 0 ? 'selected' : '' }}>Esta semana</option>
+                                                                <option value="1" {{ request('semana') == 1 ? 'selected' : '' }}>Semana pasada</option>
+                                                                <option value="2" {{ request('semana') == 2 ? 'selected' : '' }}>Hace 2 semanas</option>
+                                                                <option value="3" {{ request('semana') == 3 ? 'selected' : '' }}>Hace 3 semanas</option>
+                                                            </select>
+                                                        </div>
+                                                        -->
+                    <!-- Actualizacion para seleccionar fecha -->
+
 
                     <!-- Actualizacion para seleccionar fecha -->
                     <div>
@@ -158,25 +174,29 @@ Ultima Modificación:
                     </div>
 
                     <div class="d-flex align-items-center gap-3">
-                        <button type="submit" class="btn btn-primary d-flex align-items-center"
-                            style="font-size: 0.9rem;">
+
+
+                        <button type="submit" class="btn btn-primary d-flex align-items-center" style="font-size: 0.9rem;">
                             <i class="fas fa-filter me-2"></i> Aplicar Filtro
                         </button>
                         <div class="d-flex gap-3">
-                            <div class="estado-card pastel-morado d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm" style="text-align: center; height: 80px;">
+                            <div class="estado-card pastel-morado d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm"
+                                style="text-align: center; height: 80px;">
                                 <i class="fas fa-stopwatch text-white" style="font-size: 1.5rem;"></i>
                                 <p class="estado-titulo mb-0" style="font-size: 0.9rem;">{{ $enCursoCount }}</p>
                             </div>
-                            <div class="estado-card pastel-naranja d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm" style="text-align: center; height: 80px;">
+                            <div class="estado-card pastel-naranja d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm"
+                                style="text-align: center; height: 80px;">
                                 <i class="fas fa-hourglass-half text-white" style="font-size: 1.5rem;"></i>
                                 <p class="estado-titulo mb-0" style="font-size: 0.9rem;">{{ $pendienteCount }}</p>
                             </div>
-                            <div class="estado-card pastel-verde d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm" style="text-align: center; height: 80px;">
+                            <div class="estado-card pastel-verde d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm"
+                                style="text-align: center; height: 80px;">
                                 <i class="fas fa-check-circle text-white" style="font-size: 1.5rem;"></i>
                                 <p class="estado-titulo mb-0" style="font-size: 0.9rem;">{{ $finalizadoCount }}</p>
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
             </form>
@@ -194,12 +214,28 @@ Ultima Modificación:
             <button id="scroll-right" class="btn btn-secondary btn-md">
                 <i class="fas fa-chevron-right fa-2x"></i>
             </button>
+
         </div>
 
-        <div class="text-left">
+        <div class="d-flex justify-content-between">
             <a href="{{ route('actividades.create') }}" class="btn btn-primary btn-lg ms-3"
                 style="margin-left: 1rem;">Crear Actividad</a>
+
+            @if (Auth::user()->isAdmin() ||
+                    Auth::user()->isGerenteGeneral() ||
+                    Auth::user()->isAsistenteGerencial() ||
+                    Auth::user()->isSupervisor())
+                <div>
+                    <a href="{{ route('actividades.exportar.servicio-hora', 'excel') }}" class="btn btn-success">
+                        <i class="fas fa-file-excel"></i> Exportar Excel (Servicio x Hora)
+                    </a>
+                    <a href="{{ route('actividades.exportar.servicio-hora', 'pdf') }}" class="btn btn-danger">
+                        <i class="fas fa-file-pdf"></i> Exportar PDF (Servicio x Hora)
+                    </a>
+                </div>
+            @endif
         </div>
+
 
         <div class="table-responsive">
             <!-- Contadores para los estados -->
@@ -209,7 +245,7 @@ Ultima Modificación:
                     <tr>
                         <th>ID</th>
                         <th scope="col">Cliente</th>
-						<th scope="col">Productos</th>
+                        <th scope="col">Productos</th>
                         <th scope="col">Empleado</th>
                         <th scope="col">Descripción</th>
                         <th scope="col">Tipo Error</th>
@@ -230,15 +266,15 @@ Ultima Modificación:
                         <tr>
                             <td>{{ $actividad->id }}</td>
                             <td>{{ $actividad->cliente ? $actividad->cliente->nombre : 'No asignado' }}</td>
-                            <td>{{ $actividad->producto->nombre ?? 'N/A' }}</td> 
-							<td>{{ $actividad->empleado ? $actividad->empleado->nombre1 . ' ' . $actividad->empleado->apellido1 : 'No asignado' }}
+                            <td>{{ $actividad->producto->nombre ?? 'N/A' }}</td>
+                            <td>{{ $actividad->empleado ? $actividad->empleado->nombre1 . ' ' . $actividad->empleado->apellido1 : 'No asignado' }}
                             </td>
                             <!-- Descripcion actualizada -->
                             <td class="descripcion-limite">
                                 <div class="text-truncate" style="max-width: 200px;">
                                     {{ $actividad->descripcion }}
                                 </div>
-                            
+
                                 <!-- Botón para abrir el modal de descripción completa -->
                                 <button type="button" class="btn btn-outline-info btn-sm mt-1" data-bs-toggle="modal"
                                     data-bs-target="#modalVerDescripcion{{ $actividad->id }}">
@@ -256,7 +292,9 @@ Ultima Modificación:
                                             @method('PUT')
 
                                             <div class="modal-header">
+
                                                 <h5 class="modal-title" id="modalVerDescripcionLabel{{ $actividad->id }}">
+
                                                     Descripción Completa
                                                 </h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -271,7 +309,9 @@ Ultima Modificación:
                                             </div>
 
                                             <div class="modal-footer">
+
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+
                                                 <button type="submit" class="btn btn-primary">Guardar cambios</button>
                                             </div>
                                         </form>
@@ -282,15 +322,14 @@ Ultima Modificación:
 
                             <td>
                                 <span>{{ $actividad->error ?? 'N/A' }}</span><br>
-                            
+
                                 <!-- Botón para abrir modal de edición -->
                                 <button type="button" class="btn btn-sm btn-outline-primary mt-1" data-bs-toggle="modal"
                                     data-bs-target="#modalEditarError{{ $actividad->id }}">
                                     Editar
                                 </button>
                             </td>
-                            
-                            
+
                             <td>
                                 @if (!empty($actividad->codigo_osticket))
                                     <a href="{{ $actividad->codigo_osticket }}" target="_blank"
@@ -445,6 +484,67 @@ Ultima Modificación:
 
                             <td>{{ $actividad->tiempo_estimado }}</td>
                             <td>{{ $actividad->estado === 'FINALIZADO' ? ($actividad->tiempo_real_horas ?? 0) . ' h y ' . ($actividad->tiempo_real_minutos ?? 0) . ' min' : 'N/A' }}
+
+
+                                @if (Auth::user()->isAdmin() ||
+                                        Auth::user()->isGerenteGeneral() ||
+                                        Auth::user()->isAsistenteGerencial() ||
+                                        Auth::user()->isSupervisor())
+                                    <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                        data-bs-target="#editarTiempoModal{{ $actividad->id }}">
+                                        Editar Tiempo
+                                    </button>
+
+                                    <!-- Modal para ver observaciones -->
+                                    <div class="modal fade" id="editarTiempoModal{{ $actividad->id }}" tabindex="-1"
+                                        aria-labelledby="editarTiempoModalLabel{{ $actividad->id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title"
+                                                        id="editarTiempoModalLabel{{ $actividad->id }}">
+                                                        Editar Tiempo Modal
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form
+                                                        action="{{ route('actividades.updateTiempoReal', $actividad->id) }}"
+                                                        method="POST">
+                                                        @csrf
+                                                        @method('PUT')
+                                                        <div class="mb-3">
+                                                            <label for="tiempo_real_horas"
+                                                                class="form-label">Horas</label>
+                                                            <input type="number" name="tiempo_real_horas"
+                                                                class="form-control"
+                                                                value="{{ old('tiempo_real_horas', $actividad->tiempo_real_horas) }}">
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="tiempo_real_minutos"
+                                                                class="form-label">Minutos</label>
+                                                            <input type="number" name="tiempo_real_minutos"
+                                                                class="form-control"
+                                                                value="{{ old('tiempo_real_minutos', $actividad->tiempo_real_minutos) }}">
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Cancelar</button>
+                                                            <button type="submit"
+                                                                class="btn btn-primary">Guardar</button>
+                                                        </div>
+                                                    </form>
+
+
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
+
                             </td>
                             <td>{{ $actividad->fecha_fin ? $actividad->fecha_fin->format('d-m-Y') : '' }}</td>
 
@@ -484,44 +584,56 @@ Ultima Modificación:
                 </tbody>
             </table>
             @foreach ($actividades as $actividad)
-            <!-- Modal para editar Tipo de Error -->
-            <div class="modal fade" id="modalEditarError{{ $actividad->id }}" tabindex="-1"
-                aria-labelledby="modalEditarErrorLabel{{ $actividad->id }}" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <form action="{{ route('actividades.update', $actividad->id) }}" method="POST">
-                            @csrf
-                            @method('PUT')
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="modalEditarErrorLabel{{ $actividad->id }}">
-                                    Editar Tipo de Error
-                                </h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Cerrar"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label for="error">Tipo de Error <span class="text-danger">*</span></label>
-                                    <select name="error" class="form-select" required>
-                                        <option value="">Seleccione un tipo de error</option>
-                                        <option value="ESTRUCTURA" {{ $actividad->error == 'ESTRUCTURA' ? 'selected' : '' }}>Estructura</option>
-                                        <option value="CLIENTE" {{ $actividad->error == 'CLIENTE' ? 'selected' : '' }}>Cliente</option>
-                                        <option value="SOFTWARE" {{ $actividad->error == 'SOFTWARE' ? 'selected' : '' }}>Software</option>
-                                        <option value="MEJORA ERROR" {{ $actividad->error == 'MEJORA ERROR' ? 'selected' : '' }}>Mejora Error</option>
-                                        <option value="DESARROLLO" {{ $actividad->error == 'DESARROLLO' ? 'selected' : '' }}>Desarrollo</option>
-                                        <option value="OTRO" {{ $actividad->error == 'OTRO' ? 'selected' : '' }}>Otros</option>
-                                    </select>
+
+                <!-- Modal para editar Tipo de Error -->
+                <div class="modal fade" id="modalEditarError{{ $actividad->id }}" tabindex="-1"
+                    aria-labelledby="modalEditarErrorLabel{{ $actividad->id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form action="{{ route('actividades.update', $actividad->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalEditarErrorLabel{{ $actividad->id }}">
+                                        Editar Tipo de Error
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Cerrar"></button>
                                 </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <button type="submit" class="btn btn-primary">Guardar cambios</button>
-                            </div>
-                        </form>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="error">Tipo de Error <span class="text-danger">*</span></label>
+                                        <select name="error" class="form-select" required>
+                                            <option value="">Seleccione un tipo de error</option>
+                                            <option value="ESTRUCTURA"
+                                                {{ $actividad->error == 'ESTRUCTURA' ? 'selected' : '' }}>Estructura
+                                            </option>
+                                            <option value="CLIENTE"
+                                                {{ $actividad->error == 'CLIENTE' ? 'selected' : '' }}>Cliente</option>
+                                            <option value="SOFTWARE"
+                                                {{ $actividad->error == 'SOFTWARE' ? 'selected' : '' }}>Software</option>
+                                            <option value="MEJORA ERROR"
+                                                {{ $actividad->error == 'MEJORA ERROR' ? 'selected' : '' }}>Mejora Error
+                                            </option>
+                                            <option value="DESARROLLO"
+                                                {{ $actividad->error == 'DESARROLLO' ? 'selected' : '' }}>Desarrollo
+                                            </option>
+                                            <option value="OTRO" {{ $actividad->error == 'OTRO' ? 'selected' : '' }}>
+                                                Otros</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-        @endforeach
+            @endforeach
+
 
         </div>
 
@@ -541,10 +653,45 @@ Ultima Modificación:
                 </div>
             </div>
         </div>
-    
+
     </div>
 
     <style>
+        #inlineCalendar {
+            width: 100%;
+            padding: 10px;
+        }
+
+        .daterangepicker.inline {
+            width: 100%;
+            border: none;
+            box-shadow: none;
+            position: static !important;
+            display: block;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .daterangepicker .calendar-table {
+            background-color: white;
+        }
+
+        .daterangepicker td.active {
+            background-color: #4a6baf;
+            color: white;
+        }
+
+        .daterangepicker td.in-range {
+            background-color: #e6f0ff;
+        }
+
+        .range-display {
+            background: #4a6baf;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
         .estado-card {
             border-radius: 10px;
             padding: 20px;
@@ -653,12 +800,17 @@ Ultima Modificación:
             transform: scale(1.1);
             /* Aumenta el tamaño del ícono al pasar el cursor */
         }
+
         /* ajustar el tamaño del campo descripcion */
         .table .descripcion-limite {
-            white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
-            overflow: hidden;    /* Esconde el contenido que exceda el contenedor */
-            text-overflow: ellipsis; /* Muestra '...' cuando el texto es demasiado largo */
-            max-width: 200px;    /* Limita el ancho a 200px (ajustalo como necesites) */
+            white-space: nowrap;
+            /* Evita que el texto se rompa en varias líneas */
+            overflow: hidden;
+            /* Esconde el contenido que exceda el contenedor */
+            text-overflow: ellipsis;
+            /* Muestra '...' cuando el texto es demasiado largo */
+            max-width: 200px;
+            /* Limita el ancho a 200px (ajustalo como necesites) */
         }
     </style>
 
@@ -667,7 +819,9 @@ Ultima Modificación:
 
     {{-- SweetAlert script --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment/locale/es.js"></script>
     {{-- DataTables initialization --}}
     <script>
         $(document).ready(function() {
@@ -694,6 +848,93 @@ Ultima Modificación:
                 ]
 
 
+            });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                let startDate = null;
+                let endDate = null;
+
+                // Inicializar calendario inline
+                $('#inlineCalendar').daterangepicker({
+                    opens: 'center',
+                    autoUpdateInput: false,
+                    showDropdowns: true,
+                    alwaysShowCalendars: true,
+                    linkedCalendars: false,
+                    locale: {
+                        format: 'YYYY-MM-DD',
+                        applyLabel: 'Aplicar',
+                        cancelLabel: 'Cancelar',
+                        fromLabel: 'Desde',
+                        toLabel: 'Hasta',
+                        customRangeLabel: 'Personalizado',
+                        daysOfWeek: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+                        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                        ],
+                        firstDay: 1
+                    },
+                    minDate: moment().subtract(1, 'year'),
+                    maxDate: moment(),
+                    isInvalidDate: function(date) {
+                        return date.isAfter(moment(), 'day');
+                    }
+                }, function(start, end) {
+                    startDate = start;
+                    endDate = end;
+                    updateSelectedRange();
+                });
+
+                // Mostrar el calendario inline permanentemente
+                $('.daterangepicker').addClass('inline');
+                $('.daterangepicker').css('display', 'block');
+
+                // Actualizar el rango seleccionado
+                function updateSelectedRange() {
+                    const applyBtn = document.getElementById('applyDates');
+                    const rangeDisplay = document.getElementById('selectedRange');
+
+                    if (startDate && endDate) {
+                        const startStr = startDate.format('DD/MM/YYYY');
+                        const endStr = endDate.format('DD/MM/YYYY');
+
+                        rangeDisplay.innerHTML = `
+                <span class="range-display">
+                    <i class="fas fa-calendar-alt"></i> ${startStr} - ${endStr}
+                </span>
+            `;
+
+                        document.getElementById('startDate').value = startDate.format('YYYY-MM-DD');
+                        document.getElementById('endDate').value = endDate.format('YYYY-MM-DD');
+                        applyBtn.disabled = false;
+                    } else {
+                        rangeDisplay.innerHTML =
+                            '<span class="text-muted">No se ha seleccionado ningún rango</span>';
+                        applyBtn.disabled = true;
+                    }
+                }
+
+                // Limpiar selección
+                document.getElementById('clearDates').addEventListener('click', function() {
+                    $('.daterangepicker').data('daterangepicker').setStartDate(moment());
+                    $('.daterangepicker').data('daterangepicker').setEndDate(moment());
+                    startDate = null;
+                    endDate = null;
+                    updateSelectedRange();
+                });
+
+                // Cargar fechas iniciales si existen en la URL
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('start_date') && urlParams.has('end_date')) {
+                    const start = moment(urlParams.get('start_date'));
+                    const end = moment(urlParams.get('end_date'));
+
+                    $('.daterangepicker').data('daterangepicker').setStartDate(start);
+                    $('.daterangepicker').data('daterangepicker').setEndDate(end);
+                    startDate = start;
+                    endDate = end;
+                    updateSelectedRange();
+                }
             });
 
             // Función para contar las actividades en cada estado

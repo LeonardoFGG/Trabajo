@@ -7,7 +7,16 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Webcoopec System LTDA.</title>
 
+    <!-- Cargar la librería CSS de Flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
+    <!-- Cargar la librería JS de Flatpickr -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+
+    <!-- Agrega estos en el head -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css">
 
     <!-- CSS de FixedColumns -->
     <link rel="stylesheet" type="text/css"
@@ -287,10 +296,6 @@
                             </a>
                         </li>
 
-
-
-
-
                     </ul>
                 @endif
 
@@ -335,28 +340,27 @@
                             <i class="bi bi-table"></i> <span>Matriz de Cumplimiento</span>
                         </a>
                     </li>
-                @endif
-                @if (Auth::check() &&
-                        Auth::user()->empleado &&
-                        (Auth::user()->empleado->cargo_id == 15 || Auth::user()->empleado->cargo_id == 14))
+
                     <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('ventas.index') ? 'active' : '' }}"
-                            href="{{ route('ventas.index') }}" title="Ventas">
-                            <i class="bi bi-cart"></i> <span>Ventas</span>
+                        <a class="nav-link {{ request()->routeIs('analisis.indexAnalisis') ? 'active' : '' }}"
+                            href="{{ route('analisis.indexAnalisis') }}" title="Inteligencia de Negocios">
+                            <i class="bi bi-bar-chart"></i> <span>Inteligencia de Negocios</span>
                         </a>
+
                     </li>
                 @endif
+
                 @if (Auth::check() && Auth::user()->isGerenteGeneral())
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('analisis.indexAnalisis') ? 'active' : '' }}"
                             href="{{ route('analisis.indexAnalisis') }}" title="Inteligencia de Negocios">
                             <i class="bi bi-bar-chart"></i> <span>Inteligencia de Negocios</span>
                         </a>
-                        
+
                     </li>
                 @endif
 
-                
+
 
             </ul>
         </div>

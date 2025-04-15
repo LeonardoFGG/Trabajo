@@ -81,8 +81,8 @@
                                             @endforeach
                                         </select>
                                     </div>
-
-                                            
+                                    <!-- Campo Producto -->
+                                       
                                 </div>
                             </fieldset>
 

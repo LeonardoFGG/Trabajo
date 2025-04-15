@@ -70,14 +70,14 @@
                                     <div class="col-md-6">
                                         <p><strong>Curriculum:</strong>
                                             @if ($empleados->curriculum)
-                                                <a href="{{ asset('storage/' . $empleados->curriculum) }}" target="_blank">Ver Curriculum</a>
+                                                <a href="{{ asset($empleados->curriculum) }}" target="_blank">Ver Currículum</a>
                                             @else
                                                 N/A
                                             @endif
                                         </p>
                                         <p><strong>Contrato:</strong>
                                             @if ($empleados->contrato)
-                                                <a href="{{ asset('storage/' . $empleados->contrato) }}" target="_blank">Ver Contrato</a>
+                                                <a href="{{ asset($empleados->contrato) }}" target="_blank">Ver Contrato</a>
                                             @else
                                                 N/A
                                             @endif
@@ -86,14 +86,16 @@
                                     <div class="col-md-6">
                                         <p><strong>Contrato de Confidencialidad:</strong>
                                             @if ($empleados->contrato_confidencialidad)
-                                                <a href="{{ asset('storage/' . $empleados->contrato_confidencialidad) }}" target="_blank">Ver Contrato</a>
+                                                <a href="{{ asset($empleados->contrato_confidencialidad) }}" target="_blank">Ver
+                                                    Contrato de Confidencialidad</a>
                                             @else
                                                 N/A
                                             @endif
                                         </p>
                                         <p><strong>Contrato de Consentimiento:</strong>
                                             @if ($empleados->contrato_consentimiento)
-                                                <a href="{{ asset('storage/' . $empleados->contrato_consentimiento) }}" target="_blank">Ver Contrato</a>
+                                                <a href="{{ asset($empleados->contrato_consentimiento) }}" target="_blank">Ver Contrato
+                                                    de Consentimiento</a>
                                             @else
                                                 N/A
                                             @endif
