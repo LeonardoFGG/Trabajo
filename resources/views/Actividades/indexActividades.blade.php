@@ -141,6 +141,7 @@ Ultima Modificación:
                                                                 value="{{ request('mes', now()->format('Y-m')) }}">
                                                         </div>
 
+
                                                         <div id="filtro-semana" class="mt-3"
                                                             style="display: {{ request('filtro', 'semana') == 'semana' ? 'block' : 'none' }};">
                                                             <label for="semana" class="form-label" style="font-size: 0.9rem;">Selecciona Semana:</label>
@@ -154,6 +155,8 @@ Ultima Modificación:
                                                         -->
                     <!-- Actualizacion para seleccionar fecha -->
 
+
+                    <!-- Actualizacion para seleccionar fecha -->
                     <div>
                         <label for="fecha">Seleccionar Fecha:</label>
                         <input type="date" name="fecha" id="fecha" class="form-control"
@@ -278,8 +281,9 @@ Ultima Modificación:
                                             @method('PUT')
 
                                             <div class="modal-header">
-                                                <h5 class="modal-title"
-                                                    id="modalVerDescripcionLabel{{ $actividad->id }}">
+
+                                                <h5 class="modal-title" id="modalVerDescripcionLabel{{ $actividad->id }}">
+
                                                     Descripción Completa
                                                 </h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -294,8 +298,9 @@ Ultima Modificación:
                                             </div>
 
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Cerrar</button>
+
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+
                                                 <button type="submit" class="btn btn-primary">Guardar cambios</button>
                                             </div>
                                         </form>
@@ -313,7 +318,6 @@ Ultima Modificación:
                                     Editar
                                 </button>
                             </td>
-
 
                             <td>
                                 @if (!empty($actividad->codigo_osticket))
@@ -508,6 +512,7 @@ Ultima Modificación:
                 </tbody>
             </table>
             @foreach ($actividades as $actividad)
+
                 <!-- Modal para editar Tipo de Error -->
                 <div class="modal fade" id="modalEditarError{{ $actividad->id }}" tabindex="-1"
                     aria-labelledby="modalEditarErrorLabel{{ $actividad->id }}" aria-hidden="true">
@@ -556,6 +561,7 @@ Ultima Modificación:
                     </div>
                 </div>
             @endforeach
+
 
         </div>
 
