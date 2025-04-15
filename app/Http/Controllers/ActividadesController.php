@@ -21,6 +21,11 @@ use App\Models\Cliente;
 use App\Models\Cargos;
 use App\Models\Supervisor;
 use App\Models\Producto;
+use Maatwebsite\Excel\Facades\Excel; // Agrega esta línea al inicio
+use App\Exports\ActividadesExport; // Ensure this class exists in the App\Exports namespace
+
+// Ensure the ActividadesExport class exists in the App\Exports namespace
+use Barryvdh\DomPDF\Facade as PDF;  // Agrega esta línea con las otras importaciones
 
 use Illuminate\Support\Facades\Auth;
 
@@ -40,12 +45,19 @@ class ActividadesController extends Controller
         // Nuevo filtro por fecha
         $fechaSeleccionada = $request->input('fecha', now()->toDateString());
         // Obtener los filtros del request
-        $filtro = $request->input('filtro', 'semana'); // Por defecto, "semana"
-        $semanaSeleccionada = $request->input('semana', 0); // Por defecto, semana actual
-        $mesSeleccionado = $request->input('mes', now()->format('Y-m')); // Mes actual como predeterminado
+        $filtro = $request->input('filtro', 'fecha'); // Por defecto, "semana"
+        // $semanaSeleccionada = $request->input('semana', 0); // Por defecto, semana actual
+        // $mesSeleccionado = $request->input('mes', now()->format('Y-m')); // Mes actual como predeterminado
 
         // Inicializar la consulta de actividades
         $actividadesQuery = Actividades::with('empleado', 'cliente', 'departamento');
+
+        // Agregar nuevo filtro para servicio por hora
+        $actividadesQuery->when($request->has('servicio_hora'), function ($q) {
+            $q->whereHas('producto', function ($subQuery) {
+                $subQuery->where('nombre', 'servicio por hora');
+            });
+        });
 
         // Aplicar filtros según el tipo de usuario
         if ($user->isEmpleado() && !$user->isAdmin() && $user->id != 3 && $user->id != 24) {
@@ -58,17 +70,17 @@ class ActividadesController extends Controller
 
         // Aplicar filtro por semana o mes
 
-        if ($filtro === 'semana') {
-            $inicioSemana = now()->startOfWeek()->subWeeks($semanaSeleccionada);
-            $finSemana = now()->endOfWeek()->subWeeks($semanaSeleccionada);
+        // if ($filtro === 'semana') {
+        //     $inicioSemana = now()->startOfWeek()->subWeeks($semanaSeleccionada);
+        //     $finSemana = now()->endOfWeek()->subWeeks($semanaSeleccionada);
 
-            $actividadesQuery->whereBetween('created_at', [$inicioSemana, $finSemana]);
-        } elseif ($filtro === 'mes') {
-            $inicioMes = Carbon::parse($mesSeleccionado)->startOfMonth();
-            $finMes = Carbon::parse($mesSeleccionado)->endOfMonth();
+        //     $actividadesQuery->whereBetween('created_at', [$inicioSemana, $finSemana]);
+        // } elseif ($filtro === 'mes') {
+        //     $inicioMes = Carbon::parse($mesSeleccionado)->startOfMonth();
+        //     $finMes = Carbon::parse($mesSeleccionado)->endOfMonth();
 
-            $actividadesQuery->whereBetween('created_at', [$inicioMes, $finMes]);
-        }
+        //     $actividadesQuery->whereBetween('created_at', [$inicioMes, $finMes]);
+        // }
 
         // Nuevo filtro por fecha exacta
         if ($request->filled('fecha')) {
@@ -87,6 +99,8 @@ class ActividadesController extends Controller
         $pendienteCount = $actividades->where('estado', 'PENDIENTE')->count();
         $finalizadoCount = $actividades->where('estado', 'FINALIZADO')->count();
 
+
+
         return view('Actividades.indexActividades', compact(
             'actividades',
             'empleados',
@@ -94,8 +108,7 @@ class ActividadesController extends Controller
             'pendienteCount',
             'finalizadoCount',
             'filtro',
-            'semanaSeleccionada',
-            'mesSeleccionado'
+            
         ));
     }
 
@@ -174,7 +187,7 @@ class ActividadesController extends Controller
             'departamento_id' => 'required|exists:departamentos,id',
             'cargo_id' => 'required|exists:cargos,id',
             'error' => 'required|string|in:ESTRUCTURA,CLIENTE,SOFTWARE,MEJORA ERROR,DESARROLLO,OTRO',
-          
+
         ], [
             'cliente_id.required' => 'Debe seleccionar un cliente.',
             'cliente_id.exists' => 'El cliente seleccionado no es válido.',
@@ -202,7 +215,7 @@ class ActividadesController extends Controller
         $actividad->departamento_id = $request->input('departamento_id');
         $actividad->cargo_id = $request->input('cargo_id');
         $actividad->error = $request->input('error');
-       
+
         $actividad->save();
 
 
@@ -222,17 +235,19 @@ class ActividadesController extends Controller
 
     public function update(Request $request, $id)
     {
+
+
+        $actividad = Actividades::findOrFail($id);
         // Actualiza la descripcion
-        $actividad = Actividades::findOrFail($id);
-        $actividad->update($request->only(['descripcion']));
-
-        return redirect()->back()->with('success', 'Descripción actualizada correctamente.');
-
-        // Actualiza el tipo de error
-        $actividad = Actividades::findOrFail($id);
-        $actividad->update($request->only(['error'])); // asegúrate de permitir esto
-
-        return redirect()->back()->with('success', 'Tipo de error actualizado correctamente.');
+        if ($request->has('descripcion')) {
+            $actividad->update($request->only('descripcion'));
+            return redirect()->back()->with('success', 'Descripción actualizada correctamente.');
+        }
+    
+        if ($request->has('error')) {
+            $actividad->update($request->only('error'));
+            return redirect()->back()->with('success', 'Tipo de error actualizado correctamente.');
+        }
 
         $validated = $request->validate([
             'cliente_id' => 'required|string|max:255',
@@ -472,6 +487,30 @@ class ActividadesController extends Controller
         return redirect()->route('actividades.indexActividades')->withErrors('Operación no válida.');
     }
 
+    // Método para exportar actividades a Excel
+    public function exportarServicioHora($formato)
+    {
+        // Obtener actividades con producto "Servicio por Hora"
+        $actividades = Actividades::with(['cliente', 'empleado', 'producto'])
+            ->whereHas('producto', function ($query) {
+                $query->where('nombre', 'like', '%Servicio por Hora%');
+            })
+            ->get();
+
+        if ($formato === 'excel') {
+            return Excel::download(
+                new ActividadesExport($actividades),
+                'servicio_por_hora_' . now()->format('Ymd') . '.xlsx'
+            );
+        } else {
+            return \Barryvdh\DomPDF\Facade\Pdf::loadView('Actividades.reporte_servicio_hora', compact('actividades'))
+                ->download('servicio_por_hora_' . now()->format('Ymd') . '.pdf');
+        }
+    }
+
+    
+ 
+
     /**
      * Método para calcular y acumular tiempo transcurrido.
      */
@@ -497,7 +536,7 @@ class ActividadesController extends Controller
         }
 
         // De lo contrario, devuelve la vista completa
-        return view('actividades.show', compact('actividades'));
+        return view('Actividades.show', compact('actividades'));
     }
 
     public function destroy($id)

@@ -22,7 +22,7 @@ class CreateActividadesTabla extends Migration
             $table->string('semanal_diaria');
             $table->dateTime('fecha_inicio')->nullable();
             $table->integer('avance');
-            $table->text('observaciones')->nullable();
+            $table->ttex('observaciones')->nullable();
             $table->string('estado');
             $table->integer('tiempo_estimado');
             $table->integer('tiempo_real_horas')->nullable();

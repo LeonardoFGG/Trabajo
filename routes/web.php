@@ -516,14 +516,9 @@ Route::middleware(['auth'])->group(function () {
     ]);
 
 
-    //Servicios Tecnicos
-    Route::resource('servicios_tecnicos', ServicioTecnicoController::class)->names([
-        'index' => 'servicios_tecnicos.index',
-        'store' => 'servicios_tecnicos.store',
-        'show' => 'servicios_tecnicos.show',
-        'edit' => 'servicios_tecnicos.edit',
-        'update' => 'servicios_tecnicos.update',
-        'destroy' => 'servicios_tecnicos.destroy',
-    ]);
+  
+
+    Route::get('/actividades/servicio-hora/exportar/{formato}', [ActividadesController::class, 'exportarServicioHora'])
+    ->name('actividades.exportar.servicio-hora');
 
 });

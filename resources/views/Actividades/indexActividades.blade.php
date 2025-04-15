@@ -32,42 +32,42 @@ Ultima Modificación:
             </div>
         @endif
 
-
-
-        @if (Auth::user()->isAdmin())
+        @if (Auth::user()->isAdmin() || Auth::user()->isGerenteGeneral() || Auth::user()->isAsistenteGerencial())
             <!-- Formulario de filtros (solo para el admin) -->
+
             <form action="{{ route('actividades.indexActividades') }}" method="GET"
-            class="mb-4 p-4 shadow bg-light rounded" style="max-width: 1100px; margin: 0 auto;">                <div class="d-flex flex-column flex-md-row gap-3 align-items-center">
-                    
+                class="mb-4 p-4 shadow bg-light rounded" style="max-width: 1100px; margin: 0 auto;">
+                <div class="d-flex flex-column flex-md-row gap-3 align-items-center">
+
                     <!-- Antiguo filtro por semana y mes -->
                     <!--
-                    <div>
-                        <label for="filtro">Filtrar por:</label>
-                        <select name="filtro" id="filtro" class="form-select" onchange="cambiarFiltro()">
-                            <option value="mes" {{ request('filtro') == 'mes' ? 'selected' : '' }}>Mes</option>
-                            <option value="semana" {{ request('filtro', 'semana') == 'semana' ? 'selected' : '' }}>Semana
-                            </option>
-                        </select>
+                                                        <div>
+                                                            <label for="filtro">Filtrar por:</label>
+                                                            <select name="filtro" id="filtro" class="form-select" onchange="cambiarFiltro()">
+                                                                <option value="mes" {{ request('filtro') == 'mes' ? 'selected' : '' }}>Mes</option>
+                                                                <option value="semana" {{ request('filtro', 'semana') == 'semana' ? 'selected' : '' }}>Semana
+                                                                </option>
+                                                            </select>
 
-                    </div>
+                                                        </div>
 
-                    <div id="filtro-mes" style="display: {{ request('filtro') == 'mes' ? 'block' : 'none' }};">
-                        <label for="mes">Selecciona Mes:</label>
-                        <input type="month" name="mes" id="mes" class="form-control"
-                            value="{{ request('mes', now()->format('Y-m')) }}">
-                    </div>
+                                                        <div id="filtro-mes" style="display: {{ request('filtro') == 'mes' ? 'block' : 'none' }};">
+                                                            <label for="mes">Selecciona Mes:</label>
+                                                            <input type="month" name="mes" id="mes" class="form-control"
+                                                                value="{{ request('mes', now()->format('Y-m')) }}">
+                                                        </div>
 
-                    <div id="filtro-semana"
-                        style="display: {{ request('filtro', 'semana') == 'semana' ? 'block' : 'none' }};">
-                        <label for="semana">Selecciona Semana:</label>
-                        <select name="semana" class="form-select" id="semana">
-                            <option value="0" {{ request('semana', 0) == 0 ? 'selected' : '' }}>Esta semana</option>
-                            <option value="1" {{ request('semana') == 1 ? 'selected' : '' }}>Semana pasada</option>
-                            <option value="2" {{ request('semana') == 2 ? 'selected' : '' }}>Hace 2 semanas</option>
-                            <option value="3" {{ request('semana') == 3 ? 'selected' : '' }}>Hace 3 semanas</option>
-                        </select>
-                    </div>
-                    -->
+                                                        <div id="filtro-semana"
+                                                            style="display: {{ request('filtro', 'semana') == 'semana' ? 'block' : 'none' }};">
+                                                            <label for="semana">Selecciona Semana:</label>
+                                                            <select name="semana" class="form-select" id="semana">
+                                                                <option value="0" {{ request('semana', 0) == 0 ? 'selected' : '' }}>Esta semana</option>
+                                                                <option value="1" {{ request('semana') == 1 ? 'selected' : '' }}>Semana pasada</option>
+                                                                <option value="2" {{ request('semana') == 2 ? 'selected' : '' }}>Hace 2 semanas</option>
+                                                                <option value="3" {{ request('semana') == 3 ? 'selected' : '' }}>Hace 3 semanas</option>
+                                                            </select>
+                                                        </div>
+                                                        -->
                     <!-- Nuevo filtro por seleccion de fecha -->
                     <div>
                         <label for="fecha">Seleccionar Fecha:</label>
@@ -75,7 +75,7 @@ Ultima Modificación:
                             value="{{ request('fecha', now()->format('Y-m-d')) }}">
                     </div>
 
-                    
+
                     <div class="col-md-4">
                         <label for="empleado_id" class="form-label">Seleccionar Empleado:</label>
                         <div class="input-group">
@@ -100,20 +100,23 @@ Ultima Modificación:
                         </button>
                     </div>
                     <div class="d-flex gap-3">
-                        <div class="estado-card pastel-morado d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm" style="text-align: center; height: 80px;">
+                        <div class="estado-card pastel-morado d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm"
+                            style="text-align: center; height: 80px;">
                             <i class="fas fa-stopwatch text-white" style="font-size: 1.5rem;"></i>
                             <p class="estado-titulo mb-0" style="font-size: 0.9rem;">{{ $enCursoCount }}</p>
                         </div>
-                        <div class="estado-card pastel-naranja d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm" style="text-align: center; height: 80px;">
+                        <div class="estado-card pastel-naranja d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm"
+                            style="text-align: center; height: 80px;">
                             <i class="fas fa-hourglass-half text-white" style="font-size: 1.5rem;"></i>
                             <p class="estado-titulo mb-0" style="font-size: 0.9rem;">{{ $pendienteCount }}</p>
                         </div>
-                        <div class="estado-card pastel-verde d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm" style="text-align: center; height: 80px;">
+                        <div class="estado-card pastel-verde d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm"
+                            style="text-align: center; height: 80px;">
                             <i class="fas fa-check-circle text-white" style="font-size: 1.5rem;"></i>
                             <p class="estado-titulo mb-0" style="font-size: 0.9rem;">{{ $finalizadoCount }}</p>
                         </div>
                     </div>
-                    
+
                 </div>
             </form>
         @else
@@ -122,33 +125,36 @@ Ultima Modificación:
                 <div class="d-flex flex-column flex-md-row gap-3 align-items-center justify-content-center">
 
                     <!--
-                    <div class="d-flex flex-column gap-2">
-                        <label for="filtro" class="form-label fw-semibold" style="font-size: 0.9rem;">Filtrar por:</label>
-                        <select name="filtro" id="filtro" class="form-select w-auto" onchange="cambiarFiltro()">
-                            <option value="mes" {{ request('filtro') == 'mes' ? 'selected' : '' }}>Mes</option>
-                            <option value="semana" {{ request('filtro', 'semana') == 'semana' ? 'selected' : '' }}>Semana
-                            </option>
-                        </select>
-                    </div>
+                                                        <div class="d-flex flex-column gap-2">
+                                                            <label for="filtro" class="form-label fw-semibold" style="font-size: 0.9rem;">Filtrar por:</label>
+                                                            <select name="filtro" id="filtro" class="form-select w-auto" onchange="cambiarFiltro()">
+                                                                <option value="mes" {{ request('filtro') == 'mes' ? 'selected' : '' }}>Mes</option>
+                                                                <option value="semana" {{ request('filtro', 'semana') == 'semana' ? 'selected' : '' }}>Semana
+                                                                </option>
+                                                            </select>
+                                                        </div>
 
-                    <div id="filtro-mes" class="mt-3"
-                        style="display: {{ request('filtro') == 'mes' ? 'block' : 'none' }};">
-                        <label for="mes" class="form-label" style="font-size: 0.9rem;">Selecciona Mes:</label>
-                        <input type="month" name="mes" id="mes" class="form-control"
-                            value="{{ request('mes', now()->format('Y-m')) }}">
-                    </div>
+                                                        <div id="filtro-mes" class="mt-3"
+                                                            style="display: {{ request('filtro') == 'mes' ? 'block' : 'none' }};">
+                                                            <label for="mes" class="form-label" style="font-size: 0.9rem;">Selecciona Mes:</label>
+                                                            <input type="month" name="mes" id="mes" class="form-control"
+                                                                value="{{ request('mes', now()->format('Y-m')) }}">
+                                                        </div>
 
-                    <div id="filtro-semana" class="mt-3"
-                        style="display: {{ request('filtro', 'semana') == 'semana' ? 'block' : 'none' }};">
-                        <label for="semana" class="form-label" style="font-size: 0.9rem;">Selecciona Semana:</label>
-                        <select name="semana" id="semana" class="form-select">
-                            <option value="0" {{ request('semana', 0) == 0 ? 'selected' : '' }}>Esta semana</option>
-                            <option value="1" {{ request('semana') == 1 ? 'selected' : '' }}>Semana pasada</option>
-                            <option value="2" {{ request('semana') == 2 ? 'selected' : '' }}>Hace 2 semanas</option>
-                            <option value="3" {{ request('semana') == 3 ? 'selected' : '' }}>Hace 3 semanas</option>
-                        </select>
-                    </div>
-                    -->
+
+                                                        <div id="filtro-semana" class="mt-3"
+                                                            style="display: {{ request('filtro', 'semana') == 'semana' ? 'block' : 'none' }};">
+                                                            <label for="semana" class="form-label" style="font-size: 0.9rem;">Selecciona Semana:</label>
+                                                            <select name="semana" id="semana" class="form-select">
+                                                                <option value="0" {{ request('semana', 0) == 0 ? 'selected' : '' }}>Esta semana</option>
+                                                                <option value="1" {{ request('semana') == 1 ? 'selected' : '' }}>Semana pasada</option>
+                                                                <option value="2" {{ request('semana') == 2 ? 'selected' : '' }}>Hace 2 semanas</option>
+                                                                <option value="3" {{ request('semana') == 3 ? 'selected' : '' }}>Hace 3 semanas</option>
+                                                            </select>
+                                                        </div>
+                                                        -->
+                    <!-- Actualizacion para seleccionar fecha -->
+
 
                     <!-- Actualizacion para seleccionar fecha -->
                     <div>
@@ -163,20 +169,23 @@ Ultima Modificación:
                             <i class="fas fa-filter me-2"></i> Aplicar Filtro
                         </button>
                         <div class="d-flex gap-3">
-                            <div class="estado-card pastel-morado d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm" style="text-align: center; height: 80px;">
+                            <div class="estado-card pastel-morado d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm"
+                                style="text-align: center; height: 80px;">
                                 <i class="fas fa-stopwatch text-white" style="font-size: 1.5rem;"></i>
                                 <p class="estado-titulo mb-0" style="font-size: 0.9rem;">{{ $enCursoCount }}</p>
                             </div>
-                            <div class="estado-card pastel-naranja d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm" style="text-align: center; height: 80px;">
+                            <div class="estado-card pastel-naranja d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm"
+                                style="text-align: center; height: 80px;">
                                 <i class="fas fa-hourglass-half text-white" style="font-size: 1.5rem;"></i>
                                 <p class="estado-titulo mb-0" style="font-size: 0.9rem;">{{ $pendienteCount }}</p>
                             </div>
-                            <div class="estado-card pastel-verde d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm" style="text-align: center; height: 80px;">
+                            <div class="estado-card pastel-verde d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm"
+                                style="text-align: center; height: 80px;">
                                 <i class="fas fa-check-circle text-white" style="font-size: 1.5rem;"></i>
                                 <p class="estado-titulo mb-0" style="font-size: 0.9rem;">{{ $finalizadoCount }}</p>
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
             </form>
@@ -194,12 +203,28 @@ Ultima Modificación:
             <button id="scroll-right" class="btn btn-secondary btn-md">
                 <i class="fas fa-chevron-right fa-2x"></i>
             </button>
+
         </div>
 
-        <div class="text-left">
+        <div class="d-flex justify-content-between">
             <a href="{{ route('actividades.create') }}" class="btn btn-primary btn-lg ms-3"
                 style="margin-left: 1rem;">Crear Actividad</a>
+
+            @if (Auth::user()->isAdmin() ||
+                    Auth::user()->isGerenteGeneral() ||
+                    Auth::user()->isAsistenteGerencial() ||
+                    Auth::user()->isSupervisor())
+                <div>
+                    <a href="{{ route('actividades.exportar.servicio-hora', 'excel') }}" class="btn btn-success">
+                        <i class="fas fa-file-excel"></i> Exportar Excel (Servicio x Hora)
+                    </a>
+                    <a href="{{ route('actividades.exportar.servicio-hora', 'pdf') }}" class="btn btn-danger">
+                        <i class="fas fa-file-pdf"></i> Exportar PDF (Servicio x Hora)
+                    </a>
+                </div>
+            @endif
         </div>
+
 
         <div class="table-responsive">
             <!-- Contadores para los estados -->
@@ -209,7 +234,7 @@ Ultima Modificación:
                     <tr>
                         <th>ID</th>
                         <th scope="col">Cliente</th>
-						<th scope="col">Productos</th>
+                        <th scope="col">Productos</th>
                         <th scope="col">Empleado</th>
                         <th scope="col">Descripción</th>
                         <th scope="col">Tipo Error</th>
@@ -230,15 +255,15 @@ Ultima Modificación:
                         <tr>
                             <td>{{ $actividad->id }}</td>
                             <td>{{ $actividad->cliente ? $actividad->cliente->nombre : 'No asignado' }}</td>
-                            <td>{{ $actividad->producto->nombre ?? 'N/A' }}</td> 
-							<td>{{ $actividad->empleado ? $actividad->empleado->nombre1 . ' ' . $actividad->empleado->apellido1 : 'No asignado' }}
+                            <td>{{ $actividad->producto->nombre ?? 'N/A' }}</td>
+                            <td>{{ $actividad->empleado ? $actividad->empleado->nombre1 . ' ' . $actividad->empleado->apellido1 : 'No asignado' }}
                             </td>
                             <!-- Descripcion actualizada -->
                             <td class="descripcion-limite">
                                 <div class="text-truncate" style="max-width: 200px;">
                                     {{ $actividad->descripcion }}
                                 </div>
-                            
+
                                 <!-- Botón para abrir el modal de descripción completa -->
                                 <button type="button" class="btn btn-outline-info btn-sm mt-1" data-bs-toggle="modal"
                                     data-bs-target="#modalVerDescripcion{{ $actividad->id }}">
@@ -256,7 +281,9 @@ Ultima Modificación:
                                             @method('PUT')
 
                                             <div class="modal-header">
+
                                                 <h5 class="modal-title" id="modalVerDescripcionLabel{{ $actividad->id }}">
+
                                                     Descripción Completa
                                                 </h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -271,7 +298,9 @@ Ultima Modificación:
                                             </div>
 
                                             <div class="modal-footer">
+
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+
                                                 <button type="submit" class="btn btn-primary">Guardar cambios</button>
                                             </div>
                                         </form>
@@ -282,15 +311,14 @@ Ultima Modificación:
 
                             <td>
                                 <span>{{ $actividad->error ?? 'N/A' }}</span><br>
-                            
+
                                 <!-- Botón para abrir modal de edición -->
                                 <button type="button" class="btn btn-sm btn-outline-primary mt-1" data-bs-toggle="modal"
                                     data-bs-target="#modalEditarError{{ $actividad->id }}">
                                     Editar
                                 </button>
                             </td>
-                            
-                            
+
                             <td>
                                 @if (!empty($actividad->codigo_osticket))
                                     <a href="{{ $actividad->codigo_osticket }}" target="_blank"
@@ -484,44 +512,56 @@ Ultima Modificación:
                 </tbody>
             </table>
             @foreach ($actividades as $actividad)
-            <!-- Modal para editar Tipo de Error -->
-            <div class="modal fade" id="modalEditarError{{ $actividad->id }}" tabindex="-1"
-                aria-labelledby="modalEditarErrorLabel{{ $actividad->id }}" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <form action="{{ route('actividades.update', $actividad->id) }}" method="POST">
-                            @csrf
-                            @method('PUT')
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="modalEditarErrorLabel{{ $actividad->id }}">
-                                    Editar Tipo de Error
-                                </h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Cerrar"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label for="error">Tipo de Error <span class="text-danger">*</span></label>
-                                    <select name="error" class="form-select" required>
-                                        <option value="">Seleccione un tipo de error</option>
-                                        <option value="ESTRUCTURA" {{ $actividad->error == 'ESTRUCTURA' ? 'selected' : '' }}>Estructura</option>
-                                        <option value="CLIENTE" {{ $actividad->error == 'CLIENTE' ? 'selected' : '' }}>Cliente</option>
-                                        <option value="SOFTWARE" {{ $actividad->error == 'SOFTWARE' ? 'selected' : '' }}>Software</option>
-                                        <option value="MEJORA ERROR" {{ $actividad->error == 'MEJORA ERROR' ? 'selected' : '' }}>Mejora Error</option>
-                                        <option value="DESARROLLO" {{ $actividad->error == 'DESARROLLO' ? 'selected' : '' }}>Desarrollo</option>
-                                        <option value="OTRO" {{ $actividad->error == 'OTRO' ? 'selected' : '' }}>Otros</option>
-                                    </select>
+
+                <!-- Modal para editar Tipo de Error -->
+                <div class="modal fade" id="modalEditarError{{ $actividad->id }}" tabindex="-1"
+                    aria-labelledby="modalEditarErrorLabel{{ $actividad->id }}" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form action="{{ route('actividades.update', $actividad->id) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalEditarErrorLabel{{ $actividad->id }}">
+                                        Editar Tipo de Error
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Cerrar"></button>
                                 </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <button type="submit" class="btn btn-primary">Guardar cambios</button>
-                            </div>
-                        </form>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="error">Tipo de Error <span class="text-danger">*</span></label>
+                                        <select name="error" class="form-select" required>
+                                            <option value="">Seleccione un tipo de error</option>
+                                            <option value="ESTRUCTURA"
+                                                {{ $actividad->error == 'ESTRUCTURA' ? 'selected' : '' }}>Estructura
+                                            </option>
+                                            <option value="CLIENTE"
+                                                {{ $actividad->error == 'CLIENTE' ? 'selected' : '' }}>Cliente</option>
+                                            <option value="SOFTWARE"
+                                                {{ $actividad->error == 'SOFTWARE' ? 'selected' : '' }}>Software</option>
+                                            <option value="MEJORA ERROR"
+                                                {{ $actividad->error == 'MEJORA ERROR' ? 'selected' : '' }}>Mejora Error
+                                            </option>
+                                            <option value="DESARROLLO"
+                                                {{ $actividad->error == 'DESARROLLO' ? 'selected' : '' }}>Desarrollo
+                                            </option>
+                                            <option value="OTRO" {{ $actividad->error == 'OTRO' ? 'selected' : '' }}>
+                                                Otros</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
-        @endforeach
+            @endforeach
+
 
         </div>
 
@@ -541,7 +581,7 @@ Ultima Modificación:
                 </div>
             </div>
         </div>
-    
+
     </div>
 
     <style>
@@ -653,12 +693,17 @@ Ultima Modificación:
             transform: scale(1.1);
             /* Aumenta el tamaño del ícono al pasar el cursor */
         }
+
         /* ajustar el tamaño del campo descripcion */
         .table .descripcion-limite {
-            white-space: nowrap; /* Evita que el texto se rompa en varias líneas */
-            overflow: hidden;    /* Esconde el contenido que exceda el contenedor */
-            text-overflow: ellipsis; /* Muestra '...' cuando el texto es demasiado largo */
-            max-width: 200px;    /* Limita el ancho a 200px (ajustalo como necesites) */
+            white-space: nowrap;
+            /* Evita que el texto se rompa en varias líneas */
+            overflow: hidden;
+            /* Esconde el contenido que exceda el contenedor */
+            text-overflow: ellipsis;
+            /* Muestra '...' cuando el texto es demasiado largo */
+            max-width: 200px;
+            /* Limita el ancho a 200px (ajustalo como necesites) */
         }
     </style>
 

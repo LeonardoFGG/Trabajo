@@ -184,7 +184,7 @@
                                                 <p><strong>Tipo:</strong> {{ ucfirst($producto->tipo) }}</p>
                                                 <p><strong>Categoría:</strong> {{ $producto->categoria ?? 'N/A' }}</p>
                                                 <p><strong>Versión:</strong> {{ $producto->version ?? 'N/A' }}</p>
-                                                <p><strong>Modalidad:</strong> {{ $producto->modalidad ?? 'N/A' }}</p>
+                                                <p><strong>Modalidad:</strong> {{ $producto->modalidad_servicio ?? 'N/A' }}</p>
                                             </div>
                                             <div class="col-md-6">
                                                 <p><strong>Valor:</strong>
@@ -351,13 +351,13 @@
 
                                             <div class="mb-3">
                                                 <label for="modalidad" class="form-label">Modalidad</label>
-                                                <select class="form-select" name="modalidad">
+                                                <select class="form-select" name="modalidad_servicio">
                                                     <option value="">-- Seleccione --</option>
                                                     <option value="remoto"
-                                                        {{ $producto->modalidad == 'remoto' ? 'selected' : '' }}>
+                                                        {{ $producto->modalidad_servicio == 'remoto' ? 'selected' : '' }}>
                                                         Remoto</option>
                                                     <option value="presencial"
-                                                        {{ $producto->modalidad == 'presencial' ? 'selected' : '' }}>
+                                                        {{ $producto->modalidad_servicio == 'presencial' ? 'selected' : '' }}>
                                                         Presencial</option>
                                                 </select>
                                             </div>
@@ -468,7 +468,7 @@
                                             <!-- Modalidad (Solo si el tipo es "servicio") -->
                                             <div class="mb-3" id="modalidadContainer" class="d-none">
                                                 <label for="modalidad" class="form-label">Modalidad</label>
-                                                <select class="form-select" name="modalidad" id="modalidadSelect">
+                                                <select class="form-select" name="modalidad_servicio" id="modalidadSelect">
                                                     <option value="">-- Seleccione --</option>
                                                     <option value="remoto">Remoto</option>
                                                     <option value="presencial">Presencial</option>

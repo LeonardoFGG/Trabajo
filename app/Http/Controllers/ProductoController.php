@@ -57,7 +57,7 @@ class ProductoController extends Controller
         // Ordenamiento y paginación
         $productos = $query->orderBy('nombre')->get();
 
-        return view('productos.index', [
+        return view('Productos.index', [
             'productos' => $productos,
             'tipos' => ['core', 'modulo', 'servicio', 'estructura', 'proceso', 'aplicaciones'],
             'categorias' => $categorias,
@@ -91,7 +91,7 @@ class ProductoController extends Controller
             'incluido_en_paquete' => 'boolean',
             'periodicidad_cobro' => 'required|in:diario,mensual,anual',
             'producto_padre_id' => 'nullable|exists:productos,id',
-            'modalidad_servicio' => 'nullable|string|max:100',
+            'modalidad_servicio' => 'nullable|in:remoto,presencial',
             'activo' => 'boolean'
         ]);
 
@@ -154,7 +154,7 @@ class ProductoController extends Controller
             'incluido_en_paquete' => 'boolean',
             'periodicidad_cobro' => 'required|in:diario,mensual,anual',
             'producto_padre_id' => 'nullable|exists:productos,id',
-            'modalidad_servicio' => 'nullable|string|max:100',
+            'modalidad_servicio' => 'nullable|in:remoto,presencial',
             'activo' => 'boolean'
         ]);
 

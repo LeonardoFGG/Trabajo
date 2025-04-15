@@ -146,7 +146,7 @@
                                     </div>
                                 </div>
                             @endif
-                            @if (Auth::user()->empleado && (Auth::user()->empleado->cargo_id == 15 || Auth::user()->empleado->cargo_id == 14))
+                            {{-- @if (Auth::user()->empleado && (Auth::user()->empleado->cargo_id == 15 || Auth::user()->empleado->cargo_id == 14))
                                 <div class="col-md-5 mb-5 center">
                                     <div class="card h-100 shadow center">
                                         <div class="card-body d-flex flex-column align-items-center">
@@ -157,8 +157,8 @@
                                         </div>
                                     </div>
                                 </div>
-                            @endif
-                            @if (Auth::user()->id == 3)
+                            @endif --}}
+                            @if (Auth::user()->isGerenteGeneral() || Auth::user()->isSupervisor()) 
                                 <div class="col-md-5 mb-5 center">
                                     <div class="card h-100 shadow center">
                                         <div class="card-body d-flex flex-column align-items-center">
