@@ -30,13 +30,48 @@
                                     <i class="fas fa-plus"></i> Crear Registro Diario
                                 </a>
 
+                                <!-- Rango de fechas -->
                                 <div>
-                                    <label for="fecha">Filtrar por día (opcional):</label>
-                                    <input type="date" name="fecha" id="fecha" class="form-control"
-                                        value="{{ request('fecha') }}"
-                                        onchange="document.getElementById('filter-form').submit()">
+                                    <label for="daterange">Filtrar por rango de fechas:</label>
+                                    <input type="text" name="daterange" id="daterange" class="form-control"
+                                        placeholder="Selecciona un rango"
+                                        value="{{ request('start_date') && request('end_date') ? request('start_date') . ' to ' . request('end_date') : '' }}">
+
+                                    <!-- Inputs ocultos para enviar las fechas reales -->
+                                    <input type="hidden" name="start_date" id="start_date" value="{{ request('start_date') }}">
+                                    <input type="hidden" name="end_date" id="end_date" value="{{ request('end_date') }}">
                                 </div>
 
+                                <script>
+                                    $(document).ready(function() {
+                                        flatpickr("#daterange", {
+                                            mode: "range",
+                                            dateFormat: "Y-m-d",
+                                            defaultDate: [
+                                                "{{ request('start_date', now()->format('Y-m-d')) }}",
+                                                "{{ request('end_date', now()->format('Y-m-d')) }}"
+                                            ],
+                                            locale: {
+                                                firstDayOfWeek: 1,
+                                                weekdays: {
+                                                    shorthand: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+                                                    longhand: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                                                },
+                                                months: {
+                                                    shorthand: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                                                    longhand: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                                                },
+                                            },
+                                            onChange: function(selectedDates) {
+                                                if (selectedDates.length === 2) {
+                                                    document.getElementById('start_date').value = selectedDates[0].toISOString().slice(0, 10);
+                                                    document.getElementById('end_date').value = selectedDates[1].toISOString().slice(0, 10);
+                                                }
+                                            }
+                                        });
+                                    });
+                                </script>                                
+                                
                                 <div class="col-md-3">
                                     <label for="departamento_id" class="form-label">Departamento:</label>
                                     <div class="input-group">
@@ -73,6 +108,13 @@
                                             @endforeach
                                         </select>
                                     </div>
+                                </div>
+
+                                <!-- Botón para aplicar el filtro -->
+                                <div class="d-flex justify-content-center align-items-center mt-3 mt-md-0">
+                                    <button type="submit" form="filter-form" class="btn btn-success">
+                                        <i class="fas fa-filter"></i> Aplicar Filtro
+                                    </button>
                                 </div>
 
                                 <div class="d-flex justify-content-center align-items-center mt-3 mt-md-0">

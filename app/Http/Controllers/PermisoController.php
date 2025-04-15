@@ -49,9 +49,10 @@ class PermisoController extends Controller
             return redirect()->route('home')->with('error', 'No tienes permisos para acceder a esta página');
         }
     
-        // Filtrar por fecha SOLO si se proporciona
-        if ($request->has('fecha') && $fechaSeleccionada) {
-            $permisosQuery->whereDate('fecha_salida', $fechaSeleccionada);
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $startDate = Carbon::parse($request->input('start_date'))->startOfDay();
+            $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
+            $permisosQuery->whereBetween('fecha_salida', [$startDate, $endDate]);
         }
     
         // Ordenar por fecha de salida descendente (últimos primero)

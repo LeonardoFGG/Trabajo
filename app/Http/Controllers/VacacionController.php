@@ -18,8 +18,17 @@ class VacacionController extends Controller
         $user = Auth::user();
         // Obtener el ID del empleado seleccionado y los filtros
         $empleadoId = $request->input('empleado_id');
-        // Obtener la fecha seleccionada
-        $fechaSeleccionada = $request->input('fecha', now()->toDateString()); // Valor por defecto: hoy       
+        // Obtener las fechas de inicio y fin del rango
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+        // Obtener las fechas de inicio y fin del rango
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        // Si no se ha seleccionado un rango, establecemos las fechas por defecto (hoy)
+        $startDate = $startDate ? $startDate : now()->toDateString();
+        $endDate = $endDate ? $endDate : now()->toDateString();
+                
 
         // Obtener el saldo de vacaciones del empleado (si es empleado)
         $saldo = null;
@@ -61,9 +70,9 @@ class VacacionController extends Controller
             return redirect()->route('home')->with('error', 'No tienes permisos para acceder a esta página');
         }
 
-         // Filtrar por fecha
-         if ($request->has('fecha')) {
-            $solicitudesQuery->whereDate('fecha_solicitud', $fechaSeleccionada);
+        // Filtrar por rango de fechas
+        if ($startDate && $endDate) {
+            $solicitudesQuery->whereBetween('fecha_solicitud', [$startDate, $endDate]);
         }
       
 
@@ -71,7 +80,7 @@ class VacacionController extends Controller
         $solicitudes = $solicitudesQuery->orderBy('fecha_solicitud', 'desc')->get();
 
         // Pasar los datos a la vista
-        return view('Vacaciones.index', compact('saldo', 'solicitudes', 'empleados', 'empleadoId', 'fechaSeleccionada'));
+        return view('Vacaciones.index', compact('saldo', 'solicitudes', 'empleados', 'empleadoId', 'startDate', 'endDate'));
     }
 
     public function crearSolicitud(Request $request)

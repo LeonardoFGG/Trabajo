@@ -3,11 +3,12 @@
 @section('content')
     <div class="container mt-7">
         <!-- Mensajes de éxito y error -->
-        @if (session('success'))
-            <div class="alert alert-success" id="success-message">
-                {{ session('success') }}
-            </div>
-        @endif
+        <!-- Notificacion temporal -->
+            @if (session('success'))
+                <div id="success-alert" class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
 
         @if ($errors->has('error'))
             <div class="alert alert-danger d-flex align-items-center" id="error-message" role="alert">
@@ -291,5 +292,20 @@
     });
 });
 
+    </script>
+    <!-- script para que la notificacion desaparezca despues de 5 min -->
+    <script>
+        // Espera hasta que el DOM esté completamente cargado
+        document.addEventListener('DOMContentLoaded', function () {
+            // Verifica si existe el elemento con id 'success-alert'
+            var alert = document.getElementById('success-alert');
+            if (alert) {
+                // Establecer un temporizador de 5 segundos (5000 ms)
+                setTimeout(function() {
+                    // Desaparece el mensaje
+                    alert.style.display = 'none';
+                }, 5000); // 5000 milisegundos = 5 segundos
+            }
+        });
     </script>
 @endsection
