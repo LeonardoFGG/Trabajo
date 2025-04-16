@@ -112,6 +112,7 @@ Route::get('/register', function () {
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
+Route::patch('/empleados/{id}/toggle-estado', [EmpleadosController::class, 'toggleEstado'])->name('empleados.toggleEstado');
 
 
 // Rutas que requieren autenticación

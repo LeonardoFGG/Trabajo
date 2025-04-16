@@ -300,7 +300,7 @@
                 @endif
 
                 <!-- Links for Empleado -->
-                @if ((Auth::check() && Auth::user()->isEmpleado()) || Auth::user()->isAsistenteGerencial())
+                @if (Auth::check() && (Auth::user()->isEmpleado() || Auth::user()->isAsistenteGerencial()))
                     <ul class="nav nav-list">
                         <li class="nav-item">
                             <a class="nav-link {{ request()->routeIs('actividades.indexActividades') ? 'active' : '' }}"
