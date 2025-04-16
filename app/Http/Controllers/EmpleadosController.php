@@ -457,6 +457,16 @@ if ($empleados->es_supervisor) {
         ]);
     }
 
+    public function toggleEstado($id)
+{
+    $empleado = Empleados::findOrFail($id);
+    $empleado->estado = !$empleado->estado; // Cambia de 1 a 0 o viceversa
+    $empleado->save();
+
+    return redirect()->back()->with('success', 'Estado actualizado correctamente.');
+}
+
+
 
 
     public function destroy($id)
