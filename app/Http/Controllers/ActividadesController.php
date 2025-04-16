@@ -49,8 +49,7 @@ class ActividadesController extends Controller
             }
         ]);
 
-        // Inicializar variable de empleados
-        $empleados = collect();
+        
 
         // Aplicar filtros según el tipo de usuario
         if ($user->isAdmin() || $user->isAsistenteGerencial() || $user->isGerenteGeneral()) {
@@ -68,13 +67,24 @@ class ActividadesController extends Controller
                 ->get(['id', 'nombre1', 'apellido1']);
 
             // Filtrar actividades
-            $actividadesQuery->where(function ($query) use ($supervisorId, $empleadoId) {
-                $query->whereHas('empleado', function ($q) use ($supervisorId) {
-                    $q->where('supervisor_id', $supervisorId);
-                })->orWhere('empleado_id', $supervisorId);
+            $empleados = Empleados::where('supervisor_id', $supervisorId)
+                ->orWhere('id', $supervisorId)
+                ->get(['id', 'nombre1', 'apellido1']);
 
+            $actividadesQuery->where(function ($query) use ($supervisorId, $empleadoId, $empleados) {
+                // Si se seleccionó un empleado específico
                 if ($empleadoId) {
-                    $query->where('empleado_id', $empleadoId);
+                    // Verificar que el empleado seleccionado está bajo su supervisión
+                    $empleadoValido = $empleados->contains('id', $empleadoId);
+                    if ($empleadoValido) {
+                        $query->where('empleado_id', $empleadoId);
+                    }
+                } else {
+                    // Mostrar actividades de todos sus empleados a cargo
+                    $query->whereHas('empleado', function ($q) use ($supervisorId) {
+                        $q->where('supervisor_id', $supervisorId)
+                            ->orWhere('id', $supervisorId);
+                    });
                 }
             });
         } elseif ($user->isEmpleado()) {
@@ -153,7 +163,7 @@ class ActividadesController extends Controller
 
         return view('Actividades.createActividades', compact('empleados', 'departamentos', 'clientes', 'cargos', 'productos'));
     }
-//------------------------------------------------------------
+
     public function getProductosByCliente($clienteId)
     {
         // Buscar el cliente
@@ -168,7 +178,7 @@ class ActividadesController extends Controller
         // Si no se encuentra el cliente, devolver un array vacío
         return response()->json([]);
     }
-//------------------------------------------------------------
+
 
     public function store(Request $request)
     {
@@ -240,7 +250,6 @@ class ActividadesController extends Controller
     public function update(Request $request, $id)
     {
 
-
         $actividad = Actividades::findOrFail($id);
         // Actualiza la descripcion
         if ($request->has('descripcion')) {
@@ -252,7 +261,6 @@ class ActividadesController extends Controller
             $actividad->update($request->only('error'));
             return redirect()->back()->with('success', 'Tipo de error actualizado correctamente.');
         }
-
         $validated = $request->validate([
             'cliente_id' => 'required|string|max:255',
             'producto_id' => 'required|exists:productos,id',
@@ -321,7 +329,7 @@ class ActividadesController extends Controller
             // Si está en curso (EN CURSO)
             $actividad->estado = 'EN CURSO';
 
-            // Refstrar el tiempo de inicio si no está en curso
+            // Registrar el tiempo de inicio si no está en curso
             if (is_null($actividad->tiempo_inicio)) {
                 $actividad->tiempo_inicio = now();
             }
@@ -379,14 +387,9 @@ class ActividadesController extends Controller
     }
 
     //Actualizar el tiempo real 
+
     public function updateTiempoReal(Request $request, $id)
     {
-        // Validar que el usuario es un administrador
-        if (!Auth::user()->isAdmin() && !in_array(Auth::user()->id, [3, 24])) {
-            return redirect()->route('actividades.indexActividades')->withErrors(['error' => 'No tienes permisos para realizar esta acción.']);
-        }
-
-
         // Validar los datos del formulario
         $validated = $request->validate([
             'tiempo_real_horas' => 'required|integer|min:0',
