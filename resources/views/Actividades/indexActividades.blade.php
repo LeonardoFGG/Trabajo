@@ -40,14 +40,12 @@ Ultima Modificación:
                 class="mb-4 p-4 shadow bg-light rounded" style="max-width: 1100px; margin: 0 auto;">
                 <div class="d-flex flex-column flex-md-row gap-3 align-items-center">
 
-                    <!-- Actualizacion para seleccionar fecha -->
                     <div>
                         <label for="daterange">Rango de Fechas:</label>
                         <input type="text" name="daterange" id="daterange" class="form-control"
                             placeholder="Selecciona un rango"
                             value="{{ request('start_date') && request('end_date') ? request('start_date') . ' to ' . request('end_date') : '' }}">
 
-                        <!-- Inputs ocultos para enviar las fechas reales -->
                         <input type="hidden" name="start_date" id="start_date" value="{{ request('start_date') }}">
                         <input type="hidden" name="end_date" id="end_date" value="{{ request('end_date') }}">
                     </div>
@@ -81,7 +79,12 @@ Ultima Modificación:
                             }
                         });
                     </script>
-                   
+
+
+
+
+
+
                     <!-- Mostrar siempre el dropdown para supervisores, admin, gerentes y asistentes -->
                     <div class="col-md-4">
                         <label for="empleado_id" class="form-label">Seleccionar Empleado:</label>
@@ -89,7 +92,7 @@ Ultima Modificación:
                             <span class="input-group-text bg-primary text-white">
                                 <i class="fas fa-user"></i>
                             </span>
-                            <select name="empleado_id" id="empleado_id" class="form-select" onchange="this.form.submit()">
+                            <select name="empleado_id" id="empleado_id" class="form-select">
                                 <option value="">-- Todos los empleados --</option>
                                 @foreach ($empleados as $empleado)
                                     <option value="{{ $empleado->id }}"
@@ -108,6 +111,7 @@ Ultima Modificación:
                         <button type="submit" class="btn btn-primary">
                             <i class="fas fa-filter"></i> Aplicar Filtro
                         </button>
+
                     </div>
                     <div class="d-flex gap-3">
                         <div class="estado-card pastel-morado d-flex flex-column align-items-center justify-content-center p-1 rounded shadow-sm"
@@ -298,6 +302,10 @@ Ultima Modificación:
                                         <form action="{{ route('actividades.update', $actividad->id) }}" method="POST">
                                             @csrf
                                             @method('PUT')
+                                            <input type="hidden" name="start_date" value="{{ request('start_date') }}">
+                                            <input type="hidden" name="end_date" value="{{ request('end_date') }}">
+                                            <input type="hidden" name="empleado_id"
+                                                value="{{ request('empleado_id') }}">
 
                                             <div class="modal-header">
                                                 <h5 class="modal-title"
@@ -379,6 +387,10 @@ Ultima Modificación:
                                             method="POST" class="mt-2" onsubmit="return confirmarFinalizar(event);">
                                             @csrf
                                             @method('PUT')
+                                            <input type="hidden" name="start_date" value="{{ request('start_date') }}">
+                                            <input type="hidden" name="end_date" value="{{ request('end_date') }}">
+                                            <input type="hidden" name="empleado_id"
+                                                value="{{ request('empleado_id') }}">
                                             <button type="submit" name="finalizar" value="1"
                                                 class="btn btn-success btn-sm">
                                                 <i class="bi bi-check"></i>
@@ -395,6 +407,10 @@ Ultima Modificación:
                                             method="POST" class="mt-2">
                                             @csrf
                                             @method('PUT')
+                                            <input type="hidden" name="start_date" value="{{ request('start_date') }}">
+                                            <input type="hidden" name="end_date" value="{{ request('end_date') }}">
+                                            <input type="hidden" name="empleado_id"
+                                                value="{{ request('empleado_id') }}">
                                             <button type="submit" name="pausar" value="1"
                                                 class="btn btn-warning btn-sm">
                                                 <i class="bi bi-pause"></i>
@@ -405,6 +421,10 @@ Ultima Modificación:
                                             method="POST" class="mt-2">
                                             @csrf
                                             @method('PUT')
+                                            <input type="hidden" name="start_date" value="{{ request('start_date') }}">
+                                            <input type="hidden" name="end_date" value="{{ request('end_date') }}">
+                                            <input type="hidden" name="empleado_id"
+                                                value="{{ request('empleado_id') }}">
                                             <button type="submit" name="reanudar" value="1"
                                                 class="btn btn-primary btn-sm">
                                                 <i class="bi bi-play-fill"></i>
@@ -440,6 +460,12 @@ Ultima Modificación:
                                                     method="POST">
                                                     @csrf
                                                     @method('PUT')
+                                                    <input type="hidden" name="start_date"
+                                                        value="{{ request('start_date') }}">
+                                                    <input type="hidden" name="end_date"
+                                                        value="{{ request('end_date') }}">
+                                                    <input type="hidden" name="empleado_id"
+                                                        value="{{ request('empleado_id') }}">
                                                     <div class="modal-body">
                                                         <div class="mb-3">
                                                             <label for="observaciones"
@@ -525,6 +551,12 @@ Ultima Modificación:
                                                         method="POST">
                                                         @csrf
                                                         @method('PUT')
+                                                        <input type="hidden" name="start_date"
+                                                            value="{{ request('start_date') }}">
+                                                        <input type="hidden" name="end_date"
+                                                            value="{{ request('end_date') }}">
+                                                        <input type="hidden" name="empleado_id"
+                                                            value="{{ request('empleado_id') }}">
                                                         <div class="mb-3">
                                                             <label for="tiempo_real_horas"
                                                                 class="form-label">Horas</label>
@@ -579,6 +611,10 @@ Ultima Modificación:
                                         class="d-inline form-delete">
                                         @csrf
                                         @method('DELETE')
+                                        <input type="hidden" name="start_date" value="{{ request('start_date') }}">
+                                            <input type="hidden" name="end_date" value="{{ request('end_date') }}">
+                                            <input type="hidden" name="empleado_id"
+                                                value="{{ request('empleado_id') }}">
                                         <button type="submit" class="btn btn-danger btn-sm btn-delete" title="Eliminar">
                                             <i class="fas fa-trash fa-md"></i>
                                         </button>
@@ -603,6 +639,10 @@ Ultima Modificación:
                             <form action="{{ route('actividades.update', $actividad->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
+                                <input type="hidden" name="start_date" value="{{ request('start_date') }}">
+                                            <input type="hidden" name="end_date" value="{{ request('end_date') }}">
+                                            <input type="hidden" name="empleado_id"
+                                                value="{{ request('empleado_id') }}">
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="modalEditarErrorLabel{{ $actividad->id }}">
                                         Editar Tipo de Error
@@ -1140,5 +1180,29 @@ Ultima Modificación:
         document.addEventListener("DOMContentLoaded", function() {
             cambiarFiltro();
         });
+
+        // Función para agregar parámetros de filtro a los formularios
+        function addFilterParamsToForms() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const forms = document.querySelectorAll('form');
+
+            forms.forEach(form => {
+                // Solo agregar a formularios que no sean GET
+                if (form.method.toUpperCase() !== 'GET') {
+                    urlParams.forEach((value, key) => {
+                        if (!form.querySelector(`input[name="${key}"]`)) {
+                            const hiddenInput = document.createElement('input');
+                            hiddenInput.type = 'hidden';
+                            hiddenInput.name = key;
+                            hiddenInput.value = value;
+                            form.appendChild(hiddenInput);
+                        }
+                    });
+                }
+            });
+        }
+
+        // Ejecutar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', addFilterParamsToForms);
     </script>
 @endsection

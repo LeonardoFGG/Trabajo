@@ -49,7 +49,7 @@ class ActividadesController extends Controller
             }
         ]);
 
-        
+
 
         // Aplicar filtros según el tipo de usuario
         if ($user->isAdmin() || $user->isAsistenteGerencial() || $user->isGerenteGeneral()) {
@@ -97,7 +97,7 @@ class ActividadesController extends Controller
         // Resto de filtros
         if ($request->has('servicio_hora')) {
             $actividadesQuery->whereHas('producto', function ($q) {
-                $q->where('nombre', 'servicio por hora');
+                $q->where('nombre', 'servicio por hora', 'servicio por hora (anticipada)');
             });
         }
 
@@ -123,6 +123,9 @@ class ActividadesController extends Controller
             'pendienteCount' => $statusCounts->get('PENDIENTE', 0),
             'finalizadoCount' => $statusCounts->get('FINALIZADO', 0),
             'filtro' => $request->input('filtro', 'fecha'),
+            'start_date' => $request->input('start_date'),
+            'end_date' => $request->input('end_date'),
+            'empleado_id' => $request->input('empleado_id')
         ]);
     }
 
@@ -161,7 +164,7 @@ class ActividadesController extends Controller
 
 
 
-        return view('Actividades.createActividades', compact('empleados', 'departamentos', 'clientes', 'cargos', 'productos'));
+        return view('Actividades.createActividades', compact('empleados', 'departamentos', 'clientes', 'cargos', 'productos'), request()->all());
     }
 
     public function getProductosByCliente($clienteId)
@@ -233,7 +236,7 @@ class ActividadesController extends Controller
         $actividad->save();
 
 
-        return redirect()->route('actividades.indexActividades')->with('success', 'Actividad creada con éxito.');
+        return redirect()->route('actividades.indexActividades')->with('success', 'Actividad creada con éxito.', request()->all());
     }
 
     public function edit($id)
@@ -244,7 +247,7 @@ class ActividadesController extends Controller
         $clientes = Cliente::all();
         $cargos = Cargos::all();
 
-        return view('Actividades.editActividades', compact('actividades', 'empleados', 'departamentos', 'clientes', 'cargos'));
+        return view('Actividades.editActividades', compact('actividades', 'empleados', 'departamentos', 'clientes', 'cargos'), request()->all());
     }
 
     public function update(Request $request, $id)
@@ -289,7 +292,11 @@ class ActividadesController extends Controller
         $actividades->fill($validated);
         $actividades->save();
 
-        return redirect()->route('actividades.indexActividades')->with('success', 'Actividad actualizada con éxito.');
+        return redirect()->route('actividades.indexActividades', [
+            'start_date' => $request->input('start_date'),
+            'end_date' => $request->input('end_date'),
+            'empleado_id' => $request->input('empleado_id')
+        ])->with('success', 'Actividad actualizada con éxito.');
     }
 
     public function updateAvance(Request $request, $id)
@@ -299,7 +306,11 @@ class ActividadesController extends Controller
 
         // Validar si la actividad está en estado PENDIENTE y se intenta finalizar
         if ($actividad->estado === 'PENDIENTE' && $request->input('avance') == 100) {
-            return redirect()->route('actividades.indexActividades')
+            return redirect()->route('actividades.indexActividades', [
+                'start_date' => $request->input('start_date'),
+                'end_date' => $request->input('end_date'),
+                'empleado_id' => $request->input('empleado_id')
+            ])
                 ->withErrors(['error' => 'No se puede finalizar una actividad que no ha iniciado.']);
         }
 
@@ -361,7 +372,11 @@ class ActividadesController extends Controller
         // Guardar los cambios
         $actividad->save();
 
-        return redirect()->route('actividades.indexActividades')->with('success', 'Avance y estado actualizados con éxito.');
+        return redirect()->route('actividades.indexActividades', [
+            'start_date' => $request->input('start_date'),
+            'end_date' => $request->input('end_date'),
+            'empleado_id' => $request->input('empleado_id')
+        ])->with('success', 'Avance y estado actualizados con éxito.', request()->all());
     }
 
     public function updateObservaciones(Request $request, $id)
@@ -371,7 +386,11 @@ class ActividadesController extends Controller
 
         // Verificar si el avance ya es 100; si es así, no permitir edición y mostrar un mensaje
         if ($actividad->avance == 100) {
-            return redirect()->route('actividades.indexActividades')
+            return redirect()->route('actividades.indexActividades', [
+                'start_date' => $request->input('start_date'),
+                'end_date' => $request->input('end_date'),
+                'empleado_id' => $request->input('empleado_id')
+            ])
                 ->withErrors(['error' => 'La actividad ya está finalizada y no puede ser editada.']);
         }
 
@@ -383,7 +402,11 @@ class ActividadesController extends Controller
         $actividad->observaciones = $validated['observaciones'];
         $actividad->save();
 
-        return redirect()->route('actividades.indexActividades')->with('success', 'Observaciones actualizadas con éxito.');
+        return redirect()->route('actividades.indexActividades', [
+            'start_date' => $request->input('start_date'),
+            'end_date' => $request->input('end_date'),
+            'empleado_id' => $request->input('empleado_id')
+        ])->with('success', 'Observaciones actualizadas con éxito.');
     }
 
     //Actualizar el tiempo real 
@@ -409,7 +432,11 @@ class ActividadesController extends Controller
         // Guardar los cambios
         $actividad->save();
 
-        return redirect()->route('actividades.indexActividades')->with('success', 'Tiempo real actualizado con éxito.');
+        return redirect()->route('actividades.indexActividades', [
+            'start_date' => $request->input('start_date'),
+            'end_date' => $request->input('end_date'),
+            'empleado_id' => $request->input('empleado_id')
+        ])->with('success', 'Tiempo real actualizado con éxito.');
     }
 
 
@@ -443,7 +470,7 @@ class ActividadesController extends Controller
         if ($request->has('finalizar')) {
             // Verificar si la actividad no ha iniciado
             if ($actividad->estado === 'PENDIENTE') {
-                return redirect()->route('actividades.indexActividades')
+                return redirect()->route('actividades.indexActividades', $request->only(['start_date', 'end_date', 'empleado_id']))
                     ->withErrors(['error' => 'No se puede finalizar una actividad que no ha iniciado.']);
             }
 
@@ -463,7 +490,11 @@ class ActividadesController extends Controller
 
             $actividad->save();
 
-            return redirect()->route('actividades.indexActividades')->with('success', 'Actividad finalizada con éxito.');
+            return redirect()->route('actividades.indexActividades', [
+                'start_date' => $request->input('start_date'),
+                'end_date' => $request->input('end_date'),
+                'empleado_id' => $request->input('empleado_id')
+            ])->with('success', 'Estado actualizado correctamente');
         }
 
         // Pausar actividad
@@ -475,7 +506,11 @@ class ActividadesController extends Controller
 
             $actividad->save();
 
-            return redirect()->route('actividades.indexActividades')->with('success', 'Actividad pausada con éxito.');
+            return redirect()->route('actividades.indexActividades', [
+                'start_date' => $request->input('start_date'),
+                'end_date' => $request->input('end_date'),
+                'empleado_id' => $request->input('empleado_id')
+            ])->with('success', 'Actividad pausada con éxito.');
         }
 
         // Reanudar actividad
@@ -485,13 +520,19 @@ class ActividadesController extends Controller
                 $actividad->tiempo_inicio = now();
                 $actividad->save();
 
-                return redirect()->route('actividades.indexActividades')->with('success', 'Actividad reanudada con éxito.');
+                return redirect()->route('actividades.indexActividades', [
+                    'start_date' => $request->input('start_date'),
+                    'end_date' => $request->input('end_date'),
+                    'empleado_id' => $request->input('empleado_id')
+                ])->with('success', 'Actividad reanudada con éxito.');
             }
 
-            return redirect()->route('actividades.indexActividades')->withErrors('Solo se pueden reanudar actividades en estado pendiente.');
+            return redirect()->route('actividades.indexActividades', $request->only(['start_date', 'end_date', 'empleado_id']))
+                ->withErrors('Solo se pueden reanudar actividades en estado pendiente.');
         }
 
-        return redirect()->route('actividades.indexActividades')->withErrors('Operación no válida.');
+        return redirect()->route('actividades.indexActividades', $request->only(['start_date', 'end_date', 'empleado_id']))
+            ->withErrors('Operación no válida.');
     }
 
     // Método para exportar actividades a Excel
@@ -551,6 +592,10 @@ class ActividadesController extends Controller
         $actividad = Actividades::findOrFail($id);
         $actividad->delete();
 
-        return redirect()->route('actividades.indexActividades')->with('success', 'Actividad eliminada con éxito.');
+        return redirect()->route('actividades.indexActividades', [
+            'start_date' => $request->input('start_date'),
+            'end_date' => $request->input('end_date'),
+            'empleado_id' => $request->input('empleado_id')
+        ])->with('success', 'Actividad eliminada con éxito.');
     }
 }
