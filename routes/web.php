@@ -521,4 +521,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/actividades/servicio-hora/exportar/{formato}', [ActividadesController::class, 'exportarServicioHora'])
     ->name('actividades.exportar.servicio-hora');
 
+    Route::put('/actividades/{id}/update-tiempo-real', [ActividadesController::class, 'updateTiempoReal'])->name('actividades.updateTiempoReal');
+
+
 });
