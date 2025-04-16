@@ -523,5 +523,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::put('/actividades/{id}/update-tiempo-real', [ActividadesController::class, 'updateTiempoReal'])->name('actividades.updateTiempoReal');
 
+    Route::patch('/permisos/{permiso}/anexo', [PermisoController::class, 'updateAnexo'])->name('permisos.updateAnexo');
+
 
 });
