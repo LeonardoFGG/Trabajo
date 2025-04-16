@@ -7,12 +7,25 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Webcoopec System LTDA.</title>
 
-    <!-- Cargar la librería CSS de Flatpickr -->
+    <!-- Daterangepicker para filtro de rango en fechas -->
+    <!-- jQuery (requerido) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Moment.js (necesario para daterangepicker) -->
+    <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+
+    <!-- CSS del daterangepicker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    <!-- JS del daterangepicker -->
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+    <!-- Flatpickr para filtro de rango en fechas -->
+    <!-- Flatpickr CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-    <!-- Cargar la librería JS de Flatpickr -->
+    <!-- Flatpickr JS -->
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
 
     <!-- Agrega estos en el head -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
