@@ -53,6 +53,7 @@
                         <th>Fecha de Nacimiento</th>
                         <th>Celular</th>
                         <th>Correo</th>
+                        <th>Estado</th>
                         <th>Departamento</th>
                         <th>Cargo</th>
                         <th>Supervisor</th>
@@ -75,6 +76,20 @@
                             <td>{{ $empleado->fecha_nacimiento }}</td>
                             <td>{{ $empleado->celular }}</td>
                             <td>{{ $empleado->correo_institucional }}</td>
+                            <td> @if($empleado->estado)
+                                <span class="badge bg-success">Activo</span>
+                            @else
+                                <span class="badge bg-danger">Inactivo</span>
+                            @endif
+                            <form action="{{ route('empleados.toggleEstado', $empleado->id) }}" method="POST" style="display:inline">
+                                @csrf
+                                @method('PATCH')
+                                <button class="btn btn-sm {{ $empleado->estado ? 'btn-danger' : 'btn-success' }}">
+                                    {{ $empleado->estado ? 'Desactivar' : 'Activar' }}
+                                </button>
+                            </form>
+                             
+                            </td>
                             <td>{{ optional($empleado->departamento)->nombre ?? 'N/A' }}</td>
                             <td>{{ optional($empleado->cargo)->nombre_cargo ?? 'N/A' }}</td>
                             <td>
