@@ -112,6 +112,7 @@ Route::get('/register', function () {
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
+Route::patch('/empleados/{id}/toggle-estado', [EmpleadosController::class, 'toggleEstado'])->name('empleados.toggleEstado');
 
 
 // Rutas que requieren autenticación
@@ -520,5 +521,10 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/actividades/servicio-hora/exportar/{formato}', [ActividadesController::class, 'exportarServicioHora'])
     ->name('actividades.exportar.servicio-hora');
+
+    Route::put('/actividades/{id}/update-tiempo-real', [ActividadesController::class, 'updateTiempoReal'])->name('actividades.updateTiempoReal');
+
+    Route::patch('/permisos/{permiso}/anexo', [PermisoController::class, 'updateAnexo'])->name('permisos.updateAnexo');
+
 
 });

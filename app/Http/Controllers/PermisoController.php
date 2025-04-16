@@ -193,10 +193,7 @@ class PermisoController extends Controller
 
         $permiso = Permiso::findOrFail($id);
 
-        // Verificar que el usuario es el propietario del permiso
-        if (Auth::user()->empleado->id !== $permiso->empleado_id) {
-            return redirect()->back()->with('error', 'No tienes permiso para editar este anexo.');
-        }
+        
 
         // Guardar el nuevo archivo
         if ($request->hasFile('anexos')) {
