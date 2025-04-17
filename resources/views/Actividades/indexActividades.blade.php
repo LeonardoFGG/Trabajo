@@ -629,14 +629,6 @@ Ultima Modificación:
 
                             <td class="text-center">
                                 @if (Auth::user()->isAdmin())
-                                    <a href="{{ route('actividades.show', $actividad->id) }}" class="btn btn-info btn-sm"
-                                        title="Ver">
-                                        <i class="fas fa-eye fa-md"></i>
-                                    </a>
-                                    <a href="{{ route('actividades.edit', $actividad->id) }}"
-                                        class="btn btn-warning btn-sm" title="Editar">
-                                        <i class="fas fa-edit fa-md"></i>
-                                    </a>
                                     <!-- Botón que abre modal VER -->
                                         <button type="button" class="btn btn-info btn-sm" title="Ver"
                                         data-bs-toggle="modal" data-bs-target="#modalShow{{ $actividad->id }}">

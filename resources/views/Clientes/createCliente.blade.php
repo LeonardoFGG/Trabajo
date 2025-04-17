@@ -21,19 +21,47 @@
                             </div>
                         @endif
 
-                        <form action="{{ route('clientes.store') }}" method="POST" enctype="multipart/form-data" class="p-4">
+                        <form action="{{ route('clientes.store') }}" method="POST" enctype="multipart/form-data"
+                            class="p-4">
                             @csrf
 
                             <!-- Campo Producto -->
                             <div class="form-group mb-3">
                                 <label for="productos">Selecciona Productos</label>
-                                <div id="productos">
+                                <div id="productos-container">
                                     @foreach ($productos as $producto)
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" name="productos[]" id="producto{{ $producto->id }}" value="{{ $producto->id }}">
-                                            <label class="form-check-label" for="producto{{ $producto->id }}">
-                                                {{ $producto->nombre }}
-                                            </label>
+                                        <div class="card mb-2 producto-item">
+                                            <div class="card-body">
+                                                <div class="form-check">
+                                                    <input class="form-check-input producto-checkbox" type="checkbox"
+                                                        name="productos[]" id="producto{{ $producto->id }}"
+                                                        value="{{ $producto->id }}"
+                                                        onchange="togglePrecioEspecial({{ $producto->id }}, this.checked)">
+                                                    <label class="form-check-label" for="producto{{ $producto->id }}">
+                                                        <strong>{{ $producto->codigo }}</strong> - {{ $producto->nombre }}
+                                                        <span class="text-muted">(Precio base:
+                                                            ${{ number_format($producto->valor_producto, 2) }})</span>
+                                                    </label>
+                                                </div>
+
+                                                <div class="precio-especial-container mt-2"
+                                                    id="precio-container-{{ $producto->id }}" style="display: none;">
+                                                    <label for="precio_especial_{{ $producto->id }}">Precio
+                                                        Especial</label>
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">$</span>
+                                                        <input type="number" step="0.01"
+                                                            name="precios_especiales[{{ $producto->id }}]"
+                                                            id="precio_especial_{{ $producto->id }}" class="form-control"
+                                                            placeholder="{{ $producto->valor_producto }}">
+                                                        <button class="btn btn-outline-secondary" type="button"
+                                                            onclick="document.getElementById('precio_especial_{{ $producto->id }}').value = ''">
+                                                            Usar precio base
+                                                        </button>
+                                                    </div>
+                                                    <small class="text-muted">Dejar vacío para usar precio base</small>
+                                                </div>
+                                            </div>
                                         </div>
                                     @endforeach
                                 </div>
@@ -46,7 +74,7 @@
                                     'direccion' => 'Dirección',
                                     'telefono' => 'Teléfono',
                                     'email' => 'Email',
-                                    'contacto' => 'Contacto'
+                                    'contacto' => 'Contacto',
                                 ];
                             @endphp
 
@@ -56,7 +84,8 @@
                                         <strong>{{ $label }}</strong>
                                     </label>
                                     <div class="col-md-6">
-                                        <input type="text" name="{{ $name }}" class="form-control mb-3" value="{{ old($name) }}">
+                                        <input type="text" name="{{ $name }}" class="form-control mb-3"
+                                            value="{{ old($name) }}">
                                     </div>
                                 </div>
                             @endforeach
@@ -97,7 +126,8 @@
                                     <strong>Valor Total de Productos</strong>
                                 </label>
                                 <div class="col-md-6">
-                                    <input type="number" name="total_valor_productos" id="total_valor_productos" class="form-control">
+                                    <input type="number" name="total_valor_productos" id="total_valor_productos"
+                                        class="form-control">
                                 </div>
                             </div>
 
@@ -108,8 +138,10 @@
                                 </label>
                                 <div class="col-md-6">
                                     <select name="estado" class="form-control" required>
-                                        <option value="ACTIVO" {{ old('estado') == 'ACTIVO' ? 'selected' : '' }}>Activo</option>
-                                        <option value="INACTIVO" {{ old('estado') == 'INACTIVO' ? 'selected' : '' }}>Inactivo</option>
+                                        <option value="ACTIVO" {{ old('estado') == 'ACTIVO' ? 'selected' : '' }}>Activo
+                                        </option>
+                                        <option value="INACTIVO" {{ old('estado') == 'INACTIVO' ? 'selected' : '' }}>
+                                            Inactivo</option>
                                     </select>
                                 </div>
                             </div>
@@ -132,6 +164,44 @@
                 allowClear: true
             });
         });
+
+        // Función para mostrar/ocultar el campo de precio especial
+        function togglePrecioEspecial(productoId, isChecked) {
+            const precioContainer = document.getElementById(`precio-container-${productoId}`);
+            const precioInput = document.getElementById(`precio_especial_${productoId}`);
+
+            precioContainer.style.display = isChecked ? 'block' : 'none';
+
+            // Si se desmarca, limpiamos el precio especial
+            if (!isChecked) {
+                precioInput.value = '';
+            }
+        }
+
+        // Calcular automáticamente el valor total
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('.producto-checkbox');
+            const totalInput = document.getElementById('total_valor_productos');
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    let total = 0;
+                    checkboxes.forEach(cb => {
+                        if (cb.checked) {
+                            const productoId = cb.value;
+                            const precioEspecial = document.getElementById(
+                                `precio_especial_${productoId}`).value;
+                            const precioBase = parseFloat(cb.parentElement.querySelector(
+                                '.text-muted').textContent.match(/\d+\.\d+/)[0]);
+                            total += precioEspecial ? parseFloat(precioEspecial) :
+                                precioBase;
+                        }
+                    });
+                    totalInput.value = total.toFixed(2);
+                });
+            });
+        });
     </script>
+
 
 @endsection

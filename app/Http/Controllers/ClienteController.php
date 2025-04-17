@@ -6,7 +6,11 @@ use App\Models\Cliente;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Producto;
+use App\Models\PrecioCliente;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ClientesProductosExport;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 use Illuminate\Support\Facades\Auth;
 
@@ -32,8 +36,6 @@ class ClienteController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'productos' => 'required|array',
-            'productos.*' => 'exists:productos,id',
             'nombre' => 'required|string|max:255',
             'direccion' => 'nullable|string|max:255',
             'telefono' => 'nullable|string|max:20',
@@ -44,6 +46,11 @@ class ClienteController extends Controller
             'documento_otros.*' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
             'total_valor_productos' => 'nullable|numeric',
             'estado' => 'required|in:ACTIVO,INACTIVO',
+            'productos' => 'required|array',
+            'productos.*' => 'exists:productos,id',
+            'precios_especiales' => 'sometimes|array',
+            'precios_especiales.*' => 'nullable|numeric|min:0',
+
         ]);
 
         // Asignar valores predeterminados para campos opcionales
@@ -54,6 +61,23 @@ class ClienteController extends Controller
         $validated['total_valor_productos'] = $validated['total_valor_productos'] ?? 0;
 
         $cliente = new Cliente($validated);
+
+        // Adjuntar productos
+        $cliente->productos()->attach($validated['productos']);
+
+        // Guardar precios especiales
+        if (!empty($validated['precios_especiales'])) {
+            foreach ($validated['precios_especiales'] as $productoId => $precio) {
+                if ($precio !== null) {
+                    PrecioCliente::create([
+                        'cliente_id' => $cliente->id,
+                        'producto_id' => $productoId,
+                        'precio' => $precio,
+                        'created_by' => auth()->id()
+                    ]);
+                }
+            }
+        }
 
         if ($request->hasFile('contrato_implementacion')) {
             $cliente->contrato_implementacion = $request->file('contrato_implementacion')->store('contratos_implementacion', 'public');
@@ -95,6 +119,7 @@ class ClienteController extends Controller
     public function edit($id)
     {
         $cliente = Cliente::findOrFail($id);
+        $cliente->load('preciosEspeciales');
         $productos = Producto::all();
         return view('Clientes.edit', compact('cliente', 'productos'));
     }
@@ -114,7 +139,7 @@ class ClienteController extends Controller
             'documento_otros.*' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
             'total_valor_productos' => 'nullable|numeric',
             'estado' => 'required|in:ACTIVO,INACTIVO',
-            
+
         ]);
 
         $validated['direccion'] = $validated['direccion'] ?? ''; // Cadena vacía si es null
@@ -125,6 +150,32 @@ class ClienteController extends Controller
 
         $cliente = Cliente::findOrFail($id);
         $cliente->fill($validated);
+        // Sincronizar productos
+        $cliente->productos()->sync($request->productos ?? []);
+
+        // Manejar precios especiales
+        if ($request->has('precios_especiales')) {
+            foreach ($request->precios_especiales as $productoId => $precio) {
+                if ($precio && in_array($productoId, $request->productos ?? [])) {
+                    PrecioCliente::updateOrCreate(
+                        [
+                            'cliente_id' => $cliente->id,
+                            'producto_id' => $productoId
+                        ],
+                        [
+                            'precio' => $precio,
+                            'created_by' => auth()->id(),
+                            'updated_by' => auth()->id()
+                        ]
+                    );
+                } else {
+                    // Eliminar precio especial si no está marcado o el precio está vacío
+                    $cliente->preciosEspeciales()
+                        ->where('producto_id', $productoId)
+                        ->delete();
+                }
+            }
+        }
 
         // Subir archivos y eliminar los anteriores
         if ($request->hasFile('contrato_implementacion')) {
@@ -156,6 +207,7 @@ class ClienteController extends Controller
             $cliente->documento_otros = json_encode($rutas);
         }
 
+
         $cliente->save();
         $cliente->productos()->sync($validated['productos']); // Actualiza los productos
 
@@ -185,5 +237,75 @@ class ClienteController extends Controller
         $cliente->delete(); // Eliminar cliente
 
         return redirect()->route('clientes.index')->with('success', 'Cliente eliminado con éxito.');
+    }
+
+    public function exportarClientesProductos($formato)
+    {
+        // Obtener todos los clientes activos con sus productos
+        $clientes = Cliente::where('estado', 'ACTIVO')
+            ->with(['productos', 'preciosEspeciales'])
+            ->orderBy('nombre')
+            ->get();
+
+        // Preparar datos para el reporte
+        $reportData = [];
+        $totalDiferencia = 0;
+        $clientesProcesados = [];
+
+        foreach ($clientes as $cliente) {
+            foreach ($cliente->productos as $producto) {
+                $precioBase = $producto->valor_producto;
+                $precioEspecial = $cliente->preciosEspeciales
+                    ->where('producto_id', $producto->id)
+                    ->first();
+
+                $diferencia = $precioBase - ($precioEspecial ? $precioEspecial->precio : $precioBase);
+                $porcentaje = $precioBase != 0 ? ($diferencia / $precioBase) * 100 : 0;
+
+                $reportData[] = [
+                    'cliente_id' => $cliente->id,
+                    'cliente_nombre' => $cliente->nombre,
+                    'cliente_contacto' => $cliente->contacto,
+                    'cliente_telefono' => $cliente->telefono,
+                    'cliente_email' => $cliente->email,
+                    'producto_id' => $producto->id,
+                    'producto_nombre' => $producto->nombre,
+                    'categoria' => $producto->categoria,
+                    'precio_base' => $precioBase,
+                    'precio_especial' => $precioEspecial ? $precioEspecial->precio : null,
+                    'diferencia' => $diferencia,
+                    'porcentaje' => $porcentaje,
+                    'producto_activo' => $producto->activo,
+                    'fecha_contrato' => $cliente->created_at->format('d/m/Y')
+                ];
+
+                $totalDiferencia += $diferencia;
+            }
+
+            $clientesProcesados[$cliente->id] = $cliente->nombre;
+        }
+
+        if ($formato === 'excel') {
+            return Excel::download(
+                new ClientesProductosExport($clientes),
+                'clientes_productos_' . now()->format('Ymd') . '.xlsx'
+            );
+        } else {
+            return PDF::loadView('clientes.reporte_clientes_productos', [
+                'datos' => $reportData,
+                'totalClientes' => count($clientesProcesados),
+                'totalDiferencia' => $totalDiferencia
+            ])
+                ->setPaper('a4', 'landscape')
+                ->setOptions([
+                    'margin-top' => 10,
+                    'margin-bottom' => 10,
+                    'margin-left' => 5,
+                    'margin-right' => 5,
+                    'enable-javascript' => true,
+                    'javascript-delay' => 500
+                ])
+                ->download('clientes_productos_' . now()->format('Ymd') . '.pdf');
+        }
     }
 }
