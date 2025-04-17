@@ -116,9 +116,16 @@ class ActividadesController extends Controller
         // Contar estados
         $statusCounts = $actividades->groupBy('estado')->map->count();
 
+        $clientes = Cliente::all();
+        $departamentos = Departamento::all();
+        $cargos = Cargos::all();
+
         return view('Actividades.indexActividades', [
             'actividades' => $actividades,
             'empleados' => $empleados,
+            'clientes' => $clientes,
+            'departamentos' => $departamentos,
+            'cargos' => $cargos,
             'enCursoCount' => $statusCounts->get('EN CURSO', 0),
             'pendienteCount' => $statusCounts->get('PENDIENTE', 0),
             'finalizadoCount' => $statusCounts->get('FINALIZADO', 0),
@@ -254,12 +261,14 @@ class ActividadesController extends Controller
     {
 
         $actividad = Actividades::findOrFail($id);
+        // actualizar actividad
+        $actividad->update($request->all());
         // Actualiza la descripcion
         if ($request->has('descripcion')) {
             $actividad->update($request->only('descripcion'));
             return redirect()->back()->with('success', 'Descripción actualizada correctamente.');
         }
-
+        // Actualiza la tipo de error
         if ($request->has('error')) {
             $actividad->update($request->only('error'));
             return redirect()->back()->with('success', 'Tipo de error actualizado correctamente.');
@@ -292,6 +301,7 @@ class ActividadesController extends Controller
         $actividades->fill($validated);
         $actividades->save();
 
+        //return redirect()->route('actividades.indexActividades')->with('success', 'Actividad actualizada con éxito');
         return redirect()->route('actividades.indexActividades', [
             'start_date' => $request->input('start_date'),
             'end_date' => $request->input('end_date'),
@@ -555,10 +565,7 @@ class ActividadesController extends Controller
                 ->download('servicio_por_hora_' . now()->format('Ymd') . '.pdf');
         }
     }
-
-
-
-
+    
     /**
      * Método para calcular y acumular tiempo transcurrido.
      */
