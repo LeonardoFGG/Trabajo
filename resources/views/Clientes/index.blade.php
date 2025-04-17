@@ -10,8 +10,34 @@
             </div>
         @endif
 
-        <div class="d-flex justify-content-between mb-3">
-            <a href="{{ route('clientes.create') }}" class="btn btn-primary">Crear Cliente</a>
+        <div class="d-flex justify-content-between">
+            <a href="{{ route('clientes.create') }}" class="btn btn-primary btn-lg ms-3"
+                style="margin-left: 1rem;">Crear Cliente</a>
+
+
+            @if (Auth::user()->isAdmin() ||
+                    Auth::user()->isGerenteGeneral() ||
+                    Auth::user()->isAsistenteGerencial() )
+                <div>
+                    <a href="{{ route('clientes.exportar.productos', 'excel') }}" class="btn btn-success">
+                        <i class="fas fa-file-excel"></i> Exportar Excel (Clientes y Productos)
+                    </a>
+                    <a href="{{ route('clientes.exportar.productos', 'pdf') }}" class="btn btn-danger">
+                        <i class="fas fa-file-pdf"></i> Exportar PDF (Clientes y Productos)
+                    </a>
+                </div>
+            @endif
+        </div>
+
+
+        <div class="table-scroll-buttons d-flex justify-content-between mb-3">
+            <button id="scroll-left" class="btn btn-secondary btn-md">
+                <i class="fas fa-chevron-left fa-2x"></i>
+            </button>
+            <button id="scroll-right" class="btn btn-secondary btn-md">
+                <i class="fas fa-chevron-right fa-2x"></i>
+            </button>
+
         </div>
 
         <div class="table-responsive">
@@ -39,7 +65,7 @@
                             <td>{{ $cliente->id }}</td>
                             <td>
                                 @foreach ($cliente->productos as $producto)
-                                    <span>{{$producto->codigo . ' - ' . $producto->nombre}}</span>
+                                    <span>{{ $producto->codigo . ' - ' . $producto->nombre }}</span>
                                     @if (!$loop->last)
                                         ,
                                     @endif
@@ -106,8 +132,69 @@
                 </tbody>
             </table>
         </div>
-        
+
     </div>
+
+    <style>
+        .table-scroll-buttons {
+            display: flex;
+            justify-content: space-between;
+            position: fixed;
+            /* Fija los botones en la pantalla */
+            bottom: 20px;
+            /* Los coloca un poco más arriba de la parte inferior */
+            left: 50%;
+            /* Los coloca en el centro horizontal */
+            transform: translateX(-50%);
+            /* Centra los botones de forma precisa */
+            margin-bottom: 20px;
+            /* Espacio inferior */
+            z-index: 1000;
+            /* Asegura que los botones estén por encima de otros elementos */
+            background-color: #007bff;
+            /* Fondo llamativo (azul) */
+            border-radius: 30px;
+            /* Bordes redondeados */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            /* Sombra más sutil */
+            padding: 8px 16px;
+            /* Reduce el espaciado interior */
+            transition: all 0.3s ease;
+            /* Transición suave para efectos */
+        }
+
+        .table-scroll-buttons:hover {
+            background-color: #0056b3;
+            /* Cambio de color de fondo al pasar el cursor */
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            /* Aumenta la sombra al pasar el cursor */
+        }
+
+        .btn-md {
+            padding: 3px 10px;
+            /* Tamaño reducido para los botones */
+            font-size: 1rem;
+            /* Tamaño de texto reducido */
+            color: white;
+            /* Color de texto blanco */
+            background-color: transparent;
+            /* Fondo transparente para los botones */
+            border: 2px solid white;
+            /* Borde blanco */
+            border-radius: 22px;
+            /* Bordes redondeados */
+            transition: all 0.3s ease;
+            /* Transición suave para efectos */
+        }
+
+        .btn-md:hover {
+            background-color: white;
+            /* Fondo blanco al pasar el cursor */
+            color: #007bff;
+            /* Color de texto azul */
+        }
+    </style>
+
     {{-- SweetAlert script --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -153,6 +240,36 @@
                         form.submit();
                     }
                 })
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Inicializa la DataTable (si usas DataTables)
+            $('#example').DataTable();
+
+            const tableWrapper = document.querySelector(".table-responsive");
+            const scrollLeftBtn = document.getElementById("scroll-left");
+            const scrollRightBtn = document.getElementById("scroll-right");
+
+            // Verifica que tableWrapper se ha seleccionado correctamente
+            if (!tableWrapper) {
+                console.error("El contenedor de la tabla no se encontró.");
+                return;
+            }
+
+            // Agrega funcionalidad a los botones
+            scrollLeftBtn.addEventListener("click", () => {
+                tableWrapper.scrollBy({
+                    left: -200,
+                    behavior: "smooth"
+                });
+            });
+
+            scrollRightBtn.addEventListener("click", () => {
+                tableWrapper.scrollBy({
+                    left: 200,
+                    behavior: "smooth"
+                });
             });
         });
     </script>

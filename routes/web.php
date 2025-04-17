@@ -526,5 +526,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::patch('/permisos/{permiso}/anexo', [PermisoController::class, 'updateAnexo'])->name('permisos.updateAnexo');
 
-
+    Route::get('/clientes/productos/exportar/{formato}', [ClienteController::class, 'exportarClientesProductos'])
+    ->name('clientes.exportar.productos');
+    
 });

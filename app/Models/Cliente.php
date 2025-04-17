@@ -29,8 +29,11 @@ class Cliente extends Model
 
     public function productos()
     {
-       return $this->belongsToMany(Producto::class, 'cliente_producto');
+        return $this->belongsToMany(Producto::class, 'cliente_producto');
     }
 
-
+    public function preciosEspeciales()
+    {
+        return $this->hasMany(PrecioCliente::class);
+    }
 }
