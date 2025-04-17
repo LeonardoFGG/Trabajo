@@ -282,57 +282,87 @@ Ultima Modificación:
                                     {{ $actividad->descripcion }}
                                 </div>
                                 @if (Auth::user()->isAdmin() ||
-                                        Auth::user()->isGerenteGeneral() ||
-                                        Auth::user()->isAsistenteGerencial() ||
-                                        Auth::user()->isSupervisor())
-                                    <!-- Botón para abrir el modal de descripción completa -->
+                                    Auth::user()->isGerenteGeneral() ||
+                                    Auth::user()->isAsistenteGerencial() ||
+                                    Auth::user()->isSupervisor())
+
+                                    <!-- Botón para abrir el modal editable -->
                                     <button type="button" class="btn btn-outline-info btn-sm mt-1"
                                         data-bs-toggle="modal" data-bs-target="#modalVerDescripcion{{ $actividad->id }}">
                                         Ver más
                                     </button>
-                                @endif
-                            </td>
-                            <!-- El modal debe ir despues del </td> -->
-                            <!-- Modal para ver y editar descripción -->
 
-                            <div class="modal fade" id="modalVerDescripcion{{ $actividad->id }}" tabindex="-1"
-                                aria-labelledby="modalVerDescripcionLabel{{ $actividad->id }}" aria-hidden="true">
-                                <div class="modal-dialog modal-lg">
-                                    <div class="modal-content">
-                                        <form action="{{ route('actividades.update', $actividad->id) }}" method="POST">
-                                            @csrf
-                                            @method('PUT')
-                                            <input type="hidden" name="start_date" value="{{ request('start_date') }}">
-                                            <input type="hidden" name="end_date" value="{{ request('end_date') }}">
-                                            <input type="hidden" name="empleado_id"
-                                                value="{{ request('empleado_id') }}">
+                                    <!-- Modal editable -->
+                                    <div class="modal fade" id="modalVerDescripcion{{ $actividad->id }}" tabindex="-1"
+                                        aria-labelledby="modalVerDescripcionLabel{{ $actividad->id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <form action="{{ route('actividades.update', $actividad->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <input type="hidden" name="start_date" value="{{ request('start_date') }}">
+                                                    <input type="hidden" name="end_date" value="{{ request('end_date') }}">
+                                                    <input type="hidden" name="empleado_id" value="{{ request('empleado_id') }}">
 
-                                            <div class="modal-header">
-                                                <h5 class="modal-title"
-                                                    id="modalVerDescripcionLabel{{ $actividad->id }}">
-                                                    Descripción Completa
-                                                </h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Cerrar"></button>
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="modalVerDescripcionLabel{{ $actividad->id }}">
+                                                            Descripción Completa
+                                                        </h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                                    </div>
+
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                            <label for="descripcion">Editar Descripción:</label>
+                                                            <textarea name="descripcion" class="form-control" rows="6" required>{{ $actividad->descripcion }}</textarea>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                                                    </div>
+                                                </form>
                                             </div>
-
-                                            <div class="modal-body">
-                                                <div class="form-group">
-                                                    <label for="descripcion">Editar Descripción:</label>
-                                                    <textarea name="descripcion" class="form-control" rows="6" required>{{ $actividad->descripcion }}</textarea>
-                                                </div>
-                                            </div>
-
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-bs-dismiss="modal">Cerrar</button>
-                                                <button type="submit" class="btn btn-primary">Guardar cambios</button>
-                                            </div>
-                                        </form>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
 
+                                @elseif (Auth::check())
+                                    <!-- Botón para abrir el modal de solo lectura -->
+                                    <button type="button" class="btn btn-outline-info btn-sm mt-1"
+                                        data-bs-toggle="modal" data-bs-target="#modalVerDescripcionSoloLectura{{ $actividad->id }}">
+                                        Ver más
+                                    </button>
+
+                                    <!-- Modal de solo lectura -->
+                                    <div class="modal fade" id="modalVerDescripcionSoloLectura{{ $actividad->id }}" tabindex="-1"
+                                        aria-labelledby="modalVerDescripcionSoloLecturaLabel{{ $actividad->id }}" aria-hidden="true">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="modalVerDescripcionSoloLecturaLabel{{ $actividad->id }}">
+                                                        Descripción Completa
+                                                    </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                                                </div>
+
+                                                <div class="modal-body">
+                                                    <div class="form-group">
+                                                        <label for="descripcion">Descripción:</label>
+                                                        <pre class="border p-3" style="background-color: #f8f9fa; white-space: pre-wrap;">{{ trim($actividad->descripcion) }}
+                                                        </pre>                                                        
+                                                    </div>
+                                                </div>
+
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
 
                             <td>
                                 <span>{{ $actividad->error ?? 'N/A' }}</span><br>
@@ -607,6 +637,18 @@ Ultima Modificación:
                                         class="btn btn-warning btn-sm" title="Editar">
                                         <i class="fas fa-edit fa-md"></i>
                                     </a>
+                                    <!-- Botón que abre modal VER -->
+                                        <button type="button" class="btn btn-info btn-sm" title="Ver"
+                                        data-bs-toggle="modal" data-bs-target="#modalShow{{ $actividad->id }}">
+                                        <i class="fas fa-eye fa-md"></i>
+                                    </button>
+
+                                    <!-- Botón que abre modal EDITAR -->
+                                    <button type="button" class="btn btn-warning btn-sm" title="Editar"
+                                        data-bs-toggle="modal" data-bs-target="#modalEdit{{ $actividad->id }}">
+                                        <i class="fas fa-edit fa-md"></i>
+                                    </button>
+
                                     <form action="{{ route('actividades.destroy', $actividad->id) }}" method="POST"
                                         class="d-inline form-delete">
                                         @csrf
@@ -625,9 +667,18 @@ Ultima Modificación:
                                         <i class="fas fa-eye fa-md"></i>
                                     </a>
                                 @endif
+                                @include('actividades.modals.show', ['actividad' => $actividad])
+                                @include('actividades.modals.edit', [
+                                    'actividad' => $actividad,
+                                    'clientes' => $clientes,
+                                    'empleados' => $empleados,
+                                    'departamentos' => $departamentos,
+                                    'cargos' => $cargos
+                                ])
                             </td>
                         </tr>
                     @endforEach
+                    
                 </tbody>
             </table>
             @foreach ($actividades as $actividad)

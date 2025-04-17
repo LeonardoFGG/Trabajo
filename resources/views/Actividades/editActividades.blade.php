@@ -82,7 +82,21 @@
                                         </select>
                                     </div>
                                     <!-- Campo Producto -->
-                                       
+                                    <div class="form-group mb-4">
+                                        <label for="producto_id">Producto</label>
+                                        <select name="producto_id" id="producto_id" class="form-control" required>
+                                            <option value="">Seleccione un producto</option>
+                                            @foreach ($productos as $producto)
+                                                <option value="{{ $producto->id }}"
+                                                    {{ old('producto_id', $actividad->producto_id ?? '') == $producto->id ? 'selected' : '' }}>
+                                                    {{ $producto->codigo . ' - ' . $producto->nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        @if ($errors->has('producto_id'))
+                                            <small class="text-danger">{{ $errors->first('producto_id') }}</small>
+                                        @endif
+                                    </div>    
                                 </div>
                             </fieldset>
 

@@ -161,6 +161,7 @@
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror
+                            
                         </div>
                         <div class="group">
                             <label for="password" class="label">Contraseña</label>
