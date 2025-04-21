@@ -137,10 +137,20 @@
                                 @endif
                             </td>
                             <td class="text-center">
-                                <a href="{{ route('empleados.show', $empleado->id) }}" class="btn btn-info btn-sm"
-                                    title="Ver"><i class="fas fa-eye fa-md"></i></a>
-                                <a href="{{ route('empleados.edit', $empleado->id) }}" class="btn btn-warning btn-sm"
-                                    title="Editar"><i class="fas fa-edit fa-md"></i></a>
+                                <!-- <a href="{{ route('empleados.show', $empleado->id) }}" class="btn btn-info btn-sm"
+                                    title="Ver"><i class="fas fa-eye fa-md"></i></a> -->
+                                 <!-- Botón que abre modal VER DETALLES DEL EMPLEADO -->
+                                <button type="button" class="btn btn-info btn-sm" title="Ver"
+                                    data-bs-toggle="modal" data-bs-target="#modalShowEmpleado{{ $empleado->id }}">
+                                    <i class="fas fa-eye fa-md"></i>
+                                </button>
+                                <!-- <a href="{{ route('empleados.edit', $empleado->id) }}" class="btn btn-warning btn-sm"
+                                    title="Editar"><i class="fas fa-edit fa-md"></i></a> -->
+                                <button type="button" class="btn btn-warning btn-sm" title="Editar"
+                                    data-bs-toggle="modal" data-bs-target="#modalEditEmpleado{{ $empleado->id }}">
+                                    <i class="fas fa-edit fa-md"></i>
+                                </button>                                                              
+
                                 <form action="{{ route('empleados.destroy', $empleado->id) }}" method="POST"
                                     class="d-inline form-delete">
                                     @csrf
@@ -151,6 +161,9 @@
                                 </form>
                             </td>
                         </tr>
+                        @include('Empleados.modals.showEmpleados', ['empleado' => $empleado])
+                        @include('Empleados.modals.editEmpleados', ['empleado' => $empleado, 'departamentos' => $departamentos, 'supervisores' => $supervisores, 'cargos' => $cargos, 'rubros' => $rubros])
+
                     @endforeach
                 </tbody>
             </table>
@@ -322,5 +335,134 @@
                 }, 5000); // 5000 milisegundos = 5 segundos
             }
         });
+    </script>
+    <!-- scripts del modal -->
+    <script>
+        function filterSupervisores() {
+    var departamentoId = document.getElementById('departamento').value;
+
+    // Filtrar supervisores
+    if (departamentoId) {
+        fetch(`/supervisores/departamento/${departamentoId}`)
+            .then(response => response.json())
+            .then(data => {
+                var supervisorSelect = document.getElementById('supervisor_id'); // Este es el select de supervisor
+                supervisorSelect.innerHTML = '<option value="">Selecciona un Supervisor</option>';
+
+                data.supervisores.forEach(supervisor => {
+                    var option = document.createElement('option');
+                    option.value = supervisor.empleado_id;
+                    option.textContent = supervisor.nombre_supervisor;
+
+                    // Si el supervisor seleccionado es el supervisor de este departamento, seleccionarlo
+                    if (supervisor.empleado_id == document.getElementById('departamento').selectedOptions[0].getAttribute('data-supervisor-id')) {
+                        option.selected = true; // Marcar como seleccionado
+                    }
+
+                    supervisorSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    } else {
+        // Limpiar el campo supervisor si no se ha seleccionado departamento
+        var supervisorSelect = document.getElementById('supervisor_id');
+        supervisorSelect.innerHTML = '<option value="">Selecciona un Supervisor</option>';
+    }
+
+    // Filtrar cargos (si es necesario en tu caso, sigue usando el mismo código que ya tienes)
+    var cargoSelect = document.getElementById('cargo');
+    var options = cargoSelect.getElementsByTagName('option');
+    var cargosDisponibles = false;
+
+    Array.from(options).forEach(option => {
+        var cargoDepartamentoId = option.getAttribute('data-departamento-id');
+        if (cargoDepartamentoId === departamentoId) {
+            option.style.display = 'block'; 
+            cargosDisponibles = true; 
+        } else {
+            option.style.display = 'none'; 
+        }
+    });
+
+    // Si no hay cargos disponibles, mostrar mensaje
+    var noCargosOption = cargoSelect.querySelector('option[disabled]');
+    if (!noCargosOption) {
+        if (!cargosDisponibles) {
+            noCargosOption = document.createElement('option');
+            noCargosOption.disabled = true;
+            noCargosOption.selected = true;
+            noCargosOption.textContent = 'No hay cargos disponibles para este departamento';
+            cargoSelect.appendChild(noCargosOption);
+        }
+    } else {
+        if (cargosDisponibles) {
+            noCargosOption.remove();
+        }
+    }
+}
+
+  const montosIngresados = {};
+        document.getElementById('rubros').addEventListener('change', function(event) {
+            const montosContainer = document.getElementById('montos-container');
+            montosContainer.innerHTML = '';
+
+            // Obtener todos los checkboxes seleccionados
+            const checkboxes = document.querySelectorAll('#rubros input[type="checkbox"]:checked');
+            if (checkboxes.length === 0) {
+                // Si no hay rubros seleccionados, asignar valor 0 por defecto
+                const montoDiv = document.createElement('div');
+                montoDiv.className = 'form-group mb-3';
+
+                const label = document.createElement('label');
+                label.textContent = 'Monto para Rubros';
+                label.htmlFor = 'montoGeneral';
+
+                const montoGeneral = document.createElement('input');
+                montoGeneral.type = 'number';
+                montoGeneral.className = 'form-control';
+                montoGeneral.id = 'montoGeneral';
+                montoGeneral.name = 'montos[general]';
+                montoGeneral.value = 0;
+                montoGeneral.placeholder = 'Monto';
+
+                montoDiv.appendChild(label);
+                montoDiv.appendChild(montoGeneral);
+                montosContainer.appendChild(montoDiv);
+            }
+
+            // Crear inputs para montos de rubros seleccionados
+            checkboxes.forEach(function(checkbox) {
+                const rubroId = checkbox.value;
+                const rubroNombre = checkbox.nextElementSibling.textContent;
+
+                // Crear un div para cada monto
+                const montoDiv = document.createElement('div');
+                montoDiv.className = 'form-group mb-3';
+
+                // Etiqueta para el rubro
+                const label = document.createElement('label');
+                label.textContent = `Monto para ${rubroNombre}`;
+                label.htmlFor = `monto${rubroId}`;
+
+                // Campo de entrada para el monto
+                const montoInput = document.createElement('input');
+                montoInput.type = 'number';
+                montoInput.className = 'form-control';
+                montoInput.id = `monto${rubroId}`;
+                montoInput.name = `montos[${rubroId}]`;
+                montoInput.value = 0; // Set value to 0 by default
+                montoInput.placeholder = 'Ingrese el monto';
+
+                // Agregar los elementos al div
+                montoDiv.appendChild(label);
+                montoDiv.appendChild(montoInput);
+
+                // Agregar el div al contenedor
+                montosContainer.appendChild(montoDiv);
+            });
+        });
+
+	
+
     </script>
 @endsection

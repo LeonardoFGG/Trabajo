@@ -120,6 +120,41 @@ class ActividadesController extends Controller
         $departamentos = Departamento::all();
         $cargos = Cargos::all();
 
+        //verificacion de avance de actividad, seleccionar tiempo limite para actividades olvidadas
+        $now = Carbon::now()->setTimezone('America/Guayaquil');
+        $limiteMinutos = 45; // Para pruebas; cambiar a 480 (8h) luego
+
+        $actividadesExcedidas = \App\Models\Actividades::where('estado', 'EN CURSO')
+            ->whereNotNull('tiempo_inicio')
+            ->get();
+
+        foreach ($actividadesExcedidas as $actividad) {
+            $inicio = Carbon::parse($actividad->tiempo_inicio)->setTimezone('America/Guayaquil');
+            $transcurrido = $now->diffInMinutes($inicio);
+
+            if (($actividad->tiempo_acumulado_minutos + $transcurrido) >= $limiteMinutos) {
+                $totalMin = $actividad->tiempo_acumulado_minutos + $transcurrido;
+
+                $actividad->estado = 'FINALIZADO';
+                $actividad->tiempo_acumulado_minutos += $transcurrido;
+                $actividad->tiempo_inicio = null; // Cortar el conteo
+                $actividad->fecha_fin = now();
+                // Calcular y guardar el tiempo real
+                $horas = floor($actividad->tiempo_acumulado_minutos / 60);
+                $minutos = $actividad->tiempo_acumulado_minutos % 60;
+
+                $actividad->tiempo_real_horas = $horas;
+                $actividad->tiempo_real_minutos = $minutos;
+
+                $actividad->save();
+                // mostrar notificacion de actividad finalizada automatticente
+                if (Auth::user()->empleado && Auth::user()->empleado->id === $actividad->empleado_id) {
+                    session()->push('actividades_finalizadas_auto', 'La actividad "' . $actividad->descripcion . '" fue finalizada automáticamente por superar el tiempo máximo permitido.');
+                }
+            }
+        }
+
+
         return view('Actividades.indexActividades', [
             'actividades' => $actividades,
             'empleados' => $empleados,

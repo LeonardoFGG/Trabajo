@@ -166,7 +166,7 @@
                     </div>
                 </fieldset>
             </div>
-
+            <!-- Botones de acción -->
             <div class="modal-footer">
                 <button type="submit" class="btn btn-success">
                     <i class="fas fa-save"></i> Actualizar

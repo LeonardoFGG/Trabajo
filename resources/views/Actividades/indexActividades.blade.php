@@ -17,6 +17,14 @@ Ultima Modificación:
                 {{ session('success') }}
             </div>
         @endif
+        @if (session('actividades_finalizadas_auto'))
+            @foreach (session('actividades_finalizadas_auto') as $mensaje)
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>Atención:</strong> {{ $mensaje }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            @endforeach
+        @endif
 
         @if ($errors->has('error'))
             <div class="alert alert-danger d-flex align-items-center" id="error-message" role="alert">
@@ -659,8 +667,8 @@ Ultima Modificación:
                                         <i class="fas fa-eye fa-md"></i>
                                     </a>
                                 @endif
-                                @include('actividades.modals.show', ['actividad' => $actividad])
-                                @include('actividades.modals.edit', [
+                                @include('Actividades.modals.show', ['actividad' => $actividad])
+                                @include('Actividades.modals.edit', [
                                     'actividad' => $actividad,
                                     'clientes' => $clientes,
                                     'empleados' => $empleados,
