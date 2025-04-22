@@ -26,8 +26,9 @@ use App\Http\Controllers\ServicioTecnicoController;
 use App\Http\Controllers\PermisoController;
 use App\Models\User;
 use App\Models\Actividades;
-
+use App\Models\Paquete;
 use App\Models\Producto;
+use App\Models\Ventas;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -528,5 +529,13 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/clientes/productos/exportar/{formato}', [ClienteController::class, 'exportarClientesProductos'])
     ->name('clientes.exportar.productos');
-    
+
+    // Rutas básicas para el CRUD de ventas
+Route::resource('ventas', VentaController::class);
+
+// Rutas adicionales para el workflow
+Route::put('ventas/{venta}/pausar', [VentaController::class, 'pausar'])->name('ventas.pausar');
+Route::put('ventas/{venta}/reanudar', [VentaController::class, 'reanudar'])->name('ventas.reanudar');
+Route::post('ventas/{venta}/avanzar-estado', [VentaController::class, 'avanzarEstado'])->name('ventas.avanzar-estado');
+
 });
