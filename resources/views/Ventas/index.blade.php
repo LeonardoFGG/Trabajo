@@ -28,66 +28,6 @@
         </div>
     @endif
 
-    <!-- Panel Visual del Workflow -->
-    <div class="card mb-4">
-        <div class="card-header bg-light">
-            <h5 class="mb-0">Workflow de Ventas</h5>
-        </div>
-        <div class="card-body">
-            <div class="workflow-container">
-                <div class="workflow-steps">
-                    <div class="step active" data-estado="Prospección">
-                        <div class="step-icon">
-                            <i class="fas fa-search"></i>
-                        </div>
-                        <div class="step-label">Prospección</div>
-                        <div class="step-count">{{ $ventas->where('estado_comercial', 'Prospección')->count() }}</div>
-                    </div>
-                    <div class="step-connector"></div>
-                    <div class="step" data-estado="Contacto">
-                        <div class="step-icon">
-                            <i class="fas fa-phone"></i>
-                        </div>
-                        <div class="step-label">Contacto</div>
-                        <div class="step-count">{{ $ventas->where('estado_comercial', 'Contacto')->count() }}</div>
-                    </div>
-                    <div class="step-connector"></div>
-                    <div class="step" data-estado="Presentación">
-                        <div class="step-icon">
-                            <i class="fas fa-file-powerpoint"></i>
-                        </div>
-                        <div class="step-label">Presentación</div>
-                        <div class="step-count">{{ $ventas->where('estado_comercial', 'Presentación')->count() }}</div>
-                    </div>
-                    <div class="step-connector"></div>
-                    <div class="step" data-estado="Propuesta">
-                        <div class="step-icon">
-                            <i class="fas fa-file-contract"></i>
-                        </div>
-                        <div class="step-label">Propuesta</div>
-                        <div class="step-count">{{ $ventas->where('estado_comercial', 'Propuesta')->count() }}</div>
-                    </div>
-                    <div class="step-connector"></div>
-                    <div class="step" data-estado="Negociación">
-                        <div class="step-icon">
-                            <i class="fas fa-handshake"></i>
-                        </div>
-                        <div class="step-label">Negociación</div>
-                        <div class="step-count">{{ $ventas->where('estado_comercial', 'Negociación')->count() }}</div>
-                    </div>
-                    <div class="step-connector"></div>
-                    <div class="step" data-estado="Cierre">
-                        <div class="step-icon">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="step-label">Cierre</div>
-                        <div class="step-count">{{ $ventas->where('estado_comercial', 'Cierre')->count() }}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Estadísticas de Ventas -->
     <div class="row mb-4">
         <div class="col-md-3">
@@ -123,6 +63,67 @@
             </div>
         </div>
     </div>
+
+    <!-- Panel Visual del Workflow -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Workflow de Ventas</h5>
+        </div>
+        <div class="card-body">
+            <div class="workflow-container">
+                <div class="workflow-steps d-flex flex-nowrap overflow-auto">
+                    <div class="step active" data-estado="Prospección">
+                        <div class="step-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div class="step-label">Prospección</div>
+                        <div class="step-count">{{ $ventas->where('estado_comercial', 'Prospección')->count() }}</div>
+                    </div>
+                    <div class="step-connector align-self-center"></div>
+                    <div class="step" data-estado="Contacto">
+                        <div class="step-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="step-label">Contacto</div>
+                        <div class="step-count">{{ $ventas->where('estado_comercial', 'Contacto')->count() }}</div>
+                    </div>
+                    <div class="step-connector align-self-center"></div>
+                    <div class="step" data-estado="Presentación">
+                        <div class="step-icon">
+                            <i class="fas fa-file-powerpoint"></i>
+                        </div>
+                        <div class="step-label">Presentación</div>
+                        <div class="step-count">{{ $ventas->where('estado_comercial', 'Presentación')->count() }}</div>
+                    </div>
+                    <div class="step-connector align-self-center"></div>
+                    <div class="step" data-estado="Propuesta">
+                        <div class="step-icon">
+                            <i class="fas fa-file-contract"></i>
+                        </div>
+                        <div class="step-label">Propuesta</div>
+                        <div class="step-count">{{ $ventas->where('estado_comercial', 'Propuesta')->count() }}</div>
+                    </div>
+                    <div class="step-connector align-self-center"></div>
+                    <div class="step" data-estado="Negociación">
+                        <div class="step-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <div class="step-label">Negociación</div>
+                        <div class="step-count">{{ $ventas->where('estado_comercial', 'Negociación')->count() }}</div>
+                    </div>
+                    <div class="step-connector align-self-center"></div>
+                    <div class="step" data-estado="Cierre">
+                        <div class="step-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="step-label">Cierre</div>
+                        <div class="step-count">{{ $ventas->where('estado_comercial', 'Cierre')->count() }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 
     <!-- Tabla de Ventas con Tabs -->
     <div class="card">
@@ -181,6 +182,66 @@
     </div>
 </div>
 
+<style>
+    .workflow-steps {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+    .step {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 100px;
+        padding: 10px;
+        position: relative;
+    }
+    .step-connector {
+        flex: 1;
+        height: 2px;
+        background-color: #dee2e6;
+        min-width: 20px;
+        margin: 0 5px;
+        align-self: center;
+    }
+    .step-icon {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+    }
+    .step-label {
+        font-size: 0.85rem;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+    .step-count {
+        background-color: #f8f9fa;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+    }
+
+    .step.active .step-icon {
+        color: #007bff;
+    }
+
+    .step.active .step-label {
+        font-weight: bold;
+    }
+
+    .step.active .step-count {
+        background-color: #007bff;
+        color: white;
+    }
+    
+   
+    </style>
+
+
 <!-- Modal para crear venta -->
 @include('ventas.partials.create-modal')
 
@@ -191,71 +252,7 @@
 
 @section('styles')
 <style>
-    .workflow-container {
-        overflow-x: auto;
-        padding: 15px 0;
-    }
-    
-    .workflow-steps {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        min-width: 800px;
-        margin: 0 auto;
-    }
-    
-    .step {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        cursor: pointer;
-        transition: all 0.3s;
-        width: 100px;
-    }
-    
-    .step:hover {
-        transform: translateY(-5px);
-    }
-    
-    .step-icon {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background-color: #e9ecef;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 10px;
-        font-size: 24px;
-        color: #6c757d;
-        transition: all 0.3s;
-    }
-    
-    .step.active .step-icon {
-        background-color: #007bff;
-        color: #fff;
-    }
-    
-    .step-label {
-        font-weight: 600;
-        text-align: center;
-    }
-    
-    .step-count {
-        background-color: #f8f9fa;
-        color: #495057;
-        border-radius: 20px;
-        padding: 2px 10px;
-        font-size: 14px;
-        margin-top: 5px;
-    }
-    
-    .step-connector {
-        flex-grow: 1;
-        height: 3px;
-        background-color: #dee2e6;
-        margin: 0 10px;
-    }
+   
     
     /* Para los estados de las ventas */
     .badge.bg-secondary { opacity: 0.8; }
