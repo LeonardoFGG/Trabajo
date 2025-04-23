@@ -291,7 +291,7 @@ class ClienteController extends Controller
                 'clientes_productos_' . now()->format('Ymd') . '.xlsx'
             );
         } else {
-            return PDF::loadView('clientes.reporte_clientes_productos', [
+            return PDF::loadView('Clientes.reporte_clientes_productos', [
                 'datos' => $reportData,
                 'totalClientes' => count($clientesProcesados),
                 'totalDiferencia' => $totalDiferencia

@@ -307,8 +307,10 @@ class ActividadesController extends Controller
         $actividad = Actividades::findOrFail($id);
         // actualizar actividad
         $actividad->update($request->all());
-        // Actualiza la descripcions
-
+        // Actualiza la descripcion
+        
+      
+        
         $validated = $request->validate([
             'cliente_id' => 'required|string|max:255',
             'producto_id' => 'required|exists:productos,id',
@@ -337,12 +339,13 @@ class ActividadesController extends Controller
         $actividades->fill($validated);
         $actividades->save();
 
-        //return redirect()->route('actividades.indexActividades')->with('success', 'Actividad actualizada con éxito');
+        // Redirigir a la vista de actividades con un mensaje de éxito
         return redirect()->route('actividades.indexActividades', [
             'start_date' => $request->input('start_date'),
             'end_date' => $request->input('end_date'),
             'empleado_id' => $request->input('empleado_id')
-        ])->with('success', 'Actividad actualizada con éxito.');
+        ])->with('success', 'Actividad actualizada con éxito.', request()->all());
+
     }
 
     public function updateDescripcion(Request $request, $id)

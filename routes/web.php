@@ -27,8 +27,9 @@ use App\Http\Controllers\Auth\PerfilController;
 use App\Http\Controllers\PermisoController;
 use App\Models\User;
 use App\Models\Actividades;
-
+use App\Models\Paquete;
 use App\Models\Producto;
+use App\Models\Ventas;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -542,5 +543,14 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/actividades/{id}/descripcion', [ActividadesController::class, 'updateDescripcion'])->name('actividades.updateDescripcion');
     //ruta para actualizar tipo de error
     Route::put('/actividades/{id}/error', [ActividadesController::class, 'updateError'])->name('actividades.updateError');
+
+
+    // Rutas básicas para el CRUD de ventas
+Route::resource('ventas', VentaController::class);
+
+// Rutas adicionales para el workflow
+Route::put('ventas/{venta}/pausar', [VentaController::class, 'pausar'])->name('ventas.pausar');
+Route::put('ventas/{venta}/reanudar', [VentaController::class, 'reanudar'])->name('ventas.reanudar');
+Route::post('ventas/{venta}/avanzar-estado', [VentaController::class, 'avanzarEstado'])->name('ventas.avanzar-estado');
 
 });

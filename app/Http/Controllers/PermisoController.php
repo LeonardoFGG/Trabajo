@@ -18,9 +18,9 @@ class PermisoController extends Controller
         $user = Auth::user();
         $empleadoId = $request->input('empleado_id');
         $fechaSeleccionada = $request->input('fecha'); // No hay valor por defecto
-    
+
         $permisosQuery = Permiso::with(['empleado', 'aprobadoPor']);
-    
+
         // Filtros según el rol del usuario
         if ($user->isAdmin()) {
             $permisosQuery->when($empleadoId, function ($query) use ($empleadoId) {
@@ -48,16 +48,16 @@ class PermisoController extends Controller
         } else {
             return redirect()->route('home')->with('error', 'No tienes permisos para acceder a esta página');
         }
-    
+
         if ($request->filled('start_date') && $request->filled('end_date')) {
             $startDate = Carbon::parse($request->input('start_date'))->startOfDay();
             $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
             $permisosQuery->whereBetween('fecha_salida', [$startDate, $endDate]);
         }
-    
+
         // Ordenar por fecha de salida descendente (últimos primero)
         $permisos = $permisosQuery->orderBy('fecha_salida', 'desc')->get();
-    
+
         // Calcular horas no justificadas
         $horasNoJustificadasPorEmpleado = [];
         foreach ($permisos as $permiso) {
@@ -65,14 +65,14 @@ class PermisoController extends Controller
                 $horaSalida = \Carbon\Carbon::createFromFormat('H:i:s', $permiso->hora_salida);
                 $horaRegreso = \Carbon\Carbon::createFromFormat('H:i:s', $permiso->hora_regreso);
                 $duracion = $horaSalida->diffInMinutes($horaRegreso) / 60;
-    
+
                 if (!isset($horasNoJustificadasPorEmpleado[$permiso->empleado_id])) {
                     $horasNoJustificadasPorEmpleado[$permiso->empleado_id] = 0;
                 }
                 $horasNoJustificadasPorEmpleado[$permiso->empleado_id] += $duracion;
             }
         }
-    
+
         return view('Permisos.index', compact('permisos', 'empleados', 'horasNoJustificadasPorEmpleado'));
     }
 
@@ -182,7 +182,10 @@ class PermisoController extends Controller
             'duracion' => $duracion,
         ]);
 
-        return redirect()->route('permisos.index')->with('success', 'Hora de regreso actualizada con éxito.');
+        // Obtener todos los parámetros de filtro de la solicitud
+        $filtros = $request->only(['empleado_id', 'start_date', 'end_date', 'filtro', 'semana', 'mes']);
+
+        return redirect()->route('permisos.index', $filtros)->with('success', 'Hora de regreso actualizada con éxito.');
     }
 
     public function updateAnexo(Request $request, $id)
@@ -193,7 +196,7 @@ class PermisoController extends Controller
 
         $permiso = Permiso::findOrFail($id);
 
-        
+
 
         // Guardar el nuevo archivo
         if ($request->hasFile('anexos')) {
@@ -202,8 +205,12 @@ class PermisoController extends Controller
             $permiso->save();
         }
 
-        return redirect()->route('permisos.index')->with('success', 'Anexo actualizado correctamente.');
+        // Obtener todos los parámetros de filtro de la solicitud
+        $filtros = $request->only(['empleado_id', 'start_date', 'end_date', 'filtro', 'semana', 'mes']);
+        // Redirigir manteniendo los filtros
+        return redirect()->route('permisos.index', $filtros)->with('success', 'Anexo actualizado correctamente.');
     }
+
 
     public function destroy($id)
     {
@@ -244,7 +251,10 @@ class PermisoController extends Controller
 
             $permiso->save();
 
-            return redirect()->route('permisos.index')
+            // Obtener todos los parámetros de filtro de la solicitud
+            $filtros = $request->only(['empleado_id', 'start_date', 'end_date', 'filtro', 'semana', 'mes']);
+
+            return redirect()->route('permisos.index' , $filtros)
                 ->with('success', 'Estado del permiso actualizado correctamente.');
         } else {
             // Si no cumple ninguna de las condiciones, denegar acceso
