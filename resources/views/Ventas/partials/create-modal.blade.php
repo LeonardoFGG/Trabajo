@@ -5,7 +5,7 @@
                 <h5 class="modal-title" id="createVentaModalLabel">Nueva Venta - Workflow</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            
+
             <form id="ventaForm" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
@@ -39,30 +39,33 @@
                         <div class="mb-3">
                             <label class="form-label fw-bold">Tipo de Venta *</label>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tipo_venta" id="tipo_interna" value="Interna" checked>
+                                <input class="form-check-input" type="radio" name="tipo_venta" id="tipo_interna"
+                                    value="Interna" checked>
                                 <label class="form-check-label" for="tipo_interna">
                                     Venta Interna (Cliente existente)
                                 </label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="tipo_venta" id="tipo_externa" value="Externa">
+                                <input class="form-check-input" type="radio" name="tipo_venta" id="tipo_externa"
+                                    value="Externa">
                                 <label class="form-check-label" for="tipo_externa">
                                     Venta Externa (Nuevo cliente)
                                 </label>
                             </div>
                         </div>
-                        
+
                         <!-- Contenedor para cliente existente -->
                         <div class="mb-3" id="clienteExistenteContainer">
                             <label for="cliente_id" class="form-label">Seleccione un Cliente *</label>
                             <select class="form-select" id="cliente_id" name="cliente_id" required>
                                 <option value="">-- Seleccione un cliente --</option>
-                                @foreach($clientes as $cliente)
-                                    <option value="{{ $cliente->id }}">{{ $cliente->nombre }} - {{ $cliente->telefono }}</option>
+                                @foreach ($clientes as $cliente)
+                                    <option value="{{ $cliente->id }}">{{ $cliente->nombre }} -
+                                        {{ $cliente->telefono }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        
+
                         <!-- Contenedor para nuevo cliente -->
                         <div class="mb-3 d-none" id="nuevoClienteContainer">
                             <h5 class="mb-3">Datos del Nuevo Cliente</h5>
@@ -91,13 +94,14 @@
                                 <input type="text" class="form-control" id="contacto" name="contacto">
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="empleado_id" class="form-label">Responsable de Venta *</label>
                             <select class="form-select" id="empleado_id" name="empleado_id" required>
                                 <option value="">-- Seleccione un empleado --</option>
-                                @foreach($empleados as $empleado)
-                                    <option value="{{ $empleado->id }}">{{ $empleado->nombre1 }} {{ $empleado->apellido1 }}</option>
+                                @foreach ($empleados as $empleado)
+                                    <option value="{{ $empleado->id }}">{{ $empleado->nombre1 }}
+                                        {{ $empleado->apellido1 }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -118,7 +122,8 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="fecha_contacto" class="form-label">Fecha de Contacto *</label>
-                                <input type="date" class="form-control" id="fecha_contacto" name="fecha_contacto">
+                                <input type="date" class="form-control" id="fecha_contacto"
+                                    name="fecha_contacto">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="canal_comunicacion" class="form-label">Canal de Comunicación *</label>
@@ -142,7 +147,8 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="fecha_presentacion" class="form-label">Fecha de Presentación *</label>
-                                <input type="date" class="form-control" id="fecha_presentacion" name="fecha_presentacion">
+                                <input type="date" class="form-control" id="fecha_presentacion"
+                                    name="fecha_presentacion">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="tipo_item_venta" class="form-label">Tipo de Item *</label>
@@ -157,7 +163,7 @@
                             <label for="producto_id" class="form-label">Producto</label>
                             <select class="form-select" id="producto_id" name="producto_id">
                                 <option value="">-- Seleccione un producto --</option>
-                                @foreach($productos as $producto)
+                                @foreach ($productos as $producto)
                                     <option value="{{ $producto->id }}" data-precio="{{ $producto->valor_producto }}">
                                         {{ $producto->nombre }} - ${{ number_format($producto->valor_producto, 2) }}
                                     </option>
@@ -169,7 +175,7 @@
                             <label for="paquete_id" class="form-label">Paquete</label>
                             <select class="form-select" id="paquete_id" name="paquete_id">
                                 <option value="">-- Seleccione un paquete --</option>
-                                @foreach($paquetes as $paquete)
+                                @foreach ($paquetes as $paquete)
                                     <option value="{{ $paquete->id }}" data-precio="{{ $paquete->precio }}">
                                         {{ $paquete->nombre }} - ${{ number_format($paquete->precio, 2) }}
                                     </option>
@@ -185,16 +191,20 @@
                         <!-- Sección para múltiples productos -->
                         <div class="mb-3">
                             <label class="form-label">Productos Adicionales</label>
-                            @foreach($productos as $producto)
+                            @foreach ($productos as $producto)
                                 <div class="row mb-2">
                                     <div class="col-md-6">
-                                        <label>{{ $producto->nombre }} (${{ number_format($producto->valor_producto, 2) }})</label>
+                                        <label>{{ $producto->nombre }}
+                                            (${{ number_format($producto->valor_producto, 2) }})
+                                        </label>
                                     </div>
                                     <div class="col-md-3">
-                                        <input type="number" name="productos[{{ $producto->id }}]" class="form-control" min="0" value="0">
+                                        <input type="number" name="productos[{{ $producto->id }}]"
+                                            class="form-control" min="0" value="0">
                                     </div>
                                     <div class="col-md-3">
-                                        <input type="text" name="notas_producto[{{ $producto->id }}]" class="form-control" placeholder="Notas">
+                                        <input type="text" name="notas_producto[{{ $producto->id }}]"
+                                            class="form-control" placeholder="Notas">
                                     </div>
                                 </div>
                             @endforeach
@@ -203,16 +213,20 @@
                         <!-- Sección para múltiples paquetes -->
                         <div class="mb-3">
                             <label class="form-label">Paquetes Adicionales</label>
-                            @foreach($paquetes as $paquete)
+                            @foreach ($paquetes as $paquete)
                                 <div class="row mb-2">
                                     <div class="col-md-6">
-                                        <label>{{ $paquete->nombre }} (${{ number_format($paquete->precio, 2) }})</label>
+                                        <label>{{ $paquete->nombre }}
+                                            (${{ number_format($paquete->precio, 2) }})
+                                        </label>
                                     </div>
                                     <div class="col-md-3">
-                                        <input type="number" name="paquetes[{{ $paquete->id }}]" class="form-control" min="0" value="0">
+                                        <input type="number" name="paquetes[{{ $paquete->id }}]"
+                                            class="form-control" min="0" value="0">
                                     </div>
                                     <div class="col-md-3">
-                                        <input type="text" name="notas_paquete[{{ $paquete->id }}]" class="form-control" placeholder="Notas">
+                                        <input type="text" name="notas_paquete[{{ $paquete->id }}]"
+                                            class="form-control" placeholder="Notas">
                                     </div>
                                 </div>
                             @endforeach
@@ -224,7 +238,8 @@
                         <h5>Propuesta</h5>
                         <div class="mb-3">
                             <label for="archivo_propuesta" class="form-label">Documento de Propuesta</label>
-                            <input type="file" class="form-control" id="archivo_propuesta" name="archivo_propuesta">
+                            <input type="file" class="form-control" id="archivo_propuesta"
+                                name="archivo_propuesta">
                         </div>
                         <div class="mb-3">
                             <label for="detalle_propuesta" class="form-label">Detalles de la Propuesta *</label>
@@ -241,7 +256,8 @@
                         <h5>Negociación</h5>
                         <div class="mb-3">
                             <label for="archivo_negociacion" class="form-label">Documento de Negociación</label>
-                            <input type="file" class="form-control" id="archivo_negociacion" name="archivo_negociacion">
+                            <input type="file" class="form-control" id="archivo_negociacion"
+                                name="archivo_negociacion">
                         </div>
                         <div class="mb-3">
                             <label for="detalle_negociacion" class="form-label">Detalles de la Negociación *</label>
@@ -250,11 +266,13 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="descuento" class="form-label">Descuento Aplicado (%)</label>
-                                <input type="number" class="form-control" id="descuento" name="descuento" min="0" max="100" step="0.01">
+                                <input type="number" class="form-control" id="descuento" name="descuento"
+                                    min="0" max="100" step="0.01">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="porcentaje_descuento_aprobado_por" class="form-label">Aprobado Por</label>
-                                <select class="form-select" id="porcentaje_descuento_aprobado_por" name="porcentaje_descuento_aprobado_por">
+                                <select class="form-select" id="porcentaje_descuento_aprobado_por"
+                                    name="porcentaje_descuento_aprobado_por">
                                     <option value="Freelance">Freelance (5%)</option>
                                     <option value="Gerencia Comercial">Gerencia Comercial (10%)</option>
                                     <option value="Gerencia General">Gerencia General (15%)</option>
@@ -263,7 +281,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="fecha_negociacion" class="form-label">Fecha de Negociación *</label>
-                            <input type="date" class="form-control" id="fecha_negociacion" name="fecha_negociacion">
+                            <input type="date" class="form-control" id="fecha_negociacion"
+                                name="fecha_negociacion">
                         </div>
                     </div>
 
@@ -277,7 +296,8 @@
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="fecha_contrato" class="form-label">Fecha de Contrato *</label>
-                                <input type="date" class="form-control" id="fecha_contrato" name="fecha_contrato">
+                                <input type="date" class="form-control" id="fecha_contrato"
+                                    name="fecha_contrato">
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="fecha_cobro" class="form-label">Fecha de Cobro *</label>
@@ -300,11 +320,13 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="monto_total" class="form-label">Monto Total *</label>
-                                <input type="number" class="form-control" id="monto_total" name="monto_total" step="0.01" readonly>
+                                <input type="number" class="form-control" id="monto_total" name="monto_total"
+                                    step="0.01" readonly>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="monto_pagado" class="form-label">Monto Pagado</label>
-                                <input type="number" class="form-control" id="monto_pagado" name="monto_pagado" step="0.01">
+                                <input type="number" class="form-control" id="monto_pagado" name="monto_pagado"
+                                    step="0.01">
                             </div>
                         </div>
                         <div class="mb-3">
@@ -316,167 +338,171 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-secondary" id="prevStepBtn" disabled>Anterior</button>
                     <button type="button" class="btn btn-primary" id="nextStepBtn">Siguiente</button>
-                    <button type="submit" class="btn btn-success d-none" id="submitVentaBtn">Finalizar Venta</button>
+                    <button type="submit" class="btn btn-success d-none" id="submitVentaBtn">Finalizar
+                        Venta</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
+
 @section('scripts')
-<script>
-$(document).ready(function() {
-    let currentStep = 1;
-    const totalSteps = 7;
-    let ventaId = null;
-    
-    // Mostrar modal de creación
-    $('#createVentaBtn').click(function() {
-        $.get("{{ route('ventas.create') }}", function(response) {
-            if (response.success) {
-                // Reemplazar el modal con la nueva versión
-                $('#createVentaModal').replaceWith(response.html);
-                // Mostrar el modal
-                $('#createVentaModal').modal('show');
-                // Inicializar controles
-                initVentaModal();
-            } else {
-                alert('Error al cargar el formulario de venta');
-            }
-        });
-    });
-    
-    function initVentaModal() {
-        // Manejar cambio de tipo de venta
-        $('input[name="tipo_venta"]').change(function() {
-            if ($(this).val() === 'Interna') {
-                $('#clienteExistenteContainer').removeClass('d-none');
-                $('#nuevoClienteContainer').addClass('d-none');
-                $('#cliente_id').prop('required', true);
-                $('#nombre, #telefono').prop('required', false);
-            } else {
-                $('#clienteExistenteContainer').addClass('d-none');
-                $('#nuevoClienteContainer').removeClass('d-none');
-                $('#cliente_id').prop('required', false);
-                $('#nombre, #telefono').prop('required', true);
-            }
-        });
-        
-        // Manejar cambio de tipo de item
-        $('#tipo_item_venta').change(function() {
-            if ($(this).val() === 'producto') {
-                $('#productoContainer').removeClass('d-none');
-                $('#paqueteContainer').addClass('d-none');
-                $('#paquete_id').val('');
-                $('#paquete_id').prop('required', false);
+    <script>
+        $(document).ready(function() {
+            let currentStep = 1;
+            const totalSteps = 7;
+            let ventaId = null;
 
-                $('#producto_id').prop('required', true);
-            } else {
-                $('#productoContainer').addClass('d-none');
-                $('#paqueteContainer').removeClass('d-none');
-                $('#producto_id').val('');
-                $('#producto_id').prop('required', false);
-
-                $('#paquete_id').prop('required', true);
-            }
-        });
-
-        // Manejar cambio de cliente existente
-
-        $('#cliente_id').change(function() {
-            const clienteId = $(this).val();
-            if (clienteId) {
-                $.get("{{ route('clientes.show', '') }}/" + clienteId, function(response) {
+            // Mostrar modal de creación
+            $('#createVentaBtn').click(function() {
+                $.get("{{ route('ventas.create') }}", function(response) {
                     if (response.success) {
-                        $('#nombre').val(response.cliente.nombre);
-                        $('#telefono').val(response.cliente.telefono);
-                        $('#email').val(response.cliente.email);
-                        $('#direccion').val(response.cliente.direccion);
-                        $('#contacto').val(response.cliente.contacto);
+                        // Reemplazar el modal con la nueva versión
+                        $('#createVentaModal').replaceWith(response.html);
+                        // Mostrar el modal
+                        $('#createVentaModal').modal('show');
+                        // Inicializar controles
+                        initVentaModal();
                     } else {
-                        alert('Error al cargar los datos del cliente');
+                        alert('Error al cargar el formulario de venta');
                     }
                 });
-            } else {
-                $('#nombre, #telefono, #email, #direccion, #contacto').val('');
-            }
-        });
-
-        // Manejar cambio de producto
-        $('#producto_id').change(function() {
-            const precio = $(this).find(':selected').data('precio');
-            $('#monto_total').val(precio);
-        });
-
-        // Manejar cambio de paquete
-        $('#paquete_id').change(function() {
-            const precio = $(this).find(':selected').data('precio');
-            $('#monto_total').val(precio);
-        });
-
-        // Manejar cambio de monto pagado
-        $('#monto_pagado').on('input', function() {
-            const montoTotal = parseFloat($('#monto_total').val()) || 0;
-            const montoPagado = parseFloat($(this).val()) || 0;
-            if (montoPagado > montoTotal) {
-                $(this).val(montoTotal);
-            }
-        });
-
-        // Manejar cambio de paso
-        $('#nextStepBtn').click(function() {
-            if (currentStep < totalSteps) {
-                $(`.step[data-step="${currentStep}"]`).addClass('d-none');
-                currentStep++;
-                $(`.step[data-step="${currentStep}"]`).removeClass('d-none');
-                $('#prevStepBtn').prop('disabled', currentStep === 2);
-                $('#nextStepBtn').toggleClass('d-none', currentStep === totalSteps);
-                $('#submitVentaBtn').toggleClass('d-none', currentStep !== totalSteps);
-            }
-        });
-
-        $('#prevStepBtn').click(function() {
-            if (currentStep > 1) {
-                $(`.step[data-step="${currentStep}"]`).addClass('d-none');
-                currentStep--;
-                $(`.step[data-step="${currentStep}"]`).removeClass('d-none');
-                $('#prevStepBtn').prop('disabled', currentStep === 2);
-                $('#nextStepBtn').toggleClass('d-none', currentStep === totalSteps);
-                $('#submitVentaBtn').toggleClass('d-none', currentStep !== totalSteps);
-            }
-        });
-
-        // Manejar envío del formulario
-        $('#ventaForm').submit(function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            $.ajax({
-                url: "{{ route('ventas.store') }}",
-                type: "POST",
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    if (response.success) {
-                        alert('Venta creada exitosamente');
-                        $('#createVentaModal').modal('hide');
-                        // Recargar la tabla de ventas o realizar otra acción
-                    } else {
-                        alert('Error al crear la venta');
-                    }
-                },
-                error: function(xhr) {
-                    alert('Error en el servidor: ' + xhr.responseText);
-                }
             });
-        });
-    }
 
-});
-</script>
+            function initVentaModal() {
+                // Manejar cambio de tipo de venta
+                $('input[name="tipo_venta"]').change(function() {
+                    if ($(this).val() === 'Interna') {
+                        $('#clienteExistenteContainer').removeClass('d-none');
+                        $('#nuevoClienteContainer').addClass('d-none');
+                        $('#cliente_id').prop('required', true);
+                        $('#nombre, #telefono').prop('required', false);
+                    } else {
+                        $('#clienteExistenteContainer').addClass('d-none');
+                        $('#nuevoClienteContainer').removeClass('d-none');
+                        $('#cliente_id').prop('required', false);
+                        $('#nombre, #telefono').prop('required', true);
+                    }
+                });
+
+                // Inicializar el estado al cargar la página
+                if ($('input[name="tipo_venta"]:checked').val() === 'Interna') {
+                    $('#clienteExistenteContainer').removeClass('d-none');
+                    $('#nuevoClienteContainer').addClass('d-none');
+                } else {
+                    $('#clienteExistenteContainer').addClass('d-none');
+                    $('#nuevoClienteContainer').removeClass('d-none');
+                }
+
+                // Manejar cambio de tipo de item
+                $('#tipo_item_venta').change(function() {
+                    if ($(this).val() === 'producto') {
+                        $('#productoContainer').removeClass('d-none');
+                        $('#paqueteContainer').addClass('d-none');
+                        $('#paquete_id').val('');
+                        $('#paquete_id').prop('required', false);
+
+                        $('#producto_id').prop('required', true);
+                    } else {
+                        $('#productoContainer').addClass('d-none');
+                        $('#paqueteContainer').removeClass('d-none');
+                        $('#producto_id').val('');
+                        $('#producto_id').prop('required', false);
+
+                        $('#paquete_id').prop('required', true);
+                    }
+                });
+
+                // Manejar cambio de cliente existente
+
+                $('#cliente_id').change(function() {
+                    const clienteId = $(this).val();
+                    if (clienteId) {
+                        $.get("{{ route('clientes.show', '') }}/" + clienteId, function(response) {
+                            if (response.success) {
+                                $('#nombre').val(response.cliente.nombre);
+                                $('#telefono').val(response.cliente.telefono);
+                                $('#email').val(response.cliente.email);
+                                $('#direccion').val(response.cliente.direccion);
+                                $('#contacto').val(response.cliente.contacto);
+                            } else {
+                                alert('Error al cargar los datos del cliente');
+                            }
+                        });
+                    } else {
+                        $('#nombre, #telefono, #email, #direccion, #contacto').val('');
+                    }
+                });
+
+                // Manejar cambio de producto
+                $('#producto_id').change(function() {
+                    const precio = $(this).find(':selected').data('precio');
+                    $('#monto_total').val(precio);
+                });
+
+                // Manejar cambio de paquete
+                $('#paquete_id').change(function() {
+                    const precio = $(this).find(':selected').data('precio');
+                    $('#monto_total').val(precio);
+                });
+
+
+
+                // Manejar cambio de paso
+                $('#nextStepBtn').click(function() {
+                    if (currentStep < totalSteps) {
+                        $(`.step[data-step="${currentStep}"]`).addClass('d-none');
+                        currentStep++;
+                        $(`.step[data-step="${currentStep}"]`).removeClass('d-none');
+                        $('#prevStepBtn').prop('disabled', currentStep === 2);
+                        $('#nextStepBtn').toggleClass('d-none', currentStep === totalSteps);
+                        $('#submitVentaBtn').toggleClass('d-none', currentStep !== totalSteps);
+                    }
+                });
+
+                $('#prevStepBtn').click(function() {
+                    if (currentStep > 1) {
+                        $(`.step[data-step="${currentStep}"]`).addClass('d-none');
+                        currentStep--;
+                        $(`.step[data-step="${currentStep}"]`).removeClass('d-none');
+                        $('#prevStepBtn').prop('disabled', currentStep === 2);
+                        $('#nextStepBtn').toggleClass('d-none', currentStep === totalSteps);
+                        $('#submitVentaBtn').toggleClass('d-none', currentStep !== totalSteps);
+                    }
+                });
+
+                // Manejar envío del formulario
+                $('#ventaForm').submit(function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    $.ajax({
+                        url: "{{ route('ventas.store') }}",
+                        type: "POST",
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function(response) {
+                            if (response.success) {
+                                alert('Venta creada exitosamente');
+                                $('#createVentaModal').modal('hide');
+                                // Recargar la tabla de ventas o realizar otra acción
+                            } else {
+                                alert('Error al crear la venta');
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Error en el servidor: ' + xhr.responseText);
+                        }
+                    });
+                });
+            }
+
+        });
+    </script>
 @endsection

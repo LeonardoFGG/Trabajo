@@ -137,13 +137,7 @@
                             <div class="form-text">Suba el contrato firmado (PDF)</div>
                         </div>
                         
-                        <div class="mb-3">
-                            <label for="estado_final" class="form-label">Estado final de la venta</label>
-                            <select class="form-select" id="estado_final" name="estado_final">
-                                <option value="En Curso">En Curso</option>
-                                <option value="Finalizada">Finalizada</option>
-                            </select>
-                        </div>
+                        
                     </div>
                     
                     <div class="text-end mt-4">

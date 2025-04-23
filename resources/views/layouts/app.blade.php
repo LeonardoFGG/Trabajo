@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Webcoopec System LTDA.</title>
     
-   
+
     <!-- Daterangepicker para filtro de rango en fechas -->
     <!-- jQuery (requerido) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -363,19 +363,7 @@
 
                     </li>
                 @endif
-
-                @if (Auth::check() && Auth::user()->isGerenteGeneral())
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('analisis.indexAnalisis') ? 'active' : '' }}"
-                            href="{{ route('analisis.indexAnalisis') }}" title="Inteligencia de Negocios">
-                            <i class="bi bi-bar-chart"></i> <span>Inteligencia de Negocios</span>
-                        </a>
-
-                    </li>
-                @endif
-
-
-
+           
             </ul>
         </div>
 

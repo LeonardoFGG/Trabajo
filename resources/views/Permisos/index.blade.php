@@ -31,7 +31,7 @@
                         <input type="text" name="daterange" id="daterange" class="form-control"
                             placeholder="Selecciona un rango"
                             value="{{ request('start_date') && request('end_date') ? request('start_date') . ' to ' . request('end_date') : '' }}">
-        
+
                         <!-- Inputs ocultos para enviar las fechas reales -->
                         <input type="hidden" name="start_date" id="start_date" value="{{ request('start_date') }}">
                         <input type="hidden" name="end_date" id="end_date" value="{{ request('end_date') }}">
@@ -39,11 +39,11 @@
 
                     <script>
                         flatpickr("#daterange", {
-                            mode: "range",  // Modo de selección de rango
-                            dateFormat: "Y-m-d",  // Formato de la fecha
+                            mode: "range", // Modo de selección de rango
+                            dateFormat: "Y-m-d", // Formato de la fecha
                             defaultDate: [
-                                "{{ request('start_date', now()->format('Y-m-d')) }}",  // Fecha inicial por defecto
-                                "{{ request('end_date', now()->format('Y-m-d')) }}"     // Fecha final por defecto
+                                "{{ request('start_date', now()->format('Y-m-d')) }}", // Fecha inicial por defecto
+                                "{{ request('end_date', now()->format('Y-m-d')) }}" // Fecha final por defecto
                             ],
                             locale: {
                                 firstDayOfWeek: 1,
@@ -53,7 +53,9 @@
                                 },
                                 months: {
                                     shorthand: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-                                    longhand: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+                                    longhand: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto',
+                                        'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                                    ],
                                 },
                             },
                             onChange: function(selectedDates) {
@@ -107,46 +109,49 @@
                     <form action="{{ route('permisos.index') }}" method="GET" class="mb-0">
                         <div class="d-flex flex-column flex-md-row gap-3 align-items-center">
                             <!-- Nuevo selector de fechas por rango -->
-                    <div>
-                        <label for="daterange">Seleccionar Rango de Fechas:</label>
-                        <!-- Input para seleccionar el rango de fechas -->
-                        <input type="text" name="daterange" id="daterange" class="form-control"
-                            placeholder="Selecciona un rango"
-                            value="{{ request('start_date') && request('end_date') ? request('start_date') . ' to ' . request('end_date') : '' }}">
-        
-                        <!-- Inputs ocultos para enviar las fechas reales -->
-                        <input type="hidden" name="start_date" id="start_date" value="{{ request('start_date') }}">
-                        <input type="hidden" name="end_date" id="end_date" value="{{ request('end_date') }}">
-                    </div>
+                            <div>
+                                <label for="daterange">Seleccionar Rango de Fechas:</label>
+                                <!-- Input para seleccionar el rango de fechas -->
+                                <input type="text" name="daterange" id="daterange" class="form-control"
+                                    placeholder="Selecciona un rango"
+                                    value="{{ request('start_date') && request('end_date') ? request('start_date') . ' to ' . request('end_date') : '' }}">
 
-                    <script>
-                        flatpickr("#daterange", {
-                            mode: "range",  // Modo de selección de rango
-                            dateFormat: "Y-m-d",  // Formato de la fecha
-                            defaultDate: [
-                                "{{ request('start_date', now()->format('Y-m-d')) }}",  // Fecha inicial por defecto
-                                "{{ request('end_date', now()->format('Y-m-d')) }}"     // Fecha final por defecto
-                            ],
-                            locale: {
-                                firstDayOfWeek: 1,
-                                weekdays: {
-                                    shorthand: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
-                                    longhand: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
-                                },
-                                months: {
-                                    shorthand: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
-                                    longhand: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-                                },
-                            },
-                            onChange: function(selectedDates) {
-                                // Cuando se seleccionan ambas fechas, actualizamos los campos ocultos
-                                if (selectedDates.length === 2) {
-                                    document.getElementById('start_date').value = selectedDates[0].toISOString().slice(0, 10);
-                                    document.getElementById('end_date').value = selectedDates[1].toISOString().slice(0, 10);
-                                }
-                            }
-                        });
-                    </script>
+                                <!-- Inputs ocultos para enviar las fechas reales -->
+                                <input type="hidden" name="start_date" id="start_date"
+                                    value="{{ request('start_date') }}">
+                                <input type="hidden" name="end_date" id="end_date" value="{{ request('end_date') }}">
+                            </div>
+
+                            <script>
+                                flatpickr("#daterange", {
+                                    mode: "range", // Modo de selección de rango
+                                    dateFormat: "Y-m-d", // Formato de la fecha
+                                    defaultDate: [
+                                        "{{ request('start_date', now()->format('Y-m-d')) }}", // Fecha inicial por defecto
+                                        "{{ request('end_date', now()->format('Y-m-d')) }}" // Fecha final por defecto
+                                    ],
+                                    locale: {
+                                        firstDayOfWeek: 1,
+                                        weekdays: {
+                                            shorthand: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+                                            longhand: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+                                        },
+                                        months: {
+                                            shorthand: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+                                            longhand: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto',
+                                                'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+                                            ],
+                                        },
+                                    },
+                                    onChange: function(selectedDates) {
+                                        // Cuando se seleccionan ambas fechas, actualizamos los campos ocultos
+                                        if (selectedDates.length === 2) {
+                                            document.getElementById('start_date').value = selectedDates[0].toISOString().slice(0, 10);
+                                            document.getElementById('end_date').value = selectedDates[1].toISOString().slice(0, 10);
+                                        }
+                                    }
+                                });
+                            </script>
 
                             <div class="mt-3 mt-md-0">
                                 <button type="submit" class="btn btn-primary">
@@ -255,6 +260,13 @@
                                     class="formEstado mt-1">
                                     @csrf
                                     @method('PATCH')
+                                    <!-- Campos ocultos para mantener los filtros -->
+                                    <input type="hidden" name="empleado_id" value="{{ request('empleado_id') }}">
+                                    <input type="hidden" name="start_date" value="{{ request('start_date') }}">
+                                    <input type="hidden" name="end_date" value="{{ request('end_date') }}">
+                                    <input type="hidden" name="filtro" value="{{ request('filtro') }}">
+                                    <input type="hidden" name="semana" value="{{ request('semana') }}">
+                                    <input type="hidden" name="mes" value="{{ request('mes') }}">
                                     <input type="hidden" name="aprobado_por" value="{{ Auth::user()->id }}">
 
                                     <div class="input-group input-group-sm">
@@ -292,7 +304,8 @@
                                     Auth::user()->isGerenteGeneral() ||
                                     Auth::user()->isAsistenteGerencial())
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" id="flexSwitchCheck{{ $permiso->id }}"
+                                    <input class="form-check-input" type="checkbox"
+                                        id="flexSwitchCheck{{ $permiso->id }}"
                                         {{ $permiso->justificado ? 'checked' : '' }}
                                         onchange="toggleJustificacion({{ $permiso->id }})">
                                     <label class="form-check-label"
@@ -359,6 +372,15 @@
                                             <form action="{{ route('permisos.update', $permiso->id) }}" method="POST">
                                                 @csrf
                                                 @method('PATCH')
+                                                <!-- Campos ocultos para mantener los filtros -->
+                                                <input type="hidden" name="empleado_id"
+                                                    value="{{ request('empleado_id') }}">
+                                                <input type="hidden" name="start_date"
+                                                    value="{{ request('start_date') }}">
+                                                <input type="hidden" name="end_date" value="{{ request('end_date') }}">
+                                                <input type="hidden" name="filtro" value="{{ request('filtro') }}">
+                                                <input type="hidden" name="semana" value="{{ request('semana') }}">
+                                                <input type="hidden" name="mes" value="{{ request('mes') }}">
                                                 <div class="mb-3">
                                                     <label for="motivo" class="form-label">Motivo</label>
                                                     <textarea class="form-control" name="motivo">{{ $permiso->motivo }}</textarea>
@@ -384,6 +406,14 @@
                                             enctype="multipart/form-data">
                                             @csrf
                                             @method('PATCH')
+                                            <!-- Campos ocultos para mantener los filtros -->
+                                            <input type="hidden" name="empleado_id"
+                                                value="{{ request('empleado_id') }}">
+                                            <input type="hidden" name="start_date" value="{{ request('start_date') }}">
+                                            <input type="hidden" name="end_date" value="{{ request('end_date') }}">
+                                            <input type="hidden" name="filtro" value="{{ request('filtro') }}">
+                                            <input type="hidden" name="semana" value="{{ request('semana') }}">
+                                            <input type="hidden" name="mes" value="{{ request('mes') }}">
                                             <div class="mb-3">
                                                 <label for="anexos" class="form-label">Nuevo Anexo</label>
                                                 <input type="file" class="form-control" name="anexos" required>
@@ -408,6 +438,14 @@
                                             method="POST">
                                             @csrf
                                             @method('PATCH')
+                                            <!-- Campos ocultos para mantener los filtros -->
+                                            <input type="hidden" name="empleado_id"
+                                                value="{{ request('empleado_id') }}">
+                                            <input type="hidden" name="start_date" value="{{ request('start_date') }}">
+                                            <input type="hidden" name="end_date" value="{{ request('end_date') }}">
+                                            <input type="hidden" name="filtro" value="{{ request('filtro') }}">
+                                            <input type="hidden" name="semana" value="{{ request('semana') }}">
+                                            <input type="hidden" name="mes" value="{{ request('mes') }}">
                                             <div class="mb-3">
                                                 <label for="hora_regreso" class="form-label">Hora de Regreso</label>
                                                 <input type="time" class="form-control" name="hora_regreso"
