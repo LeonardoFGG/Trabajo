@@ -345,7 +345,7 @@
     </div>
 
     <script>
-        function filterSupervisores() {
+    function filterSupervisores() {
     var departamentoId = document.getElementById('departamento').value;
 
     // Filtrar supervisores

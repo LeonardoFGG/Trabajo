@@ -46,20 +46,20 @@
                         <div class="row justify-content-center text-center">
                             @if (Auth::user()->isAdmin())
                                 @foreach ([
-            ['route' => 'rrhh.index', 'img' => 'rrhh.png', 'title' => 'RRHH'],
-            ['route' => 'empleados.indexEmpleados', 'img' => 'activos.png', 'title' => 'Activos'],
-            ['route' => 'actividades.indexActividades', 'img' => 'actividades.png', 'title' => 'Actividades'],
-            ['route' => 'clientes.index', 'img' => 'cooperativas.png', 'title' => 'Clientes'],
-            ['route' => 'empleados.indexEmpleados', 'img' => 'cobros.png', 'title' => 'Cobros'],
-            ['route' => 'empleados.indexEmpleados', 'img' => 'mensajeria.png', 'title' => 'Mensajería'],
-            ['route' => 'productos.index', 'img' => 'productos.png', 'title' => 'Productos'],
-            ['route' => 'empleados.indexEmpleados', 'img' => 'seguridad.png', 'title' => 'Seguridades'],
-            ['route' => 'ventas.index', 'img' => 'ventas.png', 'title' => 'Ventas'],
-            ['route' => 'empleados.indexEmpleados', 'img' => 'rrhh.png', 'title' => 'Usuarios'],
-            ['route' => 'analisis.indexAnalisis', 'img' => 'inteligencia-de-negocios.png', 'title' => 'Inteligencia de Negocios'],
-            ['route' => 'daily.index', 'img' => 'scrum.png', 'title' => 'Daily Scrum'],
-            ['route' => 'imagen.index', 'img' => 'ventas.png', 'title' => 'Anuncio'],
-        ] as $item)
+                                    ['route' => 'rrhh.index', 'img' => 'rrhh.png', 'title' => 'RRHH'],
+                                    ['route' => 'empleados.indexEmpleados', 'img' => 'activos.png', 'title' => 'Activos'],
+                                    ['route' => 'actividades.indexActividades', 'img' => 'actividades.png', 'title' => 'Actividades'],
+                                    ['route' => 'clientes.index', 'img' => 'cooperativas.png', 'title' => 'Clientes'],
+                                    ['route' => 'empleados.indexEmpleados', 'img' => 'cobros.png', 'title' => 'Cobros'],
+                                    ['route' => 'empleados.indexEmpleados', 'img' => 'mensajeria.png', 'title' => 'Mensajería'],
+                                    ['route' => 'productos.index', 'img' => 'productos.png', 'title' => 'Productos'],
+                                    ['route' => 'empleados.indexEmpleados', 'img' => 'seguridad.png', 'title' => 'Seguridades'],
+                                    ['route' => 'ventas.index', 'img' => 'ventas.png', 'title' => 'Ventas'],
+                                    ['route' => 'empleados.indexEmpleados', 'img' => 'rrhh.png', 'title' => 'Usuarios'],
+                                    ['route' => 'analisis.indexAnalisis', 'img' => 'inteligencia-de-negocios.png', 'title' => 'Inteligencia de Negocios'],
+                                    ['route' => 'daily.index', 'img' => 'scrum.png', 'title' => 'Daily Scrum'],
+                                    ['route' => 'imagen.index', 'img' => 'ventas.png', 'title' => 'Anuncio'],
+                                ] as $item)
                                     <div class="col-md-3 mb-4">
                                         <div class="card h-100 shadow">
                                             <div class="card-body d-flex flex-column align-items-center">

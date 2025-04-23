@@ -46,7 +46,7 @@
                     <form id="employeeForm" action="{{ route('empleados.store') }}" method="POST"
                         enctype="multipart/form-data" class="p-4">
                         @csrf
-		<!-- Step 1: Información Personal -->
+		                <!-- Step 1: Información Personal -->
                         <div class="step" id="step1">
                              <h4 class="text-primary mb-4">Información Personal</h4>
                             <div class="row mb-3">
@@ -119,164 +119,164 @@
 
 
                        <div class="step d-none" id="step2">
-    <h4 class="text-primary mb-4">Detalles del Contrato</h4>
+                            <h4 class="text-primary mb-4">Detalles del Contrato</h4>
 
-    <div class="row g-3">
-        <!-- Selección de Departamento -->
-        <div class="col-md-6">
-            <div class="form-floating">
-                <select name="departamento_id" id="departamento" class="form-select" required onchange="filterSupervisores()">
-                    <option value="">Selecciona un Departamento</option>
-                    @foreach ($departamentos as $departamento)
-                        <option value="{{ $departamento->id }}"
-                            data-supervisor-id="{{ $departamento->supervisor_id }}"
-                            {{ old('departamento_id', $empleado->departamento_id) == $departamento->id ? 'selected' : '' }}>
-                            {{ $departamento->nombre }}
-                        </option>
-                    @endforeach
-                </select>
-                <label for="departamento">Departamento <span class="text-danger">*</span></label>
-            </div>
-        </div>
+                            <div class="row g-3">
+                                <!-- Selección de Departamento -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select name="departamento_id" id="departamento" class="form-select" required onchange="filterSupervisores()">
+                                            <option value="">Selecciona un Departamento</option>
+                                            @foreach ($departamentos as $departamento)
+                                                <option value="{{ $departamento->id }}"
+                                                    data-supervisor-id="{{ $departamento->supervisor_id }}"
+                                                    {{ old('departamento_id', $empleado->departamento_id) == $departamento->id ? 'selected' : '' }}>
+                                                    {{ $departamento->nombre }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <label for="departamento">Departamento <span class="text-danger">*</span></label>
+                                    </div>
+                                </div>
 
-        <!-- Selección de Supervisor -->
-        <div class="col-md-6">
-            <div class="form-floating">
-                <select name="supervisor_id" id="supervisor_id" class="form-select">
-                    <option value="">Selecciona un Supervisor</option>
-                    @foreach ($supervisores as $supervisor)
-                        <option value="{{ $supervisor->id }}" 
-                            {{ old('supervisor_id', $empleado->supervisor_id) == $supervisor->id ? 'selected' : '' }}>
-                            {{ $supervisor->nombre_supervisor }}
-                        </option>
-                    @endforeach
-                </select>
-                <label for="supervisor_id">Supervisor</label>
-            </div>
-        </div>
+                                <!-- Selección de Supervisor -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select name="supervisor_id" id="supervisor_id" class="form-select">
+                                            <option value="">Selecciona un Supervisor</option>
+                                            @foreach ($supervisores as $supervisor)
+                                                <option value="{{ $supervisor->id }}" 
+                                                    {{ old('supervisor_id', $empleado->supervisor_id) == $supervisor->id ? 'selected' : '' }}>
+                                                    {{ $supervisor->nombre_supervisor }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <label for="supervisor_id">Supervisor</label>
+                                    </div>
+                                </div>
 
-        <!-- Checkbox de Supervisor -->
-        <div class="col-md-6">
-            <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="es_supervisor" name="es_supervisor" value="1">
-                <label class="form-check-label" for="es_supervisor">Es supervisor</label>
-            </div>
-        </div>
+                                <!-- Checkbox de Supervisor -->
+                                <div class="col-md-6">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="es_supervisor" name="es_supervisor" value="1">
+                                        <label class="form-check-label" for="es_supervisor">Es supervisor</label>
+                                    </div>
+                                </div>
 
-        <!-- Checkbox de Supervisor Superior -->
-        <div class="col-md-6" id="supervisorSuperiorWrapper" style="display: none;">
-            <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="es_supervisor_superior" name="es_supervisor_superior" value="1">
-                <label class="form-check-label" for="es_supervisor_superior">Es supervisor superior</label>
-            </div>
-        </div>
+                                <!-- Checkbox de Supervisor Superior -->
+                                <div class="col-md-6" id="supervisorSuperiorWrapper" style="display: none;">
+                                    <div class="form-check">
+                                        <input type="checkbox" class="form-check-input" id="es_supervisor_superior" name="es_supervisor_superior" value="1">
+                                        <label class="form-check-label" for="es_supervisor_superior">Es supervisor superior</label>
+                                    </div>
+                                </div>
 
-        <!-- Selección de Supervisor Superior -->
-        <div class="col-md-12">
-            <div class="form-floating">
-                <select class="form-select" name="supervisor_id" id="supervisor_id">
-                    <option value="">Seleccionar Supervisor Superior</option>
-                    @foreach($supervisoresSuperiores as $supervisor)
-                        <option value="{{ $supervisor->id }}">{{ $supervisor->nombre_supervisor }}</option>
-                    @endforeach
-                </select>
-                <label for="supervisor_id">Supervisor Superior</label>
-            </div>
-        </div>
-    </div>
+                                <!-- Selección de Supervisor Superior -->
+                                <div class="col-md-12">
+                                    <div class="form-floating">
+                                        <select class="form-select" name="supervisor_id" id="supervisor_id">
+                                            <option value="">Seleccionar Supervisor Superior</option>
+                                            @foreach($supervisoresSuperiores as $supervisor)
+                                                <option value="{{ $supervisor->id }}">{{ $supervisor->nombre_supervisor }}</option>
+                                            @endforeach
+                                        </select>
+                                        <label for="supervisor_id">Supervisor Superior</label>
+                                    </div>
+                                </div>
+                            </div>
 
-    <hr class="my-4">
+                            <hr class="my-4">
 
-    <div class="row g-3">
-        <!-- Selección de Cargo -->
-        <div class="col-md-6">
-            <div class="form-floating">
-                <select name="cargo_id" id="cargo" class="form-select" required>
-                    <option value="">Selecciona un Cargo</option>
-                    @foreach ($cargos as $cargo)
-                        <option value="{{ $cargo->id }}" data-departamento-id="{{ $cargo->departamento_id }}">
-                            {{ $cargo->nombre_cargo }}
-                        </option>
-                    @endforeach
-                </select>
-                <label for="cargo">Cargo <span class="text-danger">*</span></label>
-            </div>
-        </div>
+                            <div class="row g-3">
+                                <!-- Selección de Cargo -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select name="cargo_id" id="cargo" class="form-select" required>
+                                            <option value="">Selecciona un Cargo</option>
+                                            @foreach ($cargos as $cargo)
+                                                <option value="{{ $cargo->id }}" data-departamento-id="{{ $cargo->departamento_id }}">
+                                                    {{ $cargo->nombre_cargo }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <label for="cargo">Cargo <span class="text-danger">*</span></label>
+                                    </div>
+                                </div>
 
-        <!-- Fecha de Ingreso -->
-        <div class="col-md-6">
-            <div class="form-floating">
-                <input type="date" name="fecha_ingreso" class="form-control" id="fecha_ingreso" required>
-                <label for="fecha_ingreso">Fecha de Ingreso <span class="text-danger">*</span></label>
-            </div>
-        </div>
-    </div>
+                                <!-- Fecha de Ingreso -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="date" name="fecha_ingreso" class="form-control" id="fecha_ingreso" required>
+                                        <label for="fecha_ingreso">Fecha de Ingreso <span class="text-danger">*</span></label>
+                                    </div>
+                                </div>
+                            </div>
 
-    <hr class="my-4">
+                            <hr class="my-4">
 
-    <div class="row g-3">
-        <!-- Tipo de Jornada -->
-        <div class="col-md-6">
-            <div class="form-floating">
-                <select name="jornada_laboral" id="jornada_laboral" class="form-select" required>
-                    <option value="">Selecciona una Opción</option>
-                    <option value="Tiempo Completo">Tiempo Completo</option>
-                    <option value="Medio Tiempo">Medio Tiempo</option>
-                </select>
-                <label for="jornada_laboral">Tipo de Jornada <span class="text-danger">*</span></label>
-            </div>
-        </div>
+                            <div class="row g-3">
+                                <!-- Tipo de Jornada -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select name="jornada_laboral" id="jornada_laboral" class="form-select" required>
+                                            <option value="">Selecciona una Opción</option>
+                                            <option value="Tiempo Completo">Tiempo Completo</option>
+                                            <option value="Medio Tiempo">Medio Tiempo</option>
+                                        </select>
+                                        <label for="jornada_laboral">Tipo de Jornada <span class="text-danger">*</span></label>
+                                    </div>
+                                </div>
 
-        <!-- Fecha de Contratación -->
-        <div class="col-md-6">
-            <div class="form-floating">
-                <input type="date" name="fecha_contratacion" class="form-control" id="fecha_contratacion" required>
-                <label for="fecha_contratacion">Fecha de Contratación <span class="text-danger">*</span></label>
-            </div>
-        </div>
-    </div>
+                                <!-- Fecha de Contratación -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="date" name="fecha_contratacion" class="form-control" id="fecha_contratacion" required>
+                                        <label for="fecha_contratacion">Fecha de Contratación <span class="text-danger">*</span></label>
+                                    </div>
+                                </div>
+                            </div>
 
-    <hr class="my-4">
+                            <hr class="my-4">
 
-    <div class="row g-3">
-        <!-- Fecha de Conclusión -->
-        <div class="col-md-6">
-            <div class="form-floating">
-                <input type="date" name="fecha_conclusion" class="form-control" id="fecha_conclusion">
-                <label for="fecha_conclusion">Fecha de Conclusión</label>
-            </div>
-        </div>
+                            <div class="row g-3">
+                                <!-- Fecha de Conclusión -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="date" name="fecha_conclusion" class="form-control" id="fecha_conclusion">
+                                        <label for="fecha_conclusion">Fecha de Conclusión</label>
+                                    </div>
+                                </div>
 
-        <!-- Terminación Voluntaria -->
-        <div class="col-md-6">
-            <div class="form-floating">
-                <select name="terminacion_voluntaria" id="terminacion_voluntaria" class="form-select">
-                    <option value="">Selecciona una Opción</option>
-                    <option value="Si">Sí</option>
-                    <option value="No">No</option>
-                </select>
-                <label for="terminacion_voluntaria">Terminación Voluntaria</label>
-            </div>
-        </div>
-    </div>
+                                <!-- Terminación Voluntaria -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <select name="terminacion_voluntaria" id="terminacion_voluntaria" class="form-select">
+                                            <option value="">Selecciona una Opción</option>
+                                            <option value="Si">Sí</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                        <label for="terminacion_voluntaria">Terminación Voluntaria</label>
+                                    </div>
+                                </div>
+                            </div>
 
-    <hr class="my-4">
+                            <hr class="my-4">
 
-    <div class="row g-3">
-        <!-- Fecha de Recontratación -->
-        <div class="col-md-6">
-            <div class="form-floating">
-                <input type="date" name="fecha_recontratacion" class="form-control" id="fecha_recontratacion">
-                <label for="fecha_recontratacion">Fecha de Recontratación</label>
-            </div>
-        </div>
-    </div>
+                            <div class="row g-3">
+                                <!-- Fecha de Recontratación -->
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="date" name="fecha_recontratacion" class="form-control" id="fecha_recontratacion">
+                                        <label for="fecha_recontratacion">Fecha de Recontratación</label>
+                                    </div>
+                                </div>
+                            </div>
 
-    <div class="d-flex justify-content-between mt-4">
-        <button type="button" class="btn btn-secondary" onclick="prevStep(1)">Anterior</button>
-        <button type="button" class="btn btn-primary" onclick="nextStep(2)">Siguiente</button>
-    </div>
-</div>
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-secondary" onclick="prevStep(1)">Anterior</button>
+                                <button type="button" class="btn btn-primary" onclick="nextStep(2)">Siguiente</button>
+                            </div>
+                        </div>
 
                         
 
@@ -352,7 +352,7 @@
                 </div>
             </div>
         </div>
-
+    </div>
         <script>
     function filterSupervisores() {
     var departamentoId = document.getElementById('departamento').value;

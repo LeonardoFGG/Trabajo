@@ -30,8 +30,9 @@
             </form>
     
             <div class="d-flex justify-content-between mb-3">
-                <a href="{{ route('cargos.create') }}" class="btn btn-primary btn-lg">Crear Nuevo Cargo</a>
-    
+                <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#createCargoModal">
+                    Crear Nuevo Cargo
+                </button>
             </div>
             
             <div class="table-responsive">
@@ -57,14 +58,21 @@
                                 <td>{{ $cargo->departamento->nombre }}</td>                               
                                 <td class="text-center">
     
-                                    <a href="{{ route('cargos.show', $cargo->id) }}" class="btn btn-info btn-sm">
+                                    <!--<a href="{{ route('cargos.show', $cargo->id) }}" class="btn btn-info btn-sm">
                                         <i class="fas fa-eye "></i>
-                                    </a>
+                                    </a>-->
+                                    <!-- Botón para abrir el modal de Ver -->
+                                    <button type="button" class="btn btn-info btn-sm" title="Ver"
+                                            data-bs-toggle="modal" data-bs-target="#modalShowCargos{{ $cargo->id }}">
+                                        <i class="fas fa-eye fa-md"></i>
+                                    </button>
 
-                                    <a href="{{ route('cargos.edit', $cargo->id) }}"
-                                        class="btn btn-warning btn-sm">
+                                    <!-- Botón que abre el modal de Editar -->
+                                    <button type="button" class="btn btn-warning btn-sm" title="Editar"
+                                        data-bs-toggle="modal" data-bs-target="#editModal{{ $cargo->id }}">
                                         <i class="fas fa-edit"></i>
-                                    </a>
+                                    </button>
+
 
                                     <form action="{{ route('cargos.destroy', $cargo->id) }}" method="POST"
                                         class="d-inline form-delete">
@@ -78,10 +86,17 @@
                                 </td>
                             </tr>
                         @endforeach
+                        
                     </tbody>
                 </table>
             </div>
+            <!-- Movemos los modales fuera de la tabla -->
+            @foreach ($cargos as $cargo)
+                @include('Cargos.modals.showCargo', ['cargo' => $cargo])
+                @include('Cargos.modals.editCargo', ['cargo' => $cargo, 'departamentos' => $departamentos])
+            @endforeach
         </div>
+        @include('Cargos.modals.createCargo', ['departamentos' => $departamentos])
     </div>
 
         <!-- DataTables y SweetAlert2 -->

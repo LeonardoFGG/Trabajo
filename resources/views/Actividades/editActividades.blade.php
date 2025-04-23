@@ -96,7 +96,7 @@
                                         @if ($errors->has('producto_id'))
                                             <small class="text-danger">{{ $errors->first('producto_id') }}</small>
                                         @endif
-                                    </div>    
+                                    </div>
                                 </div>
                             </fieldset>
 
@@ -185,8 +185,8 @@
                                     <div class="form-group col-md-6">
                                         <label for="avance">Avance (%)</label>
                                         <input type="number" name="avance" class="form-control"
-                                            value="{{ old('avance', $actividades->avance) }}" min="0" max="100"
-                                            required>
+                                            value="{{ old('avance', $actividades->avance) }}" min="0"
+                                            max="100" required>
                                     </div>
                                 </div>
                             </fieldset>
@@ -247,9 +247,13 @@
                                             <option value="MEJORA ERROR"
                                                 {{ old('error', $actividades->error) == 'MEJORA ERROR' ? 'selected' : '' }}>
                                                 Mejora Error</option>
-                                            <option value="DESARROLLO"
-                                                {{ old('error', $actividades->error) == 'DESARROLLO' ? 'selected' : '' }}>
-                                                Desarrollo</option>
+                                            <option value="INSTALACION"
+                                                {{ old('error', $actividad->error) == 'INSTALACION' ? 'selected' : '' }}>
+                                                Instalación
+                                            </option>
+                                            <option value="DESARROLLO-ACTUALIZACION"
+                                                {{ old('error', $actividades->error) == 'DESARROLLO-ACTUALIZACION' ? 'selected' : '' }}>
+                                                Desarrollo-Actualización</option>
                                             <option value="OTRO"
                                                 {{ old('error', $actividades->error) == 'OTRO' ? 'selected' : '' }}>
                                                 Otros</option>

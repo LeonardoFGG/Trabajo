@@ -20,19 +20,35 @@ class EmpleadosController extends Controller
 {
     public function index()
     {
-        $empleados = Empleados::with('departamento')
+        // Obtener los empleados con sus departamentos
+        $empleados = Empleados::with('departamento')  // Asegúrate de que tienes la relación 'departamento' bien definida en tu modelo Empleados
             ->latest()
             ->paginate(30);
-        return view('Empleados.indexEmpleados', compact('empleados'));
+
+        // Obtener los demás datos necesarios para los modales
+        $departamentos = Departamento::all();  // Trae todos los departamentos
+        $supervisores = Supervisor::all();  // Trae todos los supervisores
+        $cargos = Cargos::all();  // Trae todos los cargos
+        $rubros = Rubro::all();  // Trae todos los rubros
+
+        // Pasar todos los datos a la vista
+        return view('Empleados.indexEmpleados', compact(
+            'empleados', 
+            'departamentos', 
+            'supervisores', 
+            'cargos', 
+            'rubros'
+        ));
     }
+
 
     public function create()
     {
         $empleado = new Empleados();
         $departamentos = Departamento::all();
         $supervisores = Supervisor::all();
-         $empleadosSupervisores = Empleados::where('es_supervisor', true)->get(); // Empleados marcados como supervisores
-    $supervisoresSuperiores = Supervisor::where('es_supervisor_superior', true)->get();
+        $empleadosSupervisores = Empleados::where('es_supervisor', true)->get(); // Empleados marcados como supervisores
+        $supervisoresSuperiores = Supervisor::where('es_supervisor_superior', true)->get();
         $cargos = Cargos::all();
         $rubros = Rubro::all();
 	

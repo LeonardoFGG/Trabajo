@@ -297,8 +297,12 @@
                                             Mejora
                                             Error
                                         </option>
-                                        <option value="DESARROLLO" {{ old('error') == 'DESARROLLO' ? 'selected' : '' }}>
-                                            Desarrollo
+                                        <option value="INSTALACION"
+                                            {{ old('error') == 'INSTALACION' ? 'selected' : '' }}>
+                                            Instalación
+                                        </option>
+                                        <option value="DESARROLLO-ACTUALIZACION" {{ old('error') == 'DESARROLLO-ACTUALIZACION' ? 'selected' : '' }}>
+                                            Desarrollo-Actualización
                                         </option>
 
                                         <option value="OTRO" {{ old('error') == 'OTRO' ? 'selected' : '' }}>
