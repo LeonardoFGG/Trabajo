@@ -110,8 +110,17 @@ class ActividadesController extends Controller
         // Obtener resultados
         $actividades = $actividadesQuery
             ->select('actividades.*')
+            ->orderByRaw("
+                CASE 
+                    WHEN estado = 'PENDIENTE' THEN 0
+                    WHEN estado = 'EN CURSO' THEN 1
+                    WHEN estado = 'FINALIZADO' THEN 2
+                    ELSE 3
+                END
+            ")
             ->orderBy('created_at', 'desc')
             ->paginate(100);
+
 
         // Contar estados
         $statusCounts = $actividades->groupBy('estado')->map->count();
@@ -120,9 +129,9 @@ class ActividadesController extends Controller
         $departamentos = Departamento::all();
         $cargos = Cargos::all();
 
-        //verificacion de avance de actividad, seleccionar tiempo limite para actividades olvidadas
+        /* //verificacion de avance de actividad, seleccionar tiempo limite para actividades olvidadas
         $now = Carbon::now()->setTimezone('America/Guayaquil');
-        $limiteMinutos = 45; // Para pruebas; cambiar a 480 (8h) luego
+        $limiteMinutos = 10; // Para pruebas; cambiar a 480 (8h) luego
 
         $actividadesExcedidas = \App\Models\Actividades::where('estado', 'EN CURSO')
             ->whereNotNull('tiempo_inicio')
@@ -149,10 +158,11 @@ class ActividadesController extends Controller
                 $actividad->save();
                 // mostrar notificacion de actividad finalizada automatticente
                 if (Auth::user()->empleado && Auth::user()->empleado->id === $actividad->empleado_id) {
-                    session()->push('actividades_finalizadas_auto', 'La actividad "' . $actividad->descripcion . '" fue finalizada automáticamente por superar el tiempo máximo permitido.');
+                    session()->flash('actividades_finalizadas_auto', ['La actividad "' . $actividad->descripcion . '" fue finalizada automáticamente...']);
+
                 }
             }
-        }
+        } */
 
 
         return view('Actividades.indexActividades', [
@@ -294,20 +304,11 @@ class ActividadesController extends Controller
 
     public function update(Request $request, $id)
     {
-
         $actividad = Actividades::findOrFail($id);
         // actualizar actividad
         $actividad->update($request->all());
-        // Actualiza la descripcion
-        if ($request->has('descripcion')) {
-            $actividad->update($request->only('descripcion'));
-            return redirect()->back()->with('success', 'Descripción actualizada correctamente.');
-        }
-        // Actualiza la tipo de error
-        if ($request->has('error')) {
-            $actividad->update($request->only('error'));
-            return redirect()->back()->with('success', 'Tipo de error actualizado correctamente.');
-        }
+        // Actualiza la descripcions
+
         $validated = $request->validate([
             'cliente_id' => 'required|string|max:255',
             'producto_id' => 'required|exists:productos,id',
@@ -328,7 +329,7 @@ class ActividadesController extends Controller
             'prioridad' => 'required|string|in:ALTA,MEDIA,BAJA',
             'departamento_id' => 'required|exists:departamentos,id',
             'cargo_id' => 'required|exists:cargos,id',
-            'error' => 'required|string|in:ESTRUCTURA,CLIENTE,SOFTWARE,MEJORA ERROR,DESARROLLO,OTRO',
+            'error' => 'required|string|in:ESTRUCTURA,CLIENTE,SOFTWARE,MEJORA ERROR,INSTALACION,DESARROLLO-ACTUALIZACION,OTRO',
 
         ]);
 
@@ -343,6 +344,36 @@ class ActividadesController extends Controller
             'empleado_id' => $request->input('empleado_id')
         ])->with('success', 'Actividad actualizada con éxito.');
     }
+
+    public function updateDescripcion(Request $request, $id)
+    {
+        $request->validate([
+            'descripcion' => 'required|string|max:255',
+        ]);
+
+        $actividad = Actividades::findOrFail($id);
+        $actividad->update([
+            'descripcion' => $request->descripcion,
+        ]);
+
+        return redirect()->back()->with('success', 'Descripción actualizada correctamente.');
+    }
+
+    public function updateError(Request $request, $id)
+    {
+        $request->validate([
+            'error' => 'required|string|in:ESTRUCTURA,CLIENTE,SOFTWARE,MEJORA ERROR,INSTALACION,DESARROLLO-ACTUALIZACION,OTRO',
+        ]);
+
+        $actividad = Actividades::findOrFail($id);
+        $actividad->update([
+            'error' => $request->error,
+        ]);
+
+        return redirect()->back()->with('success', 'Tipo de error actualizado correctamente.');
+    }
+
+
 
     public function updateAvance(Request $request, $id)
     {

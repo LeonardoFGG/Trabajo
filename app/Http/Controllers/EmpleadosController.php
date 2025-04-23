@@ -47,8 +47,8 @@ class EmpleadosController extends Controller
         $empleado = new Empleados();
         $departamentos = Departamento::all();
         $supervisores = Supervisor::all();
-         $empleadosSupervisores = Empleados::where('es_supervisor', true)->get(); // Empleados marcados como supervisores
-    $supervisoresSuperiores = Supervisor::where('es_supervisor_superior', true)->get();
+        $empleadosSupervisores = Empleados::where('es_supervisor', true)->get(); // Empleados marcados como supervisores
+        $supervisoresSuperiores = Supervisor::where('es_supervisor_superior', true)->get();
         $cargos = Cargos::all();
         $rubros = Rubro::all();
 	

@@ -17,14 +17,14 @@ Ultima Modificación:
                 {{ session('success') }}
             </div>
         @endif
-        @if (session('actividades_finalizadas_auto'))
+        {{-- @if (session('actividades_finalizadas_auto'))
             @foreach (session('actividades_finalizadas_auto') as $mensaje)
                 <div class="alert alert-warning alert-dismissible fade show" role="alert">
                     <strong>Atención:</strong> {{ $mensaje }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
                 </div>
             @endforeach
-        @endif
+        @endif --}}
 
         @if ($errors->has('error'))
             <div class="alert alert-danger d-flex align-items-center" id="error-message" role="alert">
@@ -47,7 +47,7 @@ Ultima Modificación:
             <form action="{{ route('actividades.indexActividades') }}" method="GET"
                 class="mb-4 p-4 shadow bg-light rounded" style="max-width: 1100px; margin: 0 auto;">
                 <div class="d-flex flex-column flex-md-row gap-3 align-items-center">
-
+                    <!-- filtro del calendario por rango -->
                     <div>
                         <label for="daterange">Rango de Fechas:</label>
                         <input type="text" name="daterange" id="daterange" class="form-control"
@@ -87,11 +87,6 @@ Ultima Modificación:
                             }
                         });
                     </script>
-
-
-
-
-
 
                     <!-- Mostrar siempre el dropdown para supervisores, admin, gerentes y asistentes -->
                     <div class="col-md-4">
@@ -235,6 +230,7 @@ Ultima Modificación:
         <div class="d-flex justify-content-between">
             <a href="{{ route('actividades.create') }}" class="btn btn-primary btn-lg ms-3"
                 style="margin-left: 1rem;">Crear Actividad</a>
+                
 
             @if (Auth::user()->isAdmin() ||
                     Auth::user()->isGerenteGeneral() ||
@@ -249,6 +245,7 @@ Ultima Modificación:
                     </a>
                 </div>
             @endif
+            
         </div>
 
 
@@ -305,7 +302,7 @@ Ultima Modificación:
                                         aria-labelledby="modalVerDescripcionLabel{{ $actividad->id }}" aria-hidden="true">
                                         <div class="modal-dialog modal-lg">
                                             <div class="modal-content">
-                                                <form action="{{ route('actividades.update', $actividad->id) }}" method="POST">
+                                                <form action="{{ route('actividades.updateDescripcion', $actividad->id) }}" method="POST">
                                                     @csrf
                                                     @method('PUT')
                                                     <input type="hidden" name="start_date" value="{{ request('start_date') }}">
@@ -638,8 +635,8 @@ Ultima Modificación:
                             <td class="text-center">
                                 @if (Auth::user()->isAdmin())
                                     <!-- Botón que abre modal VER -->
-                                        <button type="button" class="btn btn-info btn-sm" title="Ver"
-                                        data-bs-toggle="modal" data-bs-target="#modalShow{{ $actividad->id }}">
+                                    <button type="button" class="btn btn-info btn-sm" title="Ver"
+                                    data-bs-toggle="modal" data-bs-target="#modalShow{{ $actividad->id }}">
                                         <i class="fas fa-eye fa-md"></i>
                                     </button>
 
@@ -687,7 +684,7 @@ Ultima Modificación:
                     aria-labelledby="modalEditarErrorLabel{{ $actividad->id }}" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <form action="{{ route('actividades.update', $actividad->id) }}" method="POST">
+                            <form action="{{ route('actividades.updateError', $actividad->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
                                 <input type="hidden" name="start_date" value="{{ request('start_date') }}">
@@ -716,8 +713,11 @@ Ultima Modificación:
                                             <option value="MEJORA ERROR"
                                                 {{ $actividad->error == 'MEJORA ERROR' ? 'selected' : '' }}>Mejora Error
                                             </option>
-                                            <option value="DESARROLLO"
-                                                {{ $actividad->error == 'DESARROLLO' ? 'selected' : '' }}>Desarrollo
+                                            <option value="INSTALACION"
+                                                {{ $actividad->error == 'INSTALACION' ? 'selected' : '' }}>Instalacion
+                                            </option>
+                                            <option value="DESARROLLO-ACTUALIZACION"
+                                                {{ $actividad->error == 'DESARROLLO-ACTUALIZACION' ? 'selected' : '' }}>Desarrollo-Actualización
                                             </option>
                                             <option value="OTRO" {{ $actividad->error == 'OTRO' ? 'selected' : '' }}>
                                                 Otros</option>
@@ -943,9 +943,7 @@ Ultima Modificación:
                     }
                 },
                 // Ordenar por ID de forma descendente por defecto
-                order: [
-                    [0, 'desc']
-                ]
+                order: []
 
 
             });
@@ -1256,4 +1254,15 @@ Ultima Modificación:
         // Ejecutar cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', addFilterParamsToForms);
     </script>
+    <!-- hace que la notificacion de actividad finalizada por hora sea temporal -->
+    <script>
+        setTimeout(function () {
+            let alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function (alert) {
+                let bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000); // 5000ms = 5 segundos
+    </script>
+    
 @endsection

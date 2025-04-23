@@ -325,7 +325,7 @@
 </div>
  
 <script>
-    function filterSupervisores() {
+function filterSupervisores() {
 var departamentoId = document.getElementById('departamento').value;
 
 // Filtrar supervisores
@@ -448,7 +448,5 @@ const montosIngresados = {};
             montosContainer.appendChild(montoDiv);
         });
     });
-
-
 
 </script>

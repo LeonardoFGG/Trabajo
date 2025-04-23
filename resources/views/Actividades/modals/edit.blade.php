@@ -159,7 +159,8 @@
                                 <option value="CLIENTE" {{ old('error', $actividad->error) == 'CLIENTE' ? 'selected' : '' }}>Cliente</option>
                                 <option value="SOFTWARE" {{ old('error', $actividad->error) == 'SOFTWARE' ? 'selected' : '' }}>Software</option>
                                 <option value="MEJORA ERROR" {{ old('error', $actividad->error) == 'MEJORA ERROR' ? 'selected' : '' }}>Mejora Error</option>
-                                <option value="DESARROLLO" {{ old('error', $actividad->error) == 'DESARROLLO' ? 'selected' : '' }}>Desarrollo</option>
+                                <option value="INSTALACION" {{ old('error', $actividad->error) == 'INSTALACION' ? 'selected' : '' }}>Instalación</option>
+                                <option value="DESARROLLO-ACTUALIZACION" {{ old('error', $actividad->error) == 'DESARROLLO-ACTUALIZACION' ? 'selected' : '' }}>Desarrollo-Actualizacion</option>
                                 <option value="OTRO" {{ old('error', $actividad->error) == 'OTRO' ? 'selected' : '' }}>Otros</option>
                             </select>
                         </div>
