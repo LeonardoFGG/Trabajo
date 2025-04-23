@@ -13,13 +13,13 @@
   ),
   'botman/botman' => 
   array (
-    'providers' => 
-    array (
-      0 => 'BotMan\\BotMan\\BotManServiceProvider',
-    ),
     'aliases' => 
     array (
       'BotMan' => 'BotMan\\BotMan\\Facades\\BotMan',
+    ),
+    'providers' => 
+    array (
+      0 => 'BotMan\\BotMan\\BotManServiceProvider',
     ),
   ),
   'botman/driver-web' => 

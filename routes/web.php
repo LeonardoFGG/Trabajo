@@ -22,6 +22,7 @@ use App\Http\Controllers\VacacionController;
 use App\Http\Controllers\VentaController;
 use App\Http\Controllers\PaqueteController;
 use App\Http\Controllers\ServicioTecnicoController;
+use App\Http\Controllers\Auth\PerfilController;
 
 use App\Http\Controllers\PermisoController;
 use App\Models\User;
@@ -529,6 +530,20 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/clientes/productos/exportar/{formato}', [ClienteController::class, 'exportarClientesProductos'])
     ->name('clientes.exportar.productos');
+    
+    //ruta para el perfil del usuario
+    Route::get('/perfil', [PerfilController::class, 'index'])
+        ->name('perfil')
+        ->middleware('auth');
+    //ruta para el cambio de contraseña
+    Route::put('/perfil/password', [PerfilController::class, 'updatePassword'])
+        ->name('perfil.updatePassword');
+
+    //ruta para actualizar la descripcion
+    Route::put('/actividades/{id}/descripcion', [ActividadesController::class, 'updateDescripcion'])->name('actividades.updateDescripcion');
+    //ruta para actualizar tipo de error
+    Route::put('/actividades/{id}/error', [ActividadesController::class, 'updateError'])->name('actividades.updateError');
+
 
     // Rutas básicas para el CRUD de ventas
 Route::resource('ventas', VentaController::class);

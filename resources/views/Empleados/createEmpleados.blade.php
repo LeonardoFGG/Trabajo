@@ -46,7 +46,7 @@
                     <form id="employeeForm" action="{{ route('empleados.store') }}" method="POST"
                         enctype="multipart/form-data" class="p-4">
                         @csrf
-                        <!-- Step 1: Información Personal -->
+                                        <!-- Step 1: Información Personal -->
                         <div class="step" id="step1">
                             <h4 class="text-primary mb-4">Información Personal</h4>
                             <div class="row mb-3">
@@ -140,21 +140,21 @@
                                     </div>
                                 </div>
 
-                                <!-- Selección de Supervisor -->
-                                <div class="col-md-6">
-                                    <div class="form-floating">
-                                        <select name="supervisor_id" id="supervisor_id" class="form-select">
-                                            <option value="">Selecciona un Supervisor</option>
-                                            @foreach ($supervisores as $supervisor)
-                                                <option value="{{ $supervisor->id }}"
-                                                    {{ old('supervisor_id', $empleado->supervisor_id) == $supervisor->id ? 'selected' : '' }}>
-                                                    {{ $supervisor->nombre_supervisor }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                        <label for="supervisor_id">Supervisor</label>
-                                    </div>
-                                </div>
+        <!-- Selección de Supervisor -->
+        <div class="col-md-6">
+            <div class="form-floating">
+                <select name="supervisor_id" id="supervisor_id" class="form-select">
+                    <option value="">Selecciona un Supervisor</option>
+                    @foreach ($supervisores as $supervisor)
+                        <option value="{{ $supervisor->id }}" 
+                            {{ old('supervisor_id', $empleado->supervisor_id) == $supervisor->id ? 'selected' : '' }}>
+                            {{ $supervisor->nombre_supervisor }}
+                        </option>
+                    @endforeach
+                </select>
+                <label for="supervisor_id">Supervisor</label>
+            </div>
+        </div>
 
                                 <!-- Checkbox de Supervisor -->
                                 <div class="col-md-6">
@@ -191,6 +191,7 @@
                             </div>
 
                             <hr class="my-4">
+                            <hr class="my-4">
 
                             <div class="row g-3">
                                 <!-- Selección de Cargo -->
@@ -221,6 +222,7 @@
                             </div>
 
                             <hr class="my-4">
+                            <hr class="my-4">
 
                             <div class="row g-3">
                                 <!-- Tipo de Jornada -->
@@ -248,6 +250,7 @@
                             </div>
 
                             <hr class="my-4">
+                            <hr class="my-4">
 
                             <div class="row g-3">
                                 <!-- Fecha de Conclusión -->
@@ -274,6 +277,7 @@
                             </div>
 
                             <hr class="my-4">
+                            <hr class="my-4">
 
                             <div class="row g-3">
                                 <!-- Fecha de Recontratación -->
@@ -286,6 +290,11 @@
                                 </div>
                             </div>
 
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-secondary" onclick="prevStep(1)">Anterior</button>
+                                <button type="button" class="btn btn-primary" onclick="nextStep(2)">Siguiente</button>
+                            </div>
+                        </div>
                             <div class="d-flex justify-content-between mt-4">
                                 <button type="button" class="btn btn-secondary" onclick="prevStep(1)">Anterior</button>
                                 <button type="button" class="btn btn-primary" onclick="nextStep(2)">Siguiente</button>
@@ -366,7 +375,7 @@
                 </div>
             </div>
         </div>
-
+    </div>
         <script>
             function filterSupervisores() {
                 var departamentoId = document.getElementById('departamento').value;
