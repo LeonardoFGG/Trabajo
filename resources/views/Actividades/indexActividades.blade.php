@@ -659,8 +659,8 @@ Ultima Modificación:
                                         <i class="fas fa-eye fa-md"></i>
                                     </a>
                                 @endif
-                                @include('actividades.modals.show', ['actividad' => $actividad])
-                                @include('actividades.modals.edit', [
+                                @include('Actividades.modals.show', ['actividad' => $actividad])
+                                @include('Actividades.modals.edit', [
                                     'actividad' => $actividad,
                                     'clientes' => $clientes,
                                     'empleados' => $empleados,

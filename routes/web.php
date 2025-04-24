@@ -528,5 +528,7 @@ Route::middleware(['auth'])->group(function () {
 
     Route::get('/clientes/productos/exportar/{formato}', [ClienteController::class, 'exportarClientesProductos'])
     ->name('clientes.exportar.productos');
+	
+	
     
 });
