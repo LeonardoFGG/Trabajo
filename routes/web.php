@@ -160,10 +160,10 @@ Route::middleware(['auth'])->group(function () {
             ->name('ventas.avanzar-contacto');
 
         // routes/web.php
-       
+
 
         Route::get('/clientes/{cliente}/productos-completos', [VentaController::class, 'getProductosCliente'])
-        ->name('clientes.productos-completos');
+            ->name('clientes.productos-completos');
 
         Route::post('/ventas', [VentaController::class, 'store'])->name('ventas.store');
         Route::put('/ventas/{venta}', [VentaController::class, 'update'])->name('ventas.update');
@@ -519,18 +519,18 @@ Route::middleware(['auth'])->group(function () {
     ]);
 
 
-  
+
 
     Route::get('/actividades/servicio-hora/exportar/{formato}', [ActividadesController::class, 'exportarServicioHora'])
-    ->name('actividades.exportar.servicio-hora');
+        ->name('actividades.exportar.servicio-hora');
 
     Route::put('/actividades/{id}/update-tiempo-real', [ActividadesController::class, 'updateTiempoReal'])->name('actividades.updateTiempoReal');
 
     Route::patch('/permisos/{permiso}/anexo', [PermisoController::class, 'updateAnexo'])->name('permisos.updateAnexo');
 
     Route::get('/clientes/productos/exportar/{formato}', [ClienteController::class, 'exportarClientesProductos'])
-    ->name('clientes.exportar.productos');
-    
+        ->name('clientes.exportar.productos');
+
     //ruta para el perfil del usuario
     Route::get('/perfil', [PerfilController::class, 'index'])
         ->name('perfil')
@@ -546,11 +546,18 @@ Route::middleware(['auth'])->group(function () {
 
 
     // Rutas básicas para el CRUD de ventas
-Route::resource('ventas', VentaController::class);
+    Route::resource('ventas', VentaController::class);
 
-// Rutas adicionales para el workflow
-Route::put('ventas/{venta}/pausar', [VentaController::class, 'pausar'])->name('ventas.pausar');
-Route::put('ventas/{venta}/reanudar', [VentaController::class, 'reanudar'])->name('ventas.reanudar');
-Route::post('ventas/{venta}/avanzar-estado', [VentaController::class, 'avanzarEstado'])->name('ventas.avanzar-estado');
-
+    // Rutas adicionales para el workflow
+    Route::put('ventas/{venta}/pausar', [VentaController::class, 'pausar'])->name('ventas.pausar');
+    Route::put('ventas/{venta}/reanudar', [VentaController::class, 'reanudar'])->name('ventas.reanudar');
+    Route::post('ventas/{venta}/avanzar-estado', [VentaController::class, 'avanzarEstado'])->name('ventas.avanzar-estado');
+    Route::resource('parametros', ParametroController::class)->names([
+        'index' => 'parametros.index',
+        'store' => 'parametros.store',
+        'show' => 'parametros.show',
+        'edit' => 'parametros.edit',
+        'update' => 'parametros.update',
+        'destroy' => 'parametros.destroy',
+    ]);
 });

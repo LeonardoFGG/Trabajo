@@ -8,11 +8,20 @@ use Illuminate\Http\Request;
 
 class ParametroController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $parametros = Parametro::with('departamento')->get();
-     
-        return view('Parametros.index', compact('parametros'));
+        $departamentoId = $request->input('departamento_id');
+
+        $query = Parametro::with('departamento');
+
+        if ($departamentoId) {
+            $query->where('departamento_id', $departamentoId);
+        }
+
+        $parametros = $query->get();
+        $departamentos = Departamento::all();
+
+        return view('Parametros.index', compact('parametros', 'departamentos'));
     }
 
     public function create()

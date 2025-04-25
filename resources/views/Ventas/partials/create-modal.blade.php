@@ -8,6 +8,8 @@
 
             <form id="ventaForm" method="POST" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" id="estado_comercial" name="estado_comercial" value="Prospección">
+
                 <div class="modal-body">
                     <!-- Indicador de pasos -->
                     <ul class="nav nav-pills mb-4" id="ventaSteps">
@@ -111,8 +113,19 @@
                     <div class="step d-none" data-step="2">
                         <h5>Prospección</h5>
                         <div class="mb-3">
-                            <label for="detalle_prospeccion" class="form-label">Detalles de la Prospección</label>
-                            <textarea class="form-control" id="detalle_prospeccion" name="detalle_prospeccion" rows="4"></textarea>
+                            <label for="detalle_prospeccion" class="form-label">Detalles de la Prospección *</label>
+                            <textarea class="form-control" id="detalle_prospeccion" name="detalle_prospeccion" rows="4" required></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="button" class="btn btn-warning mx-1 pause-venta-btn"
+                                data-estado="Prospección">
+                                Pausar Venta
+                            </button>
+                            <button type="button" class="btn btn-danger mx-1 close-venta-btn"
+                                data-estado="Prospección">
+                                Cerrar Venta
+                            </button>
                         </div>
                     </div>
 
@@ -122,12 +135,13 @@
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="fecha_contacto" class="form-label">Fecha de Contacto *</label>
-                                <input type="date" class="form-control" id="fecha_contacto"
-                                    name="fecha_contacto">
+                                <input type="date" class="form-control" id="fecha_contacto" name="fecha_contacto"
+                                    required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="canal_comunicacion" class="form-label">Canal de Comunicación *</label>
-                                <select class="form-select" id="canal_comunicacion" name="canal_comunicacion">
+                                <select class="form-select" id="canal_comunicacion" name="canal_comunicacion"
+                                    required>
                                     <option value="Llamada">Llamada Telefónica</option>
                                     <option value="Email">Correo Electrónico</option>
                                     <option value="Visita">Visita Presencial</option>
@@ -137,7 +151,18 @@
                         </div>
                         <div class="mb-3">
                             <label for="detalle_contacto" class="form-label">Detalles del Contacto *</label>
-                            <textarea class="form-control" id="detalle_contacto" name="detalle_contacto" rows="4"></textarea>
+                            <textarea class="form-control" id="detalle_contacto" name="detalle_contacto" rows="4" required></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="button" class="btn btn-warning mx-1 pause-venta-btn"
+                                data-estado="Contacto">
+                                Pausar Venta
+                            </button>
+                            <button type="button" class="btn btn-danger mx-1 close-venta-btn"
+                                data-estado="Contacto">
+                                Cerrar Venta
+                            </button>
                         </div>
                     </div>
 
@@ -148,11 +173,11 @@
                             <div class="col-md-6 mb-3">
                                 <label for="fecha_presentacion" class="form-label">Fecha de Presentación *</label>
                                 <input type="date" class="form-control" id="fecha_presentacion"
-                                    name="fecha_presentacion">
+                                    name="fecha_presentacion" required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="tipo_item_venta" class="form-label">Tipo de Item *</label>
-                                <select class="form-select" id="tipo_item_venta" name="tipo_item_venta">
+                                <select class="form-select" id="tipo_item_venta" name="tipo_item_venta" required>
                                     <option value="producto">Producto</option>
                                     <option value="paquete">Paquete</option>
                                 </select>
@@ -185,7 +210,8 @@
 
                         <div class="mb-3">
                             <label for="observacion_presentacion" class="form-label">Observaciones *</label>
-                            <textarea class="form-control" id="observacion_presentacion" name="observacion_presentacion" rows="4"></textarea>
+                            <textarea class="form-control" id="observacion_presentacion" name="observacion_presentacion" rows="4"
+                                required></textarea>
                         </div>
 
                         <!-- Sección para múltiples productos -->
@@ -231,6 +257,17 @@
                                 </div>
                             @endforeach
                         </div>
+
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="button" class="btn btn-warning mx-1 pause-venta-btn"
+                                data-estado="Presentación">
+                                Pausar Venta
+                            </button>
+                            <button type="button" class="btn btn-danger mx-1 close-venta-btn"
+                                data-estado="Presentación">
+                                Cerrar Venta
+                            </button>
+                        </div>
                     </div>
 
                     <!-- Paso 5: Propuesta -->
@@ -243,11 +280,23 @@
                         </div>
                         <div class="mb-3">
                             <label for="detalle_propuesta" class="form-label">Detalles de la Propuesta *</label>
-                            <textarea class="form-control" id="detalle_propuesta" name="detalle_propuesta" rows="4"></textarea>
+                            <textarea class="form-control" id="detalle_propuesta" name="detalle_propuesta" rows="4" required></textarea>
                         </div>
                         <div class="mb-3">
                             <label for="fecha_propuesta" class="form-label">Fecha de Envío *</label>
-                            <input type="date" class="form-control" id="fecha_propuesta" name="fecha_propuesta">
+                            <input type="date" class="form-control" id="fecha_propuesta" name="fecha_propuesta"
+                                required>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="button" class="btn btn-warning mx-1 pause-venta-btn"
+                                data-estado="Propuesta">
+                                Pausar Venta
+                            </button>
+                            <button type="button" class="btn btn-danger mx-1 close-venta-btn"
+                                data-estado="Propuesta">
+                                Cerrar Venta
+                            </button>
                         </div>
                     </div>
 
@@ -261,13 +310,13 @@
                         </div>
                         <div class="mb-3">
                             <label for="detalle_negociacion" class="form-label">Detalles de la Negociación *</label>
-                            <textarea class="form-control" id="detalle_negociacion" name="detalle_negociacion" rows="4"></textarea>
+                            <textarea class="form-control" id="detalle_negociacion" name="detalle_negociacion" rows="4" required></textarea>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="descuento" class="form-label">Descuento Aplicado (%)</label>
                                 <input type="number" class="form-control" id="descuento" name="descuento"
-                                    min="0" max="100" step="0.01">
+                                    min="0" max="100" step="0.01" value="0">
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="porcentaje_descuento_aprobado_por" class="form-label">Aprobado Por</label>
@@ -282,7 +331,18 @@
                         <div class="mb-3">
                             <label for="fecha_negociacion" class="form-label">Fecha de Negociación *</label>
                             <input type="date" class="form-control" id="fecha_negociacion"
-                                name="fecha_negociacion">
+                                name="fecha_negociacion" required>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="button" class="btn btn-warning mx-1 pause-venta-btn"
+                                data-estado="Negociación">
+                                Pausar Venta
+                            </button>
+                            <button type="button" class="btn btn-danger mx-1 close-venta-btn"
+                                data-estado="Negociación">
+                                Cerrar Venta
+                            </button>
                         </div>
                     </div>
 
@@ -292,16 +352,18 @@
                         <div class="row">
                             <div class="col-md-4 mb-3">
                                 <label for="fecha_venta" class="form-label">Fecha de Venta *</label>
-                                <input type="date" class="form-control" id="fecha_venta" name="fecha_venta">
+                                <input type="date" class="form-control" id="fecha_venta" name="fecha_venta"
+                                    required>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="fecha_contrato" class="form-label">Fecha de Contrato *</label>
-                                <input type="date" class="form-control" id="fecha_contrato"
-                                    name="fecha_contrato">
+                                <input type="date" class="form-control" id="fecha_contrato" name="fecha_contrato"
+                                    required>
                             </div>
                             <div class="col-md-4 mb-3">
                                 <label for="fecha_cobro" class="form-label">Fecha de Cobro *</label>
-                                <input type="date" class="form-control" id="fecha_cobro" name="fecha_cobro">
+                                <input type="date" class="form-control" id="fecha_cobro" name="fecha_cobro"
+                                    required>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -310,7 +372,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="metodo_pago" class="form-label">Método de Pago *</label>
-                            <select class="form-select" id="metodo_pago" name="metodo_pago">
+                            <select class="form-select" id="metodo_pago" name="metodo_pago" required>
                                 <option value="Efectivo">Efectivo</option>
                                 <option value="Transferencia">Transferencia</option>
                                 <option value="Tarjeta">Tarjeta</option>
@@ -321,17 +383,17 @@
                             <div class="col-md-6 mb-3">
                                 <label for="monto_total" class="form-label">Monto Total *</label>
                                 <input type="number" class="form-control" id="monto_total" name="monto_total"
-                                    step="0.01" readonly>
+                                    step="0.01" readonly required>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="monto_pagado" class="form-label">Monto Pagado</label>
                                 <input type="number" class="form-control" id="monto_pagado" name="monto_pagado"
-                                    step="0.01">
+                                    step="0.01" value="0">
                             </div>
                         </div>
                         <div class="mb-3">
                             <label for="estado_final" class="form-label">Estado Final *</label>
-                            <select class="form-select" id="estado_final" name="estado_final">
+                            <select class="form-select" id="estado_final" name="estado_final" required>
                                 <option value="En Curso">En Curso</option>
                                 <option value="Finalizada">Finalizada</option>
                             </select>
@@ -352,157 +414,3 @@
 </div>
 
 
-@section('scripts')
-    <script>
-        $(document).ready(function() {
-            let currentStep = 1;
-            const totalSteps = 7;
-            let ventaId = null;
-
-            // Mostrar modal de creación
-            $('#createVentaBtn').click(function() {
-                $.get("{{ route('ventas.create') }}", function(response) {
-                    if (response.success) {
-                        // Reemplazar el modal con la nueva versión
-                        $('#createVentaModal').replaceWith(response.html);
-                        // Mostrar el modal
-                        $('#createVentaModal').modal('show');
-                        // Inicializar controles
-                        initVentaModal();
-                    } else {
-                        alert('Error al cargar el formulario de venta');
-                    }
-                });
-            });
-
-            function initVentaModal() {
-                // Manejar cambio de tipo de venta
-                $('input[name="tipo_venta"]').change(function() {
-                    if ($(this).val() === 'Interna') {
-                        $('#clienteExistenteContainer').removeClass('d-none');
-                        $('#nuevoClienteContainer').addClass('d-none');
-                        $('#cliente_id').prop('required', true);
-                        $('#nombre, #telefono').prop('required', false);
-                    } else {
-                        $('#clienteExistenteContainer').addClass('d-none');
-                        $('#nuevoClienteContainer').removeClass('d-none');
-                        $('#cliente_id').prop('required', false);
-                        $('#nombre, #telefono').prop('required', true);
-                    }
-                });
-
-                // Inicializar el estado al cargar la página
-                if ($('input[name="tipo_venta"]:checked').val() === 'Interna') {
-                    $('#clienteExistenteContainer').removeClass('d-none');
-                    $('#nuevoClienteContainer').addClass('d-none');
-                } else {
-                    $('#clienteExistenteContainer').addClass('d-none');
-                    $('#nuevoClienteContainer').removeClass('d-none');
-                }
-
-                // Manejar cambio de tipo de item
-                $('#tipo_item_venta').change(function() {
-                    if ($(this).val() === 'producto') {
-                        $('#productoContainer').removeClass('d-none');
-                        $('#paqueteContainer').addClass('d-none');
-                        $('#paquete_id').val('');
-                        $('#paquete_id').prop('required', false);
-
-                        $('#producto_id').prop('required', true);
-                    } else {
-                        $('#productoContainer').addClass('d-none');
-                        $('#paqueteContainer').removeClass('d-none');
-                        $('#producto_id').val('');
-                        $('#producto_id').prop('required', false);
-
-                        $('#paquete_id').prop('required', true);
-                    }
-                });
-
-                // Manejar cambio de cliente existente
-
-                $('#cliente_id').change(function() {
-                    const clienteId = $(this).val();
-                    if (clienteId) {
-                        $.get("{{ route('clientes.show', '') }}/" + clienteId, function(response) {
-                            if (response.success) {
-                                $('#nombre').val(response.cliente.nombre);
-                                $('#telefono').val(response.cliente.telefono);
-                                $('#email').val(response.cliente.email);
-                                $('#direccion').val(response.cliente.direccion);
-                                $('#contacto').val(response.cliente.contacto);
-                            } else {
-                                alert('Error al cargar los datos del cliente');
-                            }
-                        });
-                    } else {
-                        $('#nombre, #telefono, #email, #direccion, #contacto').val('');
-                    }
-                });
-
-                // Manejar cambio de producto
-                $('#producto_id').change(function() {
-                    const precio = $(this).find(':selected').data('precio');
-                    $('#monto_total').val(precio);
-                });
-
-                // Manejar cambio de paquete
-                $('#paquete_id').change(function() {
-                    const precio = $(this).find(':selected').data('precio');
-                    $('#monto_total').val(precio);
-                });
-
-
-
-                // Manejar cambio de paso
-                $('#nextStepBtn').click(function() {
-                    if (currentStep < totalSteps) {
-                        $(`.step[data-step="${currentStep}"]`).addClass('d-none');
-                        currentStep++;
-                        $(`.step[data-step="${currentStep}"]`).removeClass('d-none');
-                        $('#prevStepBtn').prop('disabled', currentStep === 2);
-                        $('#nextStepBtn').toggleClass('d-none', currentStep === totalSteps);
-                        $('#submitVentaBtn').toggleClass('d-none', currentStep !== totalSteps);
-                    }
-                });
-
-                $('#prevStepBtn').click(function() {
-                    if (currentStep > 1) {
-                        $(`.step[data-step="${currentStep}"]`).addClass('d-none');
-                        currentStep--;
-                        $(`.step[data-step="${currentStep}"]`).removeClass('d-none');
-                        $('#prevStepBtn').prop('disabled', currentStep === 2);
-                        $('#nextStepBtn').toggleClass('d-none', currentStep === totalSteps);
-                        $('#submitVentaBtn').toggleClass('d-none', currentStep !== totalSteps);
-                    }
-                });
-
-                // Manejar envío del formulario
-                $('#ventaForm').submit(function(e) {
-                    e.preventDefault();
-                    const formData = new FormData(this);
-                    $.ajax({
-                        url: "{{ route('ventas.store') }}",
-                        type: "POST",
-                        data: formData,
-                        contentType: false,
-                        processData: false,
-                        success: function(response) {
-                            if (response.success) {
-                                alert('Venta creada exitosamente');
-                                $('#createVentaModal').modal('hide');
-                                // Recargar la tabla de ventas o realizar otra acción
-                            } else {
-                                alert('Error al crear la venta');
-                            }
-                        },
-                        error: function(xhr) {
-                            alert('Error en el servidor: ' + xhr.responseText);
-                        }
-                    });
-                });
-            }
-
-        });
-    </script>
-@endsection
