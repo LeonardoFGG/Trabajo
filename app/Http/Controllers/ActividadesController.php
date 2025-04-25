@@ -255,7 +255,7 @@ class ActividadesController extends Controller
             'prioridad' => 'required|string|in:ALTA,MEDIA,BAJA',
             'departamento_id' => 'required|exists:departamentos,id',
             'cargo_id' => 'required|exists:cargos,id',
-            'error' => 'required|string|in:ESTRUCTURA,CLIENTE,SOFTWARE,MEJORA ERROR,DESARROLLO,OTRO',
+            'error' => 'required|string|in:ESTRUCTURA,CLIENTE,SOFTWARE,MEJORA ERROR,INSTALACION,DESARROLLO-ACTUALIZACION,OTRO',
 
         ], [
             'cliente_id.required' => 'Debe seleccionar un cliente.',
