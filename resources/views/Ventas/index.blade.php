@@ -237,7 +237,7 @@
         background-color: #007bff;
         color: white;
     }
-    
+
    
     </style>
 
@@ -270,9 +270,306 @@
 </style>
 @endsection
 
+
+
+    
 @section('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            let currentStep = 1;
+            const totalSteps = 7;
+            let ventaId = null;
+
+            // Inicializar el modal si ya existe en el DOM
+            initVentaModal();
+
+            // Mostrar modal de creación
+            $('#createVentaBtn').click(function() {
+                $.get("{{ route('ventas.create') }}", function(response) {
+                    if (response.success) {
+                        // Reemplazar el modal con la nueva versión
+                        $('#createVentaModal').replaceWith(response.html);
+                        // Mostrar el modal
+                        $('#createVentaModal').modal('show');
+                        // Inicializar controles
+                        initVentaModal();
+                    } else {
+                        alert('Error al cargar el formulario de venta');
+                    }
+                });
+            });
+
+            function initVentaModal() {
+                // Actualizar el estado comercial al cambiar de paso
+                function updateEstadoComercial(step) {
+                    const estadosMap = {
+                        1: "Tipo de Venta",
+                        2: "Prospección",
+                        3: "Contacto",
+                        4: "Presentación",
+                        5: "Propuesta",
+                        6: "Negociación",
+                        7: "Cierre"
+                    };
+                    $('#estado_comercial').val(estadosMap[step]);
+                }
+
+                // Inicializar el estado comercial
+                updateEstadoComercial(currentStep);
+
+                // Manejar cambio de tipo de venta
+                $('input[name="tipo_venta"]').change(function() {
+                    if ($(this).val() === 'Interna') {
+                        $('#clienteExistenteContainer').removeClass('d-none');
+                        $('#nuevoClienteContainer').addClass('d-none');
+                        $('#cliente_id').prop('required', true);
+                        $('#nombre, #telefono').prop('required', false);
+                    } else {
+                        $('#clienteExistenteContainer').addClass('d-none');
+                        $('#nuevoClienteContainer').removeClass('d-none');
+                        $('#cliente_id').prop('required', false);
+                        $('#nombre, #telefono').prop('required', true);
+                    }
+                });
+
+                // Inicializar el estado al cargar la página
+                if ($('input[name="tipo_venta"]:checked').val() === 'Interna') {
+                    $('#clienteExistenteContainer').removeClass('d-none');
+                    $('#nuevoClienteContainer').addClass('d-none');
+                } else {
+                    $('#clienteExistenteContainer').addClass('d-none');
+                    $('#nuevoClienteContainer').removeClass('d-none');
+                }
+
+                // Manejar cambio de tipo de item
+                $('#tipo_item_venta').change(function() {
+                    if ($(this).val() === 'producto') {
+                        $('#productoContainer').removeClass('d-none');
+                        $('#paqueteContainer').addClass('d-none');
+                        $('#paquete_id').val('');
+                        $('#paquete_id').prop('required', false);
+                        $('#producto_id').prop('required', true);
+                    } else {
+                        $('#productoContainer').addClass('d-none');
+                        $('#paqueteContainer').removeClass('d-none');
+                        $('#producto_id').val('');
+                        $('#producto_id').prop('required', false);
+                        $('#paquete_id').prop('required', true);
+                    }
+                });
+
+                // Manejar cambio de cliente existente
+                $('#cliente_id').change(function() {
+                    const clienteId = $(this).val();
+                    if (clienteId) {
+                        $.get("{{ route('clientes.show', '') }}/" + clienteId, function(response) {
+                            if (response.success) {
+                                $('#nombre').val(response.cliente.nombre);
+                                $('#telefono').val(response.cliente.telefono);
+                                $('#email').val(response.cliente.email);
+                                $('#direccion').val(response.cliente.direccion);
+                                $('#contacto').val(response.cliente.contacto);
+                            } else {
+                                alert('Error al cargar los datos del cliente');
+                            }
+                        });
+                    } else {
+                        $('#nombre, #telefono, #email, #direccion, #contacto').val('');
+                    }
+                });
+
+                // Manejar cambio de producto
+                $('#producto_id').change(function() {
+                    const precio = $(this).find(':selected').data('precio');
+                    $('#monto_total').val(precio);
+                });
+
+                // Manejar cambio de paquete
+                $('#paquete_id').change(function() {
+                    const precio = $(this).find(':selected').data('precio');
+                    $('#monto_total').val(precio);
+                });
+
+                // Calcular precio total incluyendo productos/paquetes adicionales
+                function calcularTotal() {
+                    let total = 0;
+                    
+                    // Añadir precio del producto/paquete principal
+                    if ($('#tipo_item_venta').val() === 'producto' && $('#producto_id').val()) {
+                        total += parseFloat($('#producto_id').find(':selected').data('precio') || 0);
+                    } else if ($('#tipo_item_venta').val() === 'paquete' && $('#paquete_id').val()) {
+                        total += parseFloat($('#paquete_id').find(':selected').data('precio') || 0);
+                    }
+                    
+                    // Añadir productos adicionales
+                    $('input[name^="productos["]').each(function() {
+                        const cantidad = parseInt($(this).val() || 0);
+                        const precio = parseFloat($(this).closest('.row').find('label').text().match(/\$([0-9,.]+)/)[1].replace(',', ''));
+                        total += cantidad * precio;
+                    });
+                    
+                    // Añadir paquetes adicionales
+                    $('input[name^="paquetes["]').each(function() {
+                        const cantidad = parseInt($(this).val() || 0);
+                        const precio = parseFloat($(this).closest('.row').find('label').text().match(/\$([0-9,.]+)/)[1].replace(',', ''));
+                        total += cantidad * precio;
+                    });
+                    
+                    // Aplicar descuento si existe
+                    const descuento = parseFloat($('#descuento').val() || 0);
+                    if (descuento > 0) {
+                        total = total * (1 - (descuento / 100));
+                    }
+                    
+                    $('#monto_total').val(total.toFixed(2));
+                }
+                
+                // Actualizar total al cambiar cantidades o descuento
+                $('input[name^="productos["], input[name^="paquetes["], #descuento').change(calcularTotal);
+
+                // Manejadores para pausar venta
+                $('.pause-venta-btn').click(function() {
+                    const estado = $(this).data('estado');
+                    $('#estado_comercial').val(estado);
+                    
+                    if (confirm('¿Desea pausar la venta en el estado de ' + estado + '?')) {
+                        const formData = new FormData($('#ventaForm')[0]);
+                        formData.append('accion', 'pausar');
+                        enviarFormulario(formData);
+                    }
+                });
+
+                // Manejadores para cerrar venta
+                $('.close-venta-btn').click(function() {
+                    const estado = $(this).data('estado');
+                    $('#estado_comercial').val(estado);
+                    
+                    if (confirm('¿Desea cerrar la venta en el estado de ' + estado + '?')) {
+                        const formData = new FormData($('#ventaForm')[0]);
+                        formData.append('accion', 'cerrar');
+                        enviarFormulario(formData);
+                    }
+                });
+
+                // Manejar cambio de paso
+                $('#nextStepBtn').click(function() {
+                    if (currentStep < totalSteps) {
+                        // Validar campos requeridos del paso actual
+                        const currentStepElement = $(`.step[data-step="${currentStep}"]`);
+                        let isValid = true;
+                        
+                        currentStepElement.find('[required]').each(function() {
+                            if (!$(this).val()) {
+                                isValid = false;
+                                $(this).addClass('is-invalid');
+                            } else {
+                                $(this).removeClass('is-invalid');
+                            }
+                        });
+                        
+                        if (!isValid) {
+                            alert('Por favor complete todos los campos obligatorios');
+                            return;
+                        }
+                        
+                        // Avanzar al siguiente paso
+                        currentStepElement.addClass('d-none');
+                        currentStep++;
+                        $(`.step[data-step="${currentStep}"]`).removeClass('d-none');
+                        
+                        // Actualizar estado de los botones
+                        $('#prevStepBtn').prop('disabled', false);
+                        $('#nextStepBtn').toggleClass('d-none', currentStep === totalSteps);
+                        $('#submitVentaBtn').toggleClass('d-none', currentStep !== totalSteps);
+                        
+                        // Actualizar estado comercial
+                        updateEstadoComercial(currentStep);
+                        
+                        // Actualizar navegación por pestañas
+                        $('#ventaSteps .nav-link').removeClass('active');
+                        $(`#ventaSteps .nav-link[data-step="${currentStep}"]`).addClass('active');
+                    }
+                });
+
+                $('#prevStepBtn').click(function() {
+                    if (currentStep > 1) {
+                        $(`.step[data-step="${currentStep}"]`).addClass('d-none');
+                        currentStep--;
+                        $(`.step[data-step="${currentStep}"]`).removeClass('d-none');
+                        
+                        // Actualizar estado de los botones
+                        $('#prevStepBtn').prop('disabled', currentStep === 1);
+                        $('#nextStepBtn').removeClass('d-none');
+                        $('#submitVentaBtn').addClass('d-none');
+                        
+                        // Actualizar estado comercial
+                        updateEstadoComercial(currentStep);
+                        
+                        // Actualizar navegación por pestañas
+                        $('#ventaSteps .nav-link').removeClass('active');
+                        $(`#ventaSteps .nav-link[data-step="${currentStep}"]`).addClass('active');
+                    }
+                });
+
+                // Navegación por pestañas
+                $('#ventaSteps .nav-link').click(function() {
+                    const clickedStep = parseInt($(this).data('step'));
+                    if (clickedStep <= currentStep) { // Solo permitir ir a pasos ya completados
+                        $(`.step[data-step="${currentStep}"]`).addClass('d-none');
+                        currentStep = clickedStep;
+                        $(`.step[data-step="${currentStep}"]`).removeClass('d-none');
+                        
+                        // Actualizar estado de los botones
+                        $('#prevStepBtn').prop('disabled', currentStep === 1);
+                        $('#nextStepBtn').toggleClass('d-none', currentStep === totalSteps);
+                        $('#submitVentaBtn').toggleClass('d-none', currentStep !== totalSteps);
+                        
+                        // Actualizar navegación por pestañas
+                        $('#ventaSteps .nav-link').removeClass('active');
+                        $(this).addClass('active');
+                        
+                        // Actualizar estado comercial
+                        updateEstadoComercial(currentStep);
+                    }
+                });
+
+                // Manejar envío del formulario
+                $('#ventaForm').submit(function(e) {
+                    e.preventDefault();
+                    const formData = new FormData(this);
+                    formData.append('accion', 'finalizar');
+                    enviarFormulario(formData);
+                });
+                
+                // Función para enviar el formulario
+                function enviarFormulario(formData) {
+                    $.ajax({
+                        url: "{{ route('ventas.store') }}",
+                        type: "POST",
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function(response) {
+                            if (response.success) {
+                                alert('Venta procesada exitosamente');
+                                $('#createVentaModal').modal('hide');
+                                // Recargar tabla o realizar otra acción
+                                location.reload();
+                            } else {
+                                alert('Error al procesar la venta: ' + response.message);
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Error en el servidor: ' + xhr.responseText);
+                        }
+                    });
+                }
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
         // Script para manejar la selección de tipo de item de venta
         const tipoItemVentaSelect = document.getElementById('tipo_item_venta');
         const productoSection = document.getElementById('producto_section');
@@ -395,5 +692,6 @@
             });
         });
     });
-</script>
+
+    </script>
 @endsection

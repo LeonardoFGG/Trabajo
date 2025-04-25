@@ -31,7 +31,7 @@
                                         data-cargo-id="{{ optional($empleado->cargo)->id }}" 
                                         data-supervisor-id="{{ optional($empleado->supervisor)->id }}"
                                         data-departamento-id="{{ optional($empleado->departamento)->id }}">
-                                    {{ $empleado->nombre1 . ' ' . $empleado->apellido1 }}
+                                    {{ $empleado->nombre1 . ' ' . $empleado->apellido1 . ' ' . $empleado->apellido2 }} 
                                 </option>
                             @endforeach
                         </select>
